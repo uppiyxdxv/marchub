@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LearnVerse – Code Your Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <span class="logo-icon">⬡</span> LearnVerse
+  </div>
+  <ul class="nav-links">
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="pages/login.html" class="btn-nav">Login</a></li>
+    <li><a href="pages/register.html" class="btn-nav btn-primary-nav">Register</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger">☰</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero">
+  <canvas id="bg-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">🚀 New Batches Starting Soon</div>
+    <h1 class="hero-title">
+      Code Your<br/>
+      <span class="gradient-text">Future</span><br/>
+      Here.
+    </h1>
+    <p class="hero-sub">Master HTML, CSS, JavaScript, Java, Python, SQL & MongoDB — from zero to job-ready with hands-on projects.</p>
+    <div class="hero-cta">
+      <a href="pages/enroll.html" class="btn-hero">Enroll Now →</a>
+      <a href="#courses" class="btn-ghost">Explore Courses</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">2,400+</span><span>Students</span></div>
+      <div class="stat"><span class="stat-num">7</span><span>Courses</span></div>
+      <div class="stat"><span class="stat-num">98%</span><span>Satisfaction</span></div>
+    </div>
+  </div>
+  <div class="hero-3d" id="hero-3d"></div>
+</section>
+
+<!-- ── COURSES ── -->
+<section class="courses" id="courses">
+  <div class="section-label">What We Teach</div>
+  <h2 class="section-title">Our Courses</h2>
+  <p class="section-sub">Industry-aligned curriculum built for beginners and professionals alike.</p>
+  <div class="courses-grid">
+
+    <div class="course-card" data-color="#f97316" data-course="HTML">
+      <div class="card-glow"></div>
+      <div class="card-icon">🌐</div>
+      <h3>HTML</h3>
+      <p>Build the skeleton of the web. Structure, semantics, accessibility & best practices.</p>
+      <div class="card-meta">
+        <span>⏱ 4 Weeks</span><span>🎯 Beginner</span>
+      </div>
+      <a href="pages/enroll.html?course=HTML" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#3b82f6" data-course="CSS">
+      <div class="card-glow"></div>
+      <div class="card-icon">🎨</div>
+      <h3>CSS</h3>
+      <p>Design stunning interfaces with Flexbox, Grid, animations & responsive layouts.</p>
+      <div class="card-meta">
+        <span>⏱ 4 Weeks</span><span>🎯 Beginner</span>
+      </div>
+      <a href="pages/enroll.html?course=CSS" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#eab308" data-course="JavaScript">
+      <div class="card-glow"></div>
+      <div class="card-icon">⚡</div>
+      <h3>JavaScript</h3>
+      <p>Master the language of the web — DOM, async, ES6+, APIs and full interactivity.</p>
+      <div class="card-meta">
+        <span>⏱ 8 Weeks</span><span>🎯 Intermediate</span>
+      </div>
+      <a href="pages/enroll.html?course=JavaScript" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#ef4444" data-course="Java">
+      <div class="card-glow"></div>
+      <div class="card-icon">☕</div>
+      <h3>Java</h3>
+      <p>OOP fundamentals, data structures, Spring basics and enterprise-level coding.</p>
+      <div class="card-meta">
+        <span>⏱ 10 Weeks</span><span>🎯 Intermediate</span>
+      </div>
+      <a href="pages/enroll.html?course=Java" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#8b5cf6" data-course="Python">
+      <div class="card-glow"></div>
+      <div class="card-icon">🐍</div>
+      <h3>Python</h3>
+      <p>From scripting to data science & automation. NumPy, Pandas & Flask included.</p>
+      <div class="card-meta">
+        <span>⏱ 8 Weeks</span><span>🎯 Beginner</span>
+      </div>
+      <a href="pages/enroll.html?course=Python" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#06b6d4" data-course="SQL">
+      <div class="card-glow"></div>
+      <div class="card-icon">🗄️</div>
+      <h3>SQL</h3>
+      <p>Relational databases, queries, joins, indexes, transactions & optimization.</p>
+      <div class="card-meta">
+        <span>⏱ 5 Weeks</span><span>🎯 Beginner</span>
+      </div>
+      <a href="pages/enroll.html?course=SQL" class="card-btn">Enroll →</a>
+    </div>
+
+    <div class="course-card" data-color="#10b981" data-course="MongoDB">
+      <div class="card-glow"></div>
+      <div class="card-icon">🍃</div>
+      <h3>MongoDB</h3>
+      <p>NoSQL architecture, CRUD operations, aggregation pipelines & Atlas cloud.</p>
+      <div class="card-meta">
+        <span>⏱ 5 Weeks</span><span>🎯 Intermediate</span>
+      </div>
+      <a href="pages/enroll.html?course=MongoDB" class="card-btn">Enroll →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-text">
+      <div class="section-label">Why LearnVerse?</div>
+      <h2 class="section-title">Built for Real<br/>Careers.</h2>
+      <p>We don't just teach theory — we build. Every course includes live projects, code reviews, and community support via WhatsApp groups. Learn at your pace, in your language, with instructors who work in the industry.</p>
+      <ul class="about-list">
+        <li>✅ Project-based, hands-on curriculum</li>
+        <li>✅ WhatsApp community per course</li>
+        <li>✅ Lifetime access to materials</li>
+        <li>✅ Certificate upon completion</li>
+        <li>✅ Job placement support</li>
+      </ul>
+      <a href="pages/enroll.html" class="btn-hero" style="margin-top:2rem;display:inline-block;">Start Learning →</a>
+    </div>
+    <div class="about-visual">
+      <canvas id="about-canvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-icon">⬡</span> LearnVerse
+      <p>Code your future, one line at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="pages/login.html">Login</a>
+      <a href="pages/register.html">Register</a>
+      <a href="pages/enroll.html">Enroll</a>
+      <a href="#courses">Courses</a>
+    </div>
+    <p class="footer-copy">© 2025 LearnVerse. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/three-bg.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

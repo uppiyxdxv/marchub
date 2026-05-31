@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enroll – LearnVerse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    .enroll-page { background: radial-gradient(ellipse at 70% 30%, rgba(0,245,196,0.07), transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(124,58,237,0.07), transparent 50%), var(--bg); }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><span class="logo-icon">⬡</span> LearnVerse</div>
+  <ul class="nav-links">
+    <li><a href="../index.html#courses">Courses</a></li>
+    <li><a href="login.html" class="btn-nav">Login</a></li>
+    <li><a href="dashboard.html" class="btn-nav btn-primary-nav">Dashboard</a></li>
+  </ul>
+</nav>
+
+<div class="enroll-page">
+  <div class="enroll-header">
+    <div class="section-label">Get Started</div>
+    <h1 class="section-title">Enroll in a Course</h1>
+    <p style="color:var(--muted);max-width:500px;margin:0 auto;">Fill in your details and join the community. After enrollment you'll get a WhatsApp invite to your course group.</p>
+  </div>
+
+  <div class="enroll-card">
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="enroll-name" placeholder="Your full name"/>
+      <div class="form-error" id="en-name-err">Name is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Email Address *</label>
+      <input type="email" id="enroll-email" placeholder="you@example.com"/>
+      <div class="form-error" id="en-email-err">Valid email is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number *</label>
+      <input type="tel" id="enroll-phone" placeholder="+91 9876543210"/>
+      <div class="form-error" id="en-phone-err">Valid phone number is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Course Interest *</label>
+      <select id="enroll-course">
+        <option value="">-- Select a Course --</option>
+        <option value="HTML">HTML – Web Structure Fundamentals</option>
+        <option value="CSS">CSS – Styling & Responsive Design</option>
+        <option value="JavaScript">JavaScript – Interactive Web Dev</option>
+        <option value="Java">Java – Object Oriented Programming</option>
+        <option value="Python">Python – Scripting & Data Science</option>
+        <option value="SQL">SQL – Relational Databases</option>
+        <option value="MongoDB">MongoDB – NoSQL & Atlas Cloud</option>
+      </select>
+      <div class="form-error" id="en-course-err">Please select a course.</div>
+    </div>
+    <div class="form-group">
+      <label>Message (Optional)</label>
+      <textarea id="enroll-message" rows="3" placeholder="Any questions or background about yourself…" style="resize:vertical;"></textarea>
+    </div>
+    <button class="btn-full" id="enrollBtn">Submit Enrollment →</button>
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <h2>Enrollment Confirmed!</h2>
+    <p>Thank you, <strong id="modal-name">Student</strong>! You're enrolled in <strong id="modal-course">the course</strong>. Join our WhatsApp community to get started and connect with your batch!</p>
+    <a id="whatsapp-link" href="#" target="_blank" class="btn-whatsapp">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Join WhatsApp Community
+    </a>
+    <a class="modal-close" id="modalClose">Continue to Dashboard →</a>
+  </div>
+</div>
+
+<script src="../js/main.js"></script>
+<script>
+  // ── WhatsApp community links per course ──
+  // 🔧 REPLACE these with your actual WhatsApp group invite links
+  const WHATSAPP_LINKS = {
+    HTML:       'https://chat.whatsapp.com/YOUR_HTML_GROUP_LINK',
+    CSS:        'https://chat.whatsapp.com/YOUR_CSS_GROUP_LINK',
+    JavaScript: 'https://chat.whatsapp.com/YOUR_JS_GROUP_LINK',
+    Java:       'https://chat.whatsapp.com/YOUR_JAVA_GROUP_LINK',
+    Python:     'https://chat.whatsapp.com/YOUR_PYTHON_GROUP_LINK',
+    SQL:        'https://chat.whatsapp.com/YOUR_SQL_GROUP_LINK',
+    MongoDB:    'https://chat.whatsapp.com/YOUR_MONGODB_GROUP_LINK',
+  };
+
+  // Pre-fill course from URL param
+  const params = new URLSearchParams(window.location.search);
+  const preselect = params.get('course');
+  if (preselect) {
+    const sel = document.getElementById('enroll-course');
+    for (let opt of sel.options) {
+      if (opt.value === preselect) { opt.selected = true; break; }
+    }
+  }
+
+  // Pre-fill email if logged in
+  const session = AuthDB.getSession();
+  if (session) {
+    document.getElementById('enroll-email').value = session.email;
+    document.getElementById('enroll-name').value = session.name;
+  }
+
+  document.getElementById('enrollBtn').addEventListener('click', () => {
+    const name   = document.getElementById('enroll-name').value.trim();
+    const email  = document.getElementById('enroll-email').value.trim();
+    const phone  = document.getElementById('enroll-phone').value.trim();
+    const course = document.getElementById('enroll-course').value;
+    let valid = true;
+
+    document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('input,select').forEach(i => i.classList.remove('input-error'));
+
+    if (!name) { document.getElementById('en-name-err').classList.add('show'); document.getElementById('enroll-name').classList.add('input-error'); valid = false; }
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) { document.getElementById('en-email-err').classList.add('show'); document.getElementById('enroll-email').classList.add('input-error'); valid = false; }
+    if (!phone || phone.length < 7) { document.getElementById('en-phone-err').classList.add('show'); document.getElementById('enroll-phone').classList.add('input-error'); valid = false; }
+    if (!course) { document.getElementById('en-course-err').classList.add('show'); document.getElementById('enroll-course').classList.add('input-error'); valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('enrollBtn');
+    btn.textContent = 'Processing…';
+    btn.disabled = true;
+
+    // Save enrollment to localStorage (acts as local DB)
+    setTimeout(() => {
+      // Save enrollment (works both for guests and logged-in users)
+      const enrollments = JSON.parse(localStorage.getItem('lv_enrollments') || '[]');
+      const existing = enrollments.find(e => e.email === email && e.course === course);
+      if (existing) {
+        showToast(`You're already enrolled in ${course}!`, 'error');
+        btn.textContent = 'Submit Enrollment →';
+        btn.disabled = false;
+        return;
+      }
+      enrollments.push({
+        id: Date.now(),
+        name, email, phone, course,
+        message: document.getElementById('enroll-message').value,
+        enrolledAt: new Date().toISOString(),
+        progress: 0
+      });
+      localStorage.setItem('lv_enrollments', JSON.stringify(enrollments));
+
+      // Also update user record if logged in
+      if (session) AuthDB.enrollUser(session.email, course, phone);
+
+      // Show success modal
+      document.getElementById('modal-name').textContent = name;
+      document.getElementById('modal-course').textContent = course;
+      document.getElementById('whatsapp-link').href = WHATSAPP_LINKS[course] || 'https://wa.me/';
+      document.getElementById('successModal').classList.add('show');
+      btn.textContent = 'Submit Enrollment →';
+      btn.disabled = false;
+    }, 800);
+  });
+
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('successModal').classList.remove('show');
+    window.location.href = 'dashboard.html';
+  });
+</script>
+</body>
+</html>
