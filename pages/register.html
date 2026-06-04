@@ -54,63 +54,94 @@
 
 <script src="../js/main.js"></script>
 <script>
-  if (AuthDB.getSession()) window.location.href = 'dashboard.html';
+const registerBtn = document.getElementById('registerBtn');
 
-  const registerBtn = document.getElementById('registerBtn');
-  registerBtn.addEventListener('click', () => {
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const confirm = document.getElementById('confirm-password').value;
-    let valid = true;
+registerBtn.addEventListener('click', async () => {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('confirm-password').value;
 
-    document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
-    document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+  let valid = true;
 
-    if (!name) {
-      document.getElementById('name-err').classList.add('show');
-      document.getElementById('name').classList.add('input-error');
-      valid = false;
+  document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+
+  if (!name) {
+    document.getElementById('name-err').classList.add('show');
+    document.getElementById('name').classList.add('input-error');
+    valid = false;
+  }
+
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    document.getElementById('email-err').classList.add('show');
+    document.getElementById('email').classList.add('input-error');
+    valid = false;
+  }
+
+  if (!password || password.length < 6) {
+    document.getElementById('pass-err').classList.add('show');
+    document.getElementById('password').classList.add('input-error');
+    valid = false;
+  }
+
+  if (password !== confirm) {
+    document.getElementById('confirm-err').classList.add('show');
+    document.getElementById('confirm-password').classList.add('input-error');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  registerBtn.textContent = 'Creating account...';
+  registerBtn.disabled = true;
+
+  try {
+    const response = await fetch('http://localhost:3000/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showToast('Account created! Welcome to MarcHub 🚀', 'success');
+
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1000);
+
+    } else {
+      const err = document.getElementById('reg-err');
+      err.textContent = result.message;
+      err.classList.add('show');
     }
-    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-      document.getElementById('email-err').classList.add('show');
-      document.getElementById('email').classList.add('input-error');
-      valid = false;
-    }
-    if (!password || password.length < 6) {
-      document.getElementById('pass-err').classList.add('show');
-      document.getElementById('password').classList.add('input-error');
-      valid = false;
-    }
-    if (password !== confirm) {
-      document.getElementById('confirm-err').classList.add('show');
-      document.getElementById('confirm-password').classList.add('input-error');
-      valid = false;
-    }
-    if (!valid) return;
 
-    registerBtn.textContent = 'Creating account…';
-    registerBtn.disabled = true;
+  } catch (error) {
+    console.error(error);
 
-    setTimeout(() => {
-      const result = AuthDB.registerUser(name, email, password);
-      if (result.success) {
-        AuthDB.loginUser(email, password);
-        showToast('Account created! Welcome to MarcHub 🚀', 'success');
-        setTimeout(() => window.location.href = 'dashboard.html', 1000);
-      } else {
-        const err = document.getElementById('reg-err');
-        err.textContent = result.msg;
-        err.classList.add('show');
-        registerBtn.textContent = 'Create Account →';
-        registerBtn.disabled = false;
-      }
-    }, 600);
+    const err = document.getElementById('reg-err');
+    err.textContent = 'Cannot connect to server';
+    err.classList.add('show');
+  }
+
+  registerBtn.textContent = 'Create Account →';
+  registerBtn.disabled = false;
+});
+
+document.querySelectorAll('input').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') registerBtn.click();
   });
+});
 
-  document.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') registerBtn.click(); });
-  });
 </script>
 </body>
 </html>
