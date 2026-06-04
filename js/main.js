@@ -104,5 +104,34 @@ window.AuthDB = {
     return user ? (user.enrollments || []) : [];
   }
 };
+console.log('%cMarcHub 🚀', 'color:#00f5c4;font-size:1.5rem;font-weight:bold;');
+document.getElementById("enrollForm")
+.addEventListener("submit", async (e) => {
 
-console.log('%cLearnVerse 🚀', 'color:#00f5c4;font-size:1.5rem;font-weight:bold;');
+  e.preventDefault();
+
+  const data = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    course: document.getElementById("course").value
+  };
+
+  try {
+    const response = await fetch("http://localhost:3000/enroll", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    alert(result.message);
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to connect to server");
+  }
+});
