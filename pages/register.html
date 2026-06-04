@@ -112,11 +112,27 @@ registerBtn.addEventListener('click', async () => {
     const result = await response.json();
 
     if (result.success) {
-      showToast('Account created! Welcome to MarcHub 🚀', 'success');
 
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 1000);
+  try {
+    await emailjs.send(
+      "service_63ztzjj",
+      "template_0gbkr7y",
+      {
+        user_name: name,
+        user_email: email,
+        registered_at: new Date().toLocaleString("en-IN")
+      }
+    );
+  } catch (mailError) {
+    console.error("Email Error:", mailError);
+  }
+
+  showToast('Account created! Welcome to MarcHub 🚀', 'success');
+
+  setTimeout(() => {
+    window.location.href = 'login.html';
+  }, 1000);
+
 
     } else {
       const err = document.getElementById('reg-err');
