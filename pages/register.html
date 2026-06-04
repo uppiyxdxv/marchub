@@ -6,6 +6,10 @@
   <title>Register – MarcHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+  emailjs.init('rwHZkgqFwOWu7Cs9o'); // 🔧 replace with your actual public key
+ </script>
   <link rel="stylesheet" href="../css/style.css"/>
   <style>
     body { background: var(--bg); }
@@ -108,30 +112,6 @@
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') registerBtn.click(); });
   });
 </script>
-<!-- Firebase SDK -->
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyANJu1Wley6RMpw3giuxEZv-BKi0qJIjso",
-    authDomain: "learnverse-967f5.firebaseapp.com",
-    databaseURL: "https://learnverse-967f5-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "learnverse-967f5",
-    storageBucket: "learnverse-967f5.firebasestorage.app",
-    messagingSenderId: "932910754246",
-    appId: "1:932910754246:web:0560ef7084c2bacb46aac7",
-    measurementId: "G-6T1PFEJ5L9"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
 </body>
 </html>
+
