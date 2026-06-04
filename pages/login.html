@@ -40,51 +40,89 @@
 
 <script src="../js/main.js"></script>
 <script>
-  // Redirect if already logged in
-  if (AuthDB.getSession()) window.location.href = 'dashboard.html';
+const loginBtn = document.getElementById('loginBtn');
 
-  const loginBtn = document.getElementById('loginBtn');
-  loginBtn.addEventListener('click', () => {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    let valid = true;
+loginBtn.addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
 
-    document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
-    document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+  let valid = true;
 
-    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-      document.getElementById('email-err').classList.add('show');
-      document.getElementById('email').classList.add('input-error');
-      valid = false;
+  document.querySelectorAll('.form-error').forEach(e =>
+    e.classList.remove('show')
+  );
+
+  document.querySelectorAll('input').forEach(i =>
+    i.classList.remove('input-error')
+  );
+
+  if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    document.getElementById('email-err').classList.add('show');
+    document.getElementById('email').classList.add('input-error');
+    valid = false;
+  }
+
+  if (!password) {
+    document.getElementById('pass-err').classList.add('show');
+    document.getElementById('password').classList.add('input-error');
+    valid = false;
+  }
+
+  if (!valid) return;
+
+  loginBtn.textContent = 'Logging in...';
+  loginBtn.disabled = true;
+
+  try {
+    const response = await fetch('http://localhost:3000/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+
+      localStorage.setItem(
+        'lv_session',
+        JSON.stringify(result.user)
+      );
+
+      showToast('Login successful! Welcome back 🎉', 'success');
+
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+
+    } else {
+      const err = document.getElementById('login-err');
+      err.textContent = result.message;
+      err.classList.add('show');
     }
-    if (!password) {
-      document.getElementById('pass-err').classList.add('show');
-      document.getElementById('password').classList.add('input-error');
-      valid = false;
-    }
-    if (!valid) return;
 
-    loginBtn.textContent = 'Logging in…';
-    loginBtn.disabled = true;
+  } catch (error) {
+    console.error(error);
 
-    setTimeout(() => {
-      const result = AuthDB.loginUser(email, password);
-      if (result.ok) {
-        showToast('Login successful! Welcome back 🎉', 'success');
-        setTimeout(() => window.location.href = 'dashboard.html', 1000);
-      } else {
-        const err = document.getElementById('login-err');
-        err.textContent = result.msg;
-        err.classList.add('show');
-        loginBtn.textContent = 'Login →';
-        loginBtn.disabled = false;
-      }
-    }, 600);
+    const err = document.getElementById('login-err');
+    err.textContent = 'Cannot connect to server';
+    err.classList.add('show');
+  }
+
+  loginBtn.textContent = 'Login →';
+  loginBtn.disabled = false;
+});
+
+document.querySelectorAll('input').forEach(inp => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Enter') loginBtn.click();
   });
-
-  document.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('keydown', e => { if (e.key === 'Enter') loginBtn.click(); });
-  });
+});
 </script>
 </body>
 </html>
