@@ -118,7 +118,7 @@ document.getElementById("enrollForm")
   };
 
   try {
-    const response = await fetch("http://localhost:3000/enroll", {
+    const response = await fetch("https://marchub-backend.onrender.com/enroll", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
