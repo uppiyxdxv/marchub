@@ -1,8 +1,8 @@
 :root{
-    --card-bg:#111827;
-    --card-border:#2a3441;
-    --accent:#00f5c4;
-    --muted:#cbd5e1;
+    --card-bg:#cbd5e1;
+    --card-border:#1c0b0f;
+    --accent:#f53e07;
+    --muted:#3511ea;
 }
 .policy-container{
     max-width:900px;
