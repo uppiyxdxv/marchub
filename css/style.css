@@ -50,10 +50,35 @@ ul { list-style: none; }
 }
 
 .site-logo{
-    width:50px;
-    height:50px;
-    object-fit:contain;
+    width:60px;
+    height:60px;
     border-radius:50%;
+    object-fit:cover;
+
+    /* 3D Marble Effect */
+    background: radial-gradient(circle at 30% 30%,
+                rgba(255,255,255,0.9),
+                rgba(255,255,255,0.3) 20%,
+                transparent 40%);
+
+    box-shadow:
+      0 0 10px rgba(255,255,255,0.2),
+      0 0 25px rgba(0,245,196,0.4),
+      inset -8px -8px 15px rgba(0,0,0,0.25),
+      inset 8px 8px 15px rgba(255,255,255,0.2);
+
+    border: 2px solid rgba(255,255,255,0.2);
+
+    transition: all 0.4s ease;
+    animation: floatLogo 4s ease-in-out infinite;
+}
+.site-logo:hover{
+    transform:scale(1.1);
+    box-shadow:
+      0 0 20px rgba(255,255,255,0.3),
+      0 0 40px rgba(0,245,196,0.7),
+      inset -8px -8px 15px rgba(0,0,0,0.2),
+      inset 8px 8px 15px rgba(255,255,255,0.3);
 }
 .logo-icon { color: var(--accent); font-size: 1.8rem; }
 .nav-links { display: flex; align-items: center; gap: 2rem; }
@@ -361,7 +386,14 @@ ul { list-style: none; }
 @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes spin3d { from { transform: rotateY(0deg) rotateX(5deg); } to { transform: rotateY(360deg) rotateX(5deg); } }
 @keyframes pulse { 0%,100%{opacity:0.4;transform:scale(1);} 50%{opacity:0.8;transform:scale(1.05);} }
-
+@keyframes floatLogo{
+    0%,100%{
+        transform:translateY(0px) rotate(0deg);
+    }
+    50%{
+        transform:translateY(-5px) rotate(3deg);
+    }
+}
 /* Toast */
 .toast {
   position: fixed; bottom: 2rem; right: 2rem; z-index: 9998;

@@ -1,0 +1,34 @@
+:root{
+    --card-bg:#111827;
+    --card-border:#2a3441;
+    --accent:#00f5c4;
+    --muted:#cbd5e1;
+}
+.policy-container{
+    max-width:900px;
+    margin:80px auto;
+    padding:40px;
+    background:var(--card-bg);
+    border:1px solid var(--card-border);
+    border-radius:20px;
+}
+
+.policy-container h1{
+    margin-bottom:20px;
+    color:var(--accent);
+}
+
+.policy-container h2{
+    margin-top:25px;
+    margin-bottom:10px;
+}
+
+.policy-container p,
+.policy-container li{
+    color:var(--muted);
+    line-height:1.8;
+}
+
+.policy-container ul{
+    padding-left:25px;
+}
