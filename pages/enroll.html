@@ -160,7 +160,9 @@
     btn.disabled    = true;
 
     try {
-
+  console.log("=== ENROLL DEBUG START ===");
+  console.log("Session object:", AuthDB.getSession());
+  console.log("lv_session:", localStorage.getItem("lv_session"));
   const response = await fetch("https://marchub-backend.onrender.com/enroll", {
     method: "POST",
     headers: {
@@ -176,6 +178,9 @@
   });
 
   const result = await response.json();
+  console.log("=== AFTER JSON PARSE ===");
+  console.log("Session object:", AuthDB.getSession());
+  console.log("lv_session:", localStorage.getItem("lv_session"));
 
   if (result.success) {
 
@@ -212,6 +217,9 @@
 
       // Also update the in-memory user record if logged in
       if (session) AuthDB.enrollUser(session.email, course, phone);
+      console.log("=== AFTER enrollUser() ===");
+      console.log("Session object:", AuthDB.getSession());
+      console.log("lv_session:", localStorage.getItem("lv_session"));
 
       // ── Show success modal ──
       document.getElementById('modal-name').textContent   = name;
