@@ -105,35 +105,62 @@ window.AuthDB = {
   }
 };
 console.log('%cMarcHub 🚀', 'color:#00f5c4;font-size:1.5rem;font-weight:bold;');
-document.getElementById("enrollForm")
-.addEventListener("submit", async (e) => {
-
+document.getElementById("enrollBtn").addEventListener("click", async (e) => {
   e.preventDefault();
 
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value,
-    course: document.getElementById("course").value
-  };
+  const name = document.getElementById("enroll-name").value.trim();
+  const email = document.getElementById("enroll-email").value.trim();
+  const phone = document.getElementById("enroll-phone").value.trim();
+  const course = document.getElementById("enroll-course").value;
+
+  if (!name || !email || !phone || !course) {
+    showToast("Please fill all required fields", "error");
+    return;
+  }
 
   try {
-    const response = await fetch("https://marchub-backend.onrender.com/enroll", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
+    const response = await fetch(
+      "https://marchub-backend.onrender.com/enroll",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          course
+        })
+      }
+    );
 
     const result = await response.json();
 
-    alert(result.message);
+    console.log("Status:", response.status);
+    console.log("Result:", result);
+
+    // Duplicate enrollment or other error
+    if (!response.ok || result.success === false) {
+      showToast(
+        result.message || "You have already registered for this course!",
+        "error"
+      );
+      return;
+    }
+
+    // Success
+    showToast(
+      result.message || "Enrollment Successful!",
+      "success"
+    );
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
 
   } catch (error) {
-    console.error(error);
-    alert("Failed to connect to server");
+    console.error("Enrollment Error:", error);
+    showToast("Failed to connect to server", "error");
   }
 });
-
- 
