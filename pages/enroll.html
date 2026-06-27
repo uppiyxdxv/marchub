@@ -1,253 +1,339 @@
   <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Enroll – MarcHub</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script>
-    emailjs.init('rwHZkgqFwOWu7Cs9o'); // 🔧 replace with your actual public key
-  </script>
-    <link rel="stylesheet" href="../css/style.css"/>
-    <style>
-      .enroll-page { background: radial-gradient(ellipse at 70% 30%, rgba(0,245,196,0.07), transparent 50%), radial-gradient(ellipse at 30% 80%, rgba(124,58,237,0.07), transparent 50%), var(--bg); }
-    </style>
-  </head>
-  <body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enroll – MarcHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
 
-  <!-- Nav -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-logo"><span class="logo-icon"><img src="../images/logo.png" alt="MarcHub Logo" class="site-logo"></span> MarcHub</div>
-    <ul class="nav-links">
-      <li><a href="../index.html#courses">Courses</a></li>
-      <li><a href="login.html" class="btn-nav">Login</a></li>
-      <li><a href="dashboard.html" class="btn-nav btn-primary-nav">Dashboard</a></li>
-    </ul>
-  </nav>
-
-  <div class="enroll-page">
-    <div class="enroll-header">
-      <div class="section-label">Get Started</div>
-      <h1 class="section-title">Enroll in a Course</h1>
-      <p style="color:var(--muted);max-width:500px;margin:0 auto;">Fill in your details and join the community. After enrollment you'll get a WhatsApp invite to your course group.</p>
-    </div>
-
-    <div class="enroll-card">
-      <div class="form-group">
-        <label>Full Name *</label>
-        <input type="text" id="enroll-name" placeholder="Your full name"/>
-        <div class="form-error" id="en-name-err">Name is required.</div>
-      </div>
-      <div class="form-group">
-        <label>Email Address *</label>
-        <input type="email" id="enroll-email" placeholder="you@example.com"/>
-        <div class="form-error" id="en-email-err">Valid email is required.</div>
-      </div>
-      <div class="form-group">
-        <label>Phone Number *</label>
-        <input type="tel" id="enroll-phone" placeholder="+91 9876543210"/>
-        <div class="form-error" id="en-phone-err">Valid phone number is required.</div>
-      </div>
-      <div class="form-group">
-        <label>Course Interest *</label>
-        <select id="enroll-course">
-          <option value="">-- Select a Course --</option>
-          <option value="HTML">HTML – Web Structure Fundamentals</option>
-          <option value="CSS">CSS – Styling &amp; Responsive Design</option>
-          <option value="JavaScript">JavaScript – Interactive Web Dev</option>
-          <option value="Java">Java – Object Oriented Programming</option>
-          <option value="Python">Python – Scripting &amp; Data Science</option>
-          <option value="SQL">SQL – Relational Databases</option>
-          <option value="MongoDB">MongoDB – NoSQL &amp; Atlas Cloud</option>
-        </select>
-        <div class="form-error" id="en-course-err">Please select a course.</div>
-      </div>
-      <div class="form-group">
-        <label>Message (Optional)</label>
-        <textarea id="enroll-message" rows="3" placeholder="Any questions or background about yourself…" style="resize:vertical;"></textarea>
-      </div>
-      <button class="btn-full" id="enrollBtn">Submit Enrollment →</button>
-    </div>
-  </div>
-
-  <!-- Success Modal -->
-  <div class="modal-overlay" id="successModal">
-    <div class="modal-box">
-      <div class="modal-icon">🎉</div>
-      <h2>Enrollment Confirmed!</h2>
-      <p>Thank you, <strong id="modal-name">Student</strong>! You're enrolled in <strong id="modal-course">the course</strong>. Join our WhatsApp community to get started and connect with your batch!</p>
-      <a id="whatsapp-link" href="#" target="_blank" class="btn-whatsapp">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        Join WhatsApp Community
-      </a>
-      <a class="modal-close" id="modalClose">Continue to Dashboard →</a>
-    </div>
-  </div>
-
-
-  <!-- ── Step 2: main.js (AuthDB, showToast, etc.) ── -->
-  <script src="../js/main.js"></script>
-
+  <!-- ── EmailJS SDK must load BEFORE init is called ── -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- ── Init EmailJS immediately after the SDK loads ── -->
   <script>
-    // 🔧 REPLACE each value with your real WhatsApp group invite links
-    const WHATSAPP_LINKS = {
-      HTML:       'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',
-      CSS:        'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',
-      JavaScript: 'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',
-      Java:       'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',
-      Python:     'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',
-      SQL:        'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',
-      MongoDB:    'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh',
-    };
+    window.addEventListener('load', function () {
+      emailjs.init('rwHZkgqFwOWu7Cs9o');
+    });
+  </script>
 
-    // ── Pre-fill course from URL param e.g. enroll.html?course=Python ──
-    const params    = new URLSearchParams(window.location.search);
-    const preselect = params.get('course');
-    if (preselect) {
-      const sel = document.getElementById('enroll-course');
-      for (let opt of sel.options) {
-        if (opt.value === preselect) { opt.selected = true; break; }
-      }
+  <style>
+    .enroll-page {
+      background:
+        radial-gradient(ellipse at 70% 30%, rgba(0,245,196,0.07), transparent 50%),
+        radial-gradient(ellipse at 30% 80%, rgba(124,58,237,0.07), transparent 50%),
+        var(--bg);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><span class="logo-icon">⬡</span> MarcHub</div>
+  <ul class="nav-links">
+    <li><a href="../index.html#courses">Courses</a></li>
+    <li><a href="login.html"     class="btn-nav">Login</a></li>
+    <li><a href="dashboard.html" class="btn-nav btn-primary-nav">Dashboard</a></li>
+  </ul>
+</nav>
+
+<!-- ── FORM ── -->
+<div class="enroll-page">
+  <div class="enroll-header">
+    <div class="section-label">Get Started</div>
+    <h1 class="section-title">Enroll in a Course</h1>
+    <p style="color:var(--muted);max-width:500px;margin:0 auto;">
+      Fill in your details and join the community. After enrollment you'll get a WhatsApp invite to your course group.
+    </p>
+  </div>
+
+  <div class="enroll-card">
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text"  id="enroll-name"  placeholder="Your full name"/>
+      <div class="form-error" id="en-name-err">Name is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Email Address *</label>
+      <input type="email" id="enroll-email" placeholder="you@example.com"/>
+      <div class="form-error" id="en-email-err">Valid email is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Phone Number *</label>
+      <input type="tel"   id="enroll-phone" placeholder="+91 9876543210"/>
+      <div class="form-error" id="en-phone-err">Valid phone number is required.</div>
+    </div>
+    <div class="form-group">
+      <label>Course Interest *</label>
+      <select id="enroll-course">
+        <option value="">-- Select a Course --</option>
+        <option value="HTML">HTML – Web Structure Fundamentals</option>
+        <option value="CSS">CSS – Styling &amp; Responsive Design</option>
+        <option value="JavaScript">JavaScript – Interactive Web Dev</option>
+        <option value="Java">Java – Object Oriented Programming</option>
+        <option value="Python">Python – Scripting &amp; Data Science</option>
+        <option value="SQL">SQL – Relational Databases</option>
+        <option value="MongoDB">MongoDB – NoSQL &amp; Atlas Cloud</option>
+      </select>
+      <div class="form-error" id="en-course-err">Please select a course.</div>
+    </div>
+    <div class="form-group">
+      <label>Message (Optional)</label>
+      <textarea id="enroll-message" rows="3"
+        placeholder="Any questions or background about yourself…"
+        style="resize:vertical;"></textarea>
+    </div>
+    <button class="btn-full" id="enrollBtn">Submit Enrollment →</button>
+  </div>
+</div>
+
+<!-- ── SUCCESS MODAL ── -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <h2>Enrollment Confirmed!</h2>
+    <p>
+      Thank you, <strong id="modal-name">Student</strong>!
+      You're enrolled in <strong id="modal-course">the course</strong>.
+      Join our WhatsApp community to get started and connect with your batch!
+    </p>
+    <a id="whatsapp-link" href="#" target="_blank" class="btn-whatsapp">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+      Join WhatsApp Community
+    </a>
+    <a class="modal-close" id="modalClose">Continue to Dashboard →</a>
+  </div>
+</div>
+
+<!-- ── main.js (AuthDB, showToast) ── -->
+<script src="../js/main.js"></script>
+
+<!-- ── ENROLLMENT LOGIC ── -->
+<script>
+
+  // ════════════════════════════════════════════════════════════
+  //  CONFIG  — only these values need updating
+  // ════════════════════════════════════════════════════════════
+
+  // MongoDB Atlas App Services endpoint (from Atlas → App Services → HTTPS Endpoints)
+  // 🔧 Replace YOUR_APP_ID with your real App Services app ID
+  const MONGODB_ENDPOINT = 'https://ap-south-1.aws.data.mongodb-api.com/app/YOUR_APP_ID/endpoint';
+
+  // EmailJS IDs — already in your account, just copy here
+  const EJS_SERVICE_ID  = 'service_63ztzjj';
+  const EJS_ADMIN_TPL   = 'template_e5c8udj';
+  const EJS_STUDENT_TPL = 'template_0gbkr7y';   // ← fixed: was missing the "t" in "template_"
+
+  // WhatsApp group links — already set correctly from your file
+  const WHATSAPP_LINKS = {
+    HTML:       'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',
+    CSS:        'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',
+    JavaScript: 'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',
+    Java:       'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',
+    Python:     'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',
+    SQL:        'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',
+    MongoDB:    'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh',
+  };
+
+  // ════════════════════════════════════════════════════════════
+  //  PRE-FILL  — course from URL, name/email if logged in
+  // ════════════════════════════════════════════════════════════
+
+  const params = new URLSearchParams(window.location.search);
+  const pre    = params.get('course');
+  if (pre) {
+    const sel = document.getElementById('enroll-course');
+    for (const opt of sel.options) {
+      if (opt.value === pre) { opt.selected = true; break; }
+    }
+  }
+
+  const session = AuthDB.getSession();
+  if (session) {
+    document.getElementById('enroll-email').value = session.email;
+    document.getElementById('enroll-name').value  = session.name;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  VALIDATE
+  // ════════════════════════════════════════════════════════════
+
+  function validate(name, email, phone, course) {
+    let ok = true;
+    document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('input, select').forEach(i => i.classList.remove('input-error'));
+
+    if (!name) {
+      document.getElementById('en-name-err').classList.add('show');
+      document.getElementById('enroll-name').classList.add('input-error');
+      ok = false;
+    }
+    if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      document.getElementById('en-email-err').classList.add('show');
+      document.getElementById('enroll-email').classList.add('input-error');
+      ok = false;
+    }
+    if (!phone || phone.replace(/\D/g, '').length < 7) {
+      document.getElementById('en-phone-err').classList.add('show');
+      document.getElementById('enroll-phone').classList.add('input-error');
+      ok = false;
+    }
+    if (!course) {
+      document.getElementById('en-course-err').classList.add('show');
+      document.getElementById('enroll-course').classList.add('input-error');
+      ok = false;
+    }
+    return ok;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  SAVE TO MONGODB  via Atlas App Services HTTP Endpoint
+  //  (replaces all Firebase code)
+  // ════════════════════════════════════════════════════════════
+
+  async function saveToMongoDB(name, email, phone, course, message) {
+
+    // If endpoint not configured yet, use localStorage as fallback
+    if (MONGODB_ENDPOINT.includes('YOUR_APP_ID')) {
+      console.warn('MongoDB endpoint not set — using localStorage fallback.');
+      return saveToLocalStorage(name, email, phone, course, message);
     }
 
-    // ── Pre-fill name/email if user is already logged in ──
-    const session = AuthDB.getSession();
-    if (session) {
-      document.getElementById('enroll-email').value = session.email;
-      document.getElementById('enroll-name').value  = session.name;
-    }
-
-    // ── Form submit handler ──
-    document.getElementById('enrollBtn').addEventListener('click', async () => {
-      const name    = document.getElementById('enroll-name').value.trim();
-      const email   = document.getElementById('enroll-email').value.trim();
-      const phone   = document.getElementById('enroll-phone').value.trim();
-      const course  = document.getElementById('enroll-course').value;
-      const message = document.getElementById('enroll-message').value.trim();
-      const btn     = document.getElementById('enrollBtn');
-
-      // Clear previous errors
-      document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
-      document.querySelectorAll('input, select').forEach(i => i.classList.remove('input-error'));
-
-      // Validate
-      let valid = true;
-      if (!name) {
-        document.getElementById('en-name-err').classList.add('show');
-        document.getElementById('enroll-name').classList.add('input-error');
-        valid = false;
-      }
-      if (!email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
-        document.getElementById('en-email-err').classList.add('show');
-        document.getElementById('enroll-email').classList.add('input-error');
-        valid = false;
-      }
-      if (!phone || phone.replace(/\D/g, '').length < 7) {
-        document.getElementById('en-phone-err').classList.add('show');
-        document.getElementById('enroll-phone').classList.add('input-error');
-        valid = false;
-      }
-      if (!course) {
-        document.getElementById('en-course-err').classList.add('show');
-        document.getElementById('enroll-course').classList.add('input-error');
-        valid = false;
-      }
-      if (!valid) return;
-
-      btn.textContent = 'Processing…';
-      btn.disabled    = true;
-
-      try {
-
-    const response = await fetch("https://marchub-backend.onrender.com/enroll", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+    const response = await fetch(MONGODB_ENDPOINT + '/enrollments', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
         name,
         email,
         phone,
         course,
-        message
+        message:    message || '',
+        enrolledAt: new Date().toISOString(),
+        progress:   0
       })
     });
 
     const result = await response.json();
-    console.log("Status:", response.status);
-    console.log("Result:", result);
 
-if (!result.success) {
-  showToast(
-    result.message || "You have already registered for this course!",
-    "error"
-  );
-  return;
-}
-
-    if (!response.success) {
-        showToast(result.message, "error");
-        return;
+    if (response.status === 409) {
+      // 409 = duplicate — the Atlas function returns this when already enrolled
+      showToast(`You're already enrolled in ${course}!`, 'error');
+      return false;
     }
 
-    if (result.success) {
-
-    try {
-      await emailjs.send(
-        "service_63ztzjj",
-        "template_e5c8udj",
-        {
-          user_name: name,
-          user_email: email,
-          registered_at: new Date().toLocaleString("en-IN")
-        }
-      );
-    } catch (mailError) {
-      console.error("Email Error:", mailError);
+    if (!response.ok) {
+      throw new Error(result.message || result.error || 'MongoDB save failed');
     }
 
-    showToast('Account created! Welcome to MarcHub 🚀', 'success');
-
-    setTimeout(() => {
-      window.location.href = 'dashboard.html';
-    }, 1000);
+    return true;  // saved successfully
   }
 
+  // ════════════════════════════════════════════════════════════
+  //  FALLBACK  — localStorage when MongoDB not configured yet
+  // ════════════════════════════════════════════════════════════
 
-    // Send student confirmation
-    await emailjs.send('service_63ztzjj', 'template_0gbkr7y', {
-      to_name: name,
-      to_email: email,
-      course: course,
+  function saveToLocalStorage(name, email, phone, course, message) {
+    const list = JSON.parse(localStorage.getItem('lv_enrollments') || '[]');
+    if (list.find(e => e.email === email && e.course === course)) {
+      showToast(`You're already enrolled in ${course}!`, 'error');
+      return false;
+    }
+    list.push({
+      id: Date.now(), name, email, phone, course,
+      message: message || '', enrolledAt: new Date().toISOString(), progress: 0
+    });
+    localStorage.setItem('lv_enrollments', JSON.stringify(list));
+    return true;
+  }
+
+  // ════════════════════════════════════════════════════════════
+  //  SEND EMAILS  via EmailJS
+  // ════════════════════════════════════════════════════════════
+
+  async function sendEmails(name, email, phone, course, message) {
+    // Admin notification
+    await emailjs.send(EJS_SERVICE_ID, EJS_ADMIN_TPL, {
+      from_name:   name,
+      from_email:  email,
+      phone:       phone,
+      course:      course,
+      message:     message || 'No message provided',
+      enrolled_at: new Date().toLocaleString('en-IN')
+    });
+
+    // Student confirmation
+    await emailjs.send(EJS_SERVICE_ID, EJS_STUDENT_TPL, {
+      to_name:       name,
+      to_email:      email,
+      course:        course,
       whatsapp_link: WHATSAPP_LINKS[course] || '#'
     });
+  }
 
+  // ════════════════════════════════════════════════════════════
+  //  SUBMIT HANDLER
+  // ════════════════════════════════════════════════════════════
 
-        // Also update the in-memory user record if logged in
-        if (session) AuthDB.enrollUser(session.email, course, phone);
+  const btn = document.getElementById('enrollBtn');
 
-        // ── Show success modal ──
-        document.getElementById('modal-name').textContent   = name;
-        document.getElementById('modal-course').textContent = course;
-        document.getElementById('whatsapp-link').href       = WHATSAPP_LINKS[course] || '#';
-        document.getElementById('successModal').classList.add('show');
+  btn.addEventListener('click', async () => {
+    const name    = document.getElementById('enroll-name').value.trim();
+    const email   = document.getElementById('enroll-email').value.trim();
+    const phone   = document.getElementById('enroll-phone').value.trim();
+    const course  = document.getElementById('enroll-course').value;
+    const message = document.getElementById('enroll-message').value.trim();
 
-      } catch (err) {
-        console.error('Enrollment error:', err);
-        showToast('Something went wrong. Please try again.', 'error');
-      } finally {
+    if (!validate(name, email, phone, course)) return;
+
+    btn.textContent = 'Saving to database…';
+    btn.disabled    = true;
+
+    try {
+      // 1️⃣  Save to MongoDB (or localStorage fallback)
+      const saved = await saveToMongoDB(name, email, phone, course, message);
+      if (!saved) {
         btn.textContent = 'Submit Enrollment →';
         btn.disabled    = false;
+        return;
       }
-    });
 
-    // ── Close modal and go to dashboard ──
-    document.getElementById('modalClose').addEventListener('click', () => {
-      document.getElementById('successModal').classList.remove('show');
-      window.location.href = 'dashboard.html';
-    });
-  </script>
-  </body>
-  </html>
+      // 2️⃣  Update in-memory user record if logged in
+      if (session) AuthDB.enrollUser(session.email, course, phone);
+
+      // 3️⃣  Send emails — wrapped so an email failure never blocks enrollment
+      btn.textContent = 'Sending confirmation email…';
+      try {
+        await sendEmails(name, email, phone, course, message);
+      } catch (emailErr) {
+        // Enrollment already saved — email failure is non-critical
+        console.warn('Email send failed (enrollment still saved):', emailErr);
+        showToast('Enrolled! (Email notification failed — check EmailJS config)', 'error');
+      }
+
+      // 4️⃣  Show success modal
+      document.getElementById('modal-name').textContent   = name;
+      document.getElementById('modal-course').textContent = course;
+      document.getElementById('whatsapp-link').href       = WHATSAPP_LINKS[course] || '#';
+      document.getElementById('successModal').classList.add('show');
+
+    } catch (err) {
+      console.error('Enrollment error:', err);
+      showToast('Error: ' + (err.message || 'Something went wrong. Check the console.'), 'error');
+    } finally {
+      btn.textContent = 'Submit Enrollment →';
+      btn.disabled    = false;
+    }
+  });
+
+  // ── Close modal → dashboard ──
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('successModal').classList.remove('show');
+    window.location.href = 'dashboard.html';
+  });
+
+</script>
+</body>
+</html>

@@ -104,27 +104,27 @@ window.AuthDB = {
     return user ? (user.enrollments || []) : [];
   }
 };
-console.log('%cMarcHub 🚀', 'color:#00f5c4;font-size:1.5rem;font-weight:bold;');
-const enrollBtn = document.getElementById('enrollBtn');
+console.log("%cMarcHub 🚀", "color:#00f5c4;font-size:1.5rem;font-weight:bold;");
+
+const enrollBtn = document.getElementById("enrollBtn");
 
 if (enrollBtn) {
-  enrollBtn.addEventListener('click', enrollUser);
-}
 
-  const name = document.getElementById("enroll-name").value.trim();
-  const email = document.getElementById("enroll-email").value.trim();
-  const phone = document.getElementById("enroll-phone").value.trim();
-  const course = document.getElementById("enroll-course").value;
+  enrollBtn.addEventListener("click", async function () {
 
-  if (!name || !email || !phone || !course) {
-    showToast("Please fill all required fields", "error");
-    return;
-  }
+    const name = document.getElementById("enroll-name").value.trim();
+    const email = document.getElementById("enroll-email").value.trim();
+    const phone = document.getElementById("enroll-phone").value.trim();
+    const course = document.getElementById("enroll-course").value;
 
-  try {
-    const response = await fetch(
-      "https://marchub-backend.onrender.com/enroll",
-      {
+    if (!name || !email || !phone || !course) {
+      showToast("Please fill all required fields", "error");
+      return;
+    }
+
+    try {
+
+      const response = await fetch("https://marchub-backend.onrender.com/enroll", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -135,35 +135,32 @@ if (enrollBtn) {
           phone,
           course
         })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+
+        showToast("Enrollment Successful!", "success");
+
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 1500);
+
+      } else {
+
+        showToast(result.message || "Enrollment Failed", "error");
+
       }
-    );
 
-    const result = await response.json();
+    } catch (error) {
 
-    console.log("Status:", response.status);
-    console.log("Result:", result);
+      console.error(error);
 
-    // Duplicate enrollment or other error
-    if (!response.ok || result.success === false) {
-      showToast(
-        result.message || "You have already registered for this course!",
-        "error"
-      );
-      return;
+      showToast("Cannot connect to server", "error");
+
     }
 
-    // Success
-    showToast(
-      result.message || "Enrollment Successful!",
-      "success"
-    );
+  });
 
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1500);
-
-  } catch (error) {
-    console.error("Enrollment Error:", error);
-    showToast("Failed to connect to server", "error");
-  }
-});
+}
