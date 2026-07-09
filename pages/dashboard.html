@@ -361,13 +361,13 @@
 
     selectedAvatar = e.target.result;
 
-  const currentUser = AuthDB.getUser(session.email);
+  const currentUser = AuthDB.getUser(session.email) || session;
 
-  renderAvatar(
+renderAvatar(
     document.getElementById('settingsAvatar'),
     currentUser.name,
     selectedAvatar
-  );
+);
 
     showToast("Photo selected. Click 'Save Changes' to save.", "success");
 
