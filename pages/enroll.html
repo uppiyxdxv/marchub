@@ -120,7 +120,7 @@
 
   // MongoDB Atlas App Services endpoint (from Atlas → App Services → HTTPS Endpoints)
   // 🔧 Replace YOUR_APP_ID with your real App Services app ID
-  const MONGODB_ENDPOINT = 'https://ap-south-1.aws.data.mongodb-api.com/app/YOUR_APP_ID/endpoint';
+ const BACKEND = 'https://marchub-backend.onrender.com';
 
   // EmailJS IDs — already in your account, just copy here
   const EJS_SERVICE_ID  = 'service_63ztzjj';
@@ -196,40 +196,38 @@
 
   async function saveToMongoDB(name, email, phone, course, message) {
 
-    // If endpoint not configured yet, use localStorage as fallback
-    if (MONGODB_ENDPOINT.includes('YOUR_APP_ID')) {
-      console.warn('MongoDB endpoint not set — using localStorage fallback.');
-      return saveToLocalStorage(name, email, phone, course, message);
-    }
-
-    const response = await fetch(MONGODB_ENDPOINT + '/enrollments', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        name,
-        email,
-        phone,
-        course,
-        message:    message || '',
-        enrolledAt: new Date().toISOString(),
-        progress:   0
-      })
+    const response = await fetch(`${BACKEND}/enroll`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name,
+            email,
+            phone,
+            course,
+            message
+        })
     });
 
     const result = await response.json();
 
-    if (response.status === 409) {
+      if (response.status === 409) {
       // 409 = duplicate — the Atlas function returns this when already enrolled
       showToast(`You're already enrolled in ${course}!`, 'error');
       return false;
     }
 
+
     if (!response.ok) {
-      throw new Error(result.message || result.error || 'MongoDB save failed');
+        throw new Error(result.message || "Enrollment failed");
     }
 
-    return true;  // saved successfully
-  }
+    return true;
+}
+   
+
+  
 
   // ════════════════════════════════════════════════════════════
   //  FALLBACK  — localStorage when MongoDB not configured yet
@@ -302,7 +300,9 @@
       }
 
       // 2️⃣  Update in-memory user record if logged in
-      if (session) AuthDB.enrollUser(session.email, course, phone);
+      if (session) {
+    await AuthDB.enrollUser(session.email, course, phone);
+}
 
       // 3️⃣  Send emails — wrapped so an email failure never blocks enrollment
       btn.textContent = 'Sending confirmation email…';
