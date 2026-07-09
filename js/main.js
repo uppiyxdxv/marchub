@@ -33,13 +33,23 @@ window.showToast = function(msg, type='success') {
 };
 
 window.AuthDB = {
-  ADMIN_EMAIL:'admin@marchub.com', ADMIN_PASS:'Admin@123',
+  ADMIN_EMAIL:'marchub2026@gmail.com', ADMIN_PASS:'Uppiyxdxv@2004',
   getUsers(){ return JSON.parse(localStorage.getItem('lv_users')||'[]'); },
   saveUsers(u){ localStorage.setItem('lv_users',JSON.stringify(u)); },
   getUser(email){
     if(email===this.ADMIN_EMAIL) return {name:'Admin',email:this.ADMIN_EMAIL,isAdmin:true,phone:'',bio:'',avatar:''};
     return this.getUsers().find(u=>u.email===email)||null;
   },
+  verifyPassword(email, password) {
+
+    const user = this.getUsers().find(u => u.email === email);
+
+    if (!user) {
+        return false;
+    }
+
+    return user.password === password;
+},
   registerUser(name,email,password,phone=''){
     const users=this.getUsers();
     if(users.find(u=>u.email===email)) return {ok:false,msg:'Email already registered.'};

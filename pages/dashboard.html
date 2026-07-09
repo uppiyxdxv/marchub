@@ -155,20 +155,25 @@
         <textarea id="set-bio" rows="3" placeholder="Tell us about yourself…" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.95rem;resize:vertical;outline:none;"></textarea>
       </div>
       <hr class="section-sep"/>
-      <h3>Change Password</h3>
-      <div class="form-group">
-        <label>Current Password</label>
-        <input type="password" id="set-curpass" placeholder="••••••••"/>
-      </div>
-      <div class="form-group">
-        <label>New Password</label>
-        <input type="password" id="set-newpass" placeholder="Min. 6 characters"/>
-      </div>
-      <div class="form-group">
-        <label>Confirm New Password</label>
-        <input type="password" id="set-conpass" placeholder="Repeat password"/>
-      </div>
-      <button class="btn-full" id="saveSettingsBtn">Save Changes →</button>
+
+     <h3>Security Verification</h3>
+
+     <div class="form-group">
+         <label>Current Password</label>
+        <input
+           type="password"
+           id="set-curpass"
+           placeholder="Enter your current password"
+         />
+         <div class="form-error" id="set-pass-err">
+            Incorrect password.
+     </div>
+ </div>
+
+<button class="btn-full" id="saveSettingsBtn">
+    Save Changes →
+</button>
+     
     </div>
   </div>
 </div>
@@ -347,54 +352,91 @@
   }
 
   // Avatar file upload
+  let selectedAvatar = null;
   document.getElementById('avatarInput').addEventListener('change',function(){
     const file=this.files[0]; if(!file) return;
     if(file.size>2*1024*1024){showToast('Image must be under 2MB','error');return;}
     const reader=new FileReader();
-    reader.onload=e=>{
-      const avatar=e.target.result;
-      AuthDB.updateProfile(session.email,{avatar});
-      renderAvatar(document.getElementById('avatarEl'),user.name,avatar);
-      renderAvatar(document.getElementById('settingsAvatar'),user.name,avatar);
-      showToast('Photo updated!','success');
-    };
+    reader.onload = e => {
+
+    selectedAvatar = e.target.result;
+
+  const currentUser = AuthDB.getUser(session.email);
+
+  renderAvatar(
+    document.getElementById('settingsAvatar'),
+    currentUser.name,
+    selectedAvatar
+  );
+
+    showToast("Photo selected. Click 'Save Changes' to save.", "success");
+
+};
     reader.readAsDataURL(file);
   });
 
-  document.getElementById('saveSettingsBtn').addEventListener('click',()=>{
-    const name=document.getElementById('set-name').value.trim();
-    const phone=document.getElementById('set-phone').value.trim();
-    const bio=document.getElementById('set-bio').value.trim();
-    const curpass=document.getElementById('set-curpass').value;
-    const newpass=document.getElementById('set-newpass').value;
-    const conpass=document.getElementById('set-conpass').value;
+  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
 
-    const updates={};
-    if(name) updates.name=name;
-    if(phone) updates.phone=phone;
-    if(bio!==undefined) updates.bio=bio;
+    const name = document.getElementById('set-name').value.trim();
+    const phone = document.getElementById('set-phone').value.trim();
+    const bio = document.getElementById('set-bio').value.trim();
+    const curpass = document.getElementById('set-curpass').value;
 
-    // Password change
-    if(curpass||newpass||conpass){
-      const u=AuthDB.getUser(session.email);
-      if(!u||u.password!==curpass){showToast('Current password is incorrect.','error');return;}
-      if(!newpass||newpass.length<6){showToast('New password must be 6+ characters.','error');return;}
-      if(newpass!==conpass){showToast('New passwords don\'t match.','error');return;}
-      updates.password=newpass;
+    const updates = {};
+
+    if (name) updates.name = name;
+    if (phone) updates.phone = phone;
+    updates.bio = bio;
+    if (selectedAvatar) {
+    updates.avatar = selectedAvatar;
+   }
+
+    // Verify current password
+    if (!AuthDB.verifyPassword(session.email, curpass)) {
+        showToast('Current password is incorrect.', 'error');
+        return;
     }
 
-    const r=AuthDB.updateProfile(session.email,updates);
-    if(r.ok){
-      showToast('Profile updated! ✓','success');
-      document.getElementById('profileName').textContent=updates.name||name||session.name;
-      if(updates.phone) document.getElementById('profilePhone').textContent='📞 '+updates.phone;
-      if(updates.bio!==undefined) document.getElementById('profileBio').textContent=updates.bio?'"'+updates.bio+'"':'';
-      document.getElementById('set-curpass').value='';
-      document.getElementById('set-newpass').value='';
-      document.getElementById('set-conpass').value='';
-    } else showToast(r.msg,'error');
-  });
+    const r = AuthDB.updateProfile(session.email, updates);
 
+   if (r.ok) {
+    const updatedUser = AuthDB.getUser(session.email);
+
+    renderAvatar(
+       document.getElementById("avatarEl"),
+       updatedUser.name,
+       updatedUser.avatar
+    );
+
+    renderAvatar(
+        document.getElementById("settingsAvatar"),
+        updatedUser.name,
+        updatedUser.avatar
+    );
+
+    selectedAvatar = null;
+
+    showToast('Profile updated! ✓', 'success');
+
+    // Update session and profile name
+    session.name = updatedUser.name;
+
+    document.getElementById('profileName').textContent = updatedUser.name;
+
+    if (updates.phone) {
+        document.getElementById('profilePhone').textContent = '📞 ' + updates.phone;
+    }
+
+    document.getElementById('profileBio').textContent =
+        updates.bio ? '"' + updates.bio + '"' : '';
+
+    document.getElementById('set-curpass').value = '';
+
+} else {
+    showToast(r.msg, 'error');
+}
+
+});
   document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 </script>
 </body>
