@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin – MarcHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    body{background:var(--bg);}
+    .admin{padding:7rem 5% 4rem;min-height:100vh;}
+    .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+    .admin-header h1{font-size:1.8rem;font-weight:800;}
+    .admin-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:99px;background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);font-size:.78rem;font-family:var(--font-mono);margin-left:.75rem;}
+    /* Stats */
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
+    .stat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.5rem;text-align:center;}
+    .stat-card .n{font-size:2.2rem;font-weight:800;font-family:var(--font-mono);}
+    .stat-card .l{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.3rem;}
+    /* Tabs */
+    .tab-row{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .tab-btn{padding:.6rem 1.2rem;border-radius:8px;border:1px solid var(--card-border);background:transparent;color:var(--muted);font-family:var(--font-display);font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;}
+    .tab-btn.active,.tab-btn:hover{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+    .tab-panel{display:none;}.tab-panel.active{display:block;}
+    /* Table */
+    .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--card-border);}
+    table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    thead{background:rgba(255,255,255,.04);}
+    th{padding:.85rem 1rem;text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;white-space:nowrap;}
+    td{padding:.8rem 1rem;border-top:1px solid var(--card-border);vertical-align:middle;}
+    tr:hover td{background:rgba(255,255,255,.02);}
+    .del-btn{padding:.3rem .7rem;border-radius:6px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:.78rem;cursor:pointer;font-family:var(--font-display);}
+    .del-btn:hover{background:rgba(239,68,68,.3);}
+    /* Search */
+    .search-row{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
+    .search-row input,.search-row select{flex:1;min-width:180px;padding:.7rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;}
+    .search-row input:focus,.search-row select:focus{border-color:var(--accent);}
+    .search-row select option{background:var(--bg2);}
+    /* Task management */
+    .task-mgmt{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+    @media(max-width:640px){.task-mgmt{grid-template-columns:1fr;}}
+    .task-form-card,.task-list-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.5rem;}
+    .task-form-card h3,.task-list-card h3{font-size:1.1rem;font-weight:800;margin-bottom:1rem;}
+    .admin-task-item{background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+    .admin-task-item .ti{flex:1;}
+    .admin-task-item h5{font-size:.9rem;font-weight:700;margin-bottom:.2rem;}
+    .admin-task-item p{font-size:.78rem;color:var(--muted);}
+    .admin-task-item .due{font-size:.72rem;color:var(--accent3);font-family:var(--font-mono);margin-top:.2rem;}
+    /* Recent regs */
+    .reg-item{display:flex;align-items:center;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--card-border);}
+    .reg-item:last-child{border-bottom:none;}
+    .reg-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:var(--bg);flex-shrink:0;}
+    .reg-info h5{font-size:.9rem;font-weight:600;margin-bottom:.1rem;}
+    .reg-info p{font-size:.78rem;color:var(--muted);}
+    .reg-date{margin-left:auto;font-size:.75rem;font-family:var(--font-mono);color:var(--muted);}
+    /* Action buttons */
+    .action-bar{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;}
+    .act-btn{padding:.55rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font-display);border:1px solid var(--card-border);background:transparent;color:var(--muted);transition:all .2s;}
+    .act-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .act-btn.green{border-color:#10b981;color:#10b981;}
+    .act-btn.green:hover{background:rgba(16,185,129,.1);}
+    /* Grading */
+    .grade-input{width:60px;padding:.3rem .5rem;background:rgba(255,255,255,.07);border:1px solid var(--card-border);border-radius:6px;color:var(--text);font-family:var(--font-mono);text-align:center;outline:none;}
+    .grade-btn{padding:.3rem .6rem;border-radius:6px;background:rgba(0,245,196,.15);border:1px solid rgba(0,245,196,.3);color:var(--accent);font-size:.75rem;cursor:pointer;font-family:var(--font-display);}
+    .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:none;transition:all .2s;}
+    .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
+    .empty-info{color:var(--muted);font-size:.9rem;padding:2rem;text-align:center;}
+  </style>
+</head>
+<body>
+<nav class="navbar" id="navbar">
+  <div class="nav-logo"><span class="logo-icon">⬡</span> MarcHub <span class="admin-badge">🔐 Admin</span></div>
+  <ul class="nav-links">
+    <li><button class="logout-btn" id="logoutBtn">Logout</button></li>
+  </ul>
+</nav>
+
+<div class="admin">
+  <div class="admin-header">
+    <div>
+      <div class="section-label">Admin Panel</div>
+      <h1>MarcHub Dashboard</h1>
+    </div>
+    <button class="act-btn green" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stat-grid" id="statGrid"></div>
+
+  <!-- Tabs -->
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchTab('enrollments')" id="tab-enrollments">📋 Enrollments</button>
+    <button class="tab-btn" onclick="switchTab('students')" id="tab-students">👥 Students</button>
+    <button class="tab-btn" onclick="switchTab('tasks')" id="tab-tasks">📝 Task Manager</button>
+    <button class="tab-btn" onclick="switchTab('submissions')" id="tab-submissions">✅ Submissions</button>
+    <button class="tab-btn" onclick="switchTab('recent')" id="tab-recent">🆕 Recent</button>
+  </div>
+
+  <!-- Enrollments Tab -->
+  <div class="tab-panel active" id="panel-enrollments">
+    <div class="search-row">
+      <input type="text" id="enroll-search" placeholder="🔍 Search by name, email or course…" oninput="renderEnrollments()"/>
+      <select id="enroll-filter" onchange="renderEnrollments()">
+        <option value="">All Courses</option>
+        <option>HTML</option><option>CSS</option><option>JavaScript</option>
+        <option>Java</option><option>Python</option><option>SQL</option><option>MongoDB</option>
+      </select>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Enrolled</th><th>Action</th></tr></thead>
+        <tbody id="enrollTbody"></tbody>
+      </table>
+    </div>
+    <p id="enrollCount" style="font-size:.82rem;color:var(--muted);margin-top:.75rem;font-family:var(--font-mono);"></p>
+  </div>
+
+  <!-- Students Tab -->
+  <div class="tab-panel" id="panel-students">
+    <div class="search-row">
+      <input type="text" id="stu-search" placeholder="🔍 Search students…" oninput="renderStudents()"/>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Courses</th><th>Joined</th></tr></thead>
+        <tbody id="stuTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Task Manager Tab -->
+  <div class="tab-panel" id="panel-tasks">
+    <div class="task-mgmt">
+      <div class="task-form-card">
+        <h3>➕ Assign New Task</h3>
+        <div class="form-group">
+          <label>Course</label>
+          <select id="task-course">
+            <option value="">-- Select Course --</option>
+            <option>HTML</option><option>CSS</option><option>JavaScript</option>
+            <option>Java</option><option>Python</option><option>SQL</option><option>MongoDB</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Task Title</label><input type="text" id="task-title" placeholder="e.g. Build a landing page"/></div>
+        <div class="form-group"><label>Description</label><textarea id="task-desc" rows="3" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;" placeholder="Task instructions…"></textarea></div>
+        <div class="form-group"><label>Due Date</label><input type="date" id="task-due"/></div>
+        <button class="btn-full" id="addTaskBtn">Assign Task →</button>
+      </div>
+      <div class="task-list-card">
+        <h3>📋 Existing Tasks</h3>
+        <div class="form-group">
+          <select id="view-course" onchange="renderTaskList()">
+            <option value="">-- Select Course to View --</option>
+            <option>HTML</option><option>CSS</option><option>JavaScript</option>
+            <option>Java</option><option>Python</option><option>SQL</option><option>MongoDB</option>
+          </select>
+        </div>
+        <div id="taskListContainer"><p class="empty-info">Select a course above.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submissions Tab -->
+  <div class="tab-panel" id="panel-submissions">
+    <div class="search-row">
+      <select id="sub-course" onchange="renderSubmissions()">
+        <option value="">-- Select Course --</option>
+        <option>HTML</option><option>CSS</option><option>JavaScript</option>
+        <option>Java</option><option>Python</option><option>SQL</option><option>MongoDB</option>
+      </select>
+    </div>
+    <div id="subContent"><p class="empty-info">Select a course to view submissions.</p></div>
+  </div>
+
+  <!-- Recent Registrations Tab -->
+  <div class="tab-panel" id="panel-recent">
+    <div class="task-form-card" style="max-width:600px;">
+      <h3>🆕 Recent Registrations</h3>
+      <div id="recentList"></div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/main.js"></script>
+<script>
+  // Guard: only admin
+  const sess=AuthDB.getSession();
+  if(!sess||!sess.isAdmin){window.location.href='login.html';}
+
+  const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
+
+  function getAllEnrollments(){ return AuthDB.getAllEnrollments(); }
+  function getAllUsers(){ return AuthDB.getUsers(); }
+
+  // Stats
+  function renderStats(){
+    const enroll=getAllEnrollments();
+    const users=getAllUsers();
+    const courses=[...new Set(enroll.map(e=>e.course))];
+    document.getElementById('statGrid').innerHTML=`
+      <div class="stat-card"><div class="n" style="color:var(--accent)">${users.length}</div><div class="l">Total Users</div></div>
+      <div class="stat-card"><div class="n" style="color:#3b82f6">${enroll.length}</div><div class="l">Enrollments</div></div>
+      <div class="stat-card"><div class="n" style="color:#8b5cf6">${courses.length}</div><div class="l">Active Courses</div></div>
+      <div class="stat-card"><div class="n" style="color:#f59e0b">${users.filter(u=>{const d=new Date(u.createdAt);const now=new Date();return (now-d)<7*24*60*60*1000;}).length}</div><div class="l">New This Week</div></div>
+    `;
+  }
+  renderStats();
+
+  // Tab switching
+  function switchTab(t){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+t).classList.add('active');
+    document.getElementById('tab-'+t).classList.add('active');
+    if(t==='enrollments') renderEnrollments();
+    if(t==='students') renderStudents();
+    if(t==='recent') renderRecent();
+    if(t==='submissions') renderSubmissions();
+  }
+
+  // Enrollments
+  function renderEnrollments(){
+    const q=(document.getElementById('enroll-search').value||'').toLowerCase();
+    const cf=document.getElementById('enroll-filter').value;
+    let data=getAllEnrollments();
+    if(cf) data=data.filter(e=>e.course===cf);
+    if(q) data=data.filter(e=>(e.name||'').toLowerCase().includes(q)||(e.email||'').toLowerCase().includes(q)||(e.course||'').toLowerCase().includes(q));
+    document.getElementById('enrollCount').textContent=`Showing ${data.length} enrollment${data.length!==1?'s':''}`;
+    document.getElementById('enrollTbody').innerHTML=data.length===0
+      ?'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No enrollments found.</td></tr>'
+      :data.map((e,i)=>`<tr>
+        <td style="color:var(--muted);font-family:var(--font-mono);">${i+1}</td>
+        <td style="font-weight:600;">${e.name||'—'}</td>
+        <td style="font-family:var(--font-mono);font-size:.8rem;">${e.email}</td>
+        <td style="font-family:var(--font-mono);font-size:.8rem;">${e.phone||'—'}</td>
+        <td><span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;padding:.2rem .6rem;border-radius:6px;background:rgba(255,255,255,.06);">${COURSE_ICONS[e.course]||'📘'} ${e.course}</span></td>
+        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${e.enrolledAt?new Date(e.enrolledAt).toLocaleDateString('en-IN'):'—'}</td>
+        <td><button class="del-btn" onclick="deleteEnroll('${e.email}','${e.course}')">🗑 Delete</button></td>
+      </tr>`).join('');
+  }
+  renderEnrollments();
+
+  function deleteEnroll(email,course){
+    if(!confirm(`Delete ${email}'s enrollment in ${course}?`)) return;
+    AuthDB.deleteEnrollment(email,course);
+    renderEnrollments(); renderStats();
+    showToast('Enrollment deleted.','success');
+  }
+
+  // Students
+  function renderStudents(){
+    const q=(document.getElementById('stu-search').value||'').toLowerCase();
+    let users=getAllUsers();
+    if(q) users=users.filter(u=>(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+    document.getElementById('stuTbody').innerHTML=users.length===0
+      ?'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">No students found.</td></tr>'
+      :users.map((u,i)=>`<tr>
+        <td style="color:var(--muted);font-family:var(--font-mono);">${i+1}</td>
+        <td><div style="display:flex;align-items:center;gap:.6rem;"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--bg);">${(u.name||'U')[0]}</div><span style="font-weight:600;">${u.name}</span></div></td>
+        <td style="font-family:var(--font-mono);font-size:.8rem;">${u.email}</td>
+        <td style="font-size:.8rem;color:var(--muted);">${u.phone||'—'}</td>
+        <td><span style="font-family:var(--font-mono);color:var(--accent);font-size:.9rem;">${(u.enrollments||[]).length}</span></td>
+        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN'):'—'}</td>
+      </tr>`).join('');
+  }
+
+  // Task Manager
+  document.getElementById('addTaskBtn').addEventListener('click',()=>{
+    const course=document.getElementById('task-course').value;
+    const title=document.getElementById('task-title').value.trim();
+    const desc=document.getElementById('task-desc').value.trim();
+    const due=document.getElementById('task-due').value;
+    if(!course||!title){showToast('Course and title are required.','error');return;}
+    AuthDB.addTask(course,title,desc,due);
+    showToast(`Task assigned to ${course}! ✓`,'success');
+    document.getElementById('task-title').value='';
+    document.getElementById('task-desc').value='';
+    document.getElementById('task-due').value='';
+    if(document.getElementById('view-course').value===course) renderTaskList();
+  });
+
+  function renderTaskList(){
+    const course=document.getElementById('view-course').value;
+    const con=document.getElementById('taskListContainer');
+    if(!course){con.innerHTML='<p class="empty-info">Select a course above.</p>';return;}
+    const tasks=AuthDB.getTasks(course);
+    if(!tasks.length){con.innerHTML=`<p class="empty-info">No tasks for ${course} yet.</p>`;return;}
+    con.innerHTML=tasks.map(t=>`<div class="admin-task-item">
+      <div class="ti">
+        <h5>${t.title}</h5>
+        <p>${t.desc||''}</p>
+        <div class="due">📅 ${t.due||'No deadline'}</div>
+      </div>
+      <button class="del-btn" onclick="deleteTask('${course}',${t.id})">🗑</button>
+    </div>`).join('');
+  }
+
+  function deleteTask(course,id){
+    if(!confirm('Delete this task?')) return;
+    AuthDB.deleteTask(course,id);
+    renderTaskList();
+    showToast('Task deleted.','success');
+  }
+
+  // Submissions
+  function renderSubmissions(){
+    const course=document.getElementById('sub-course').value;
+    const con=document.getElementById('subContent');
+    if(!course){con.innerHTML='<p class="empty-info">Select a course.</p>';return;}
+    const tasks=AuthDB.getTasks(course);
+    const users=getAllUsers().filter(u=>(u.enrollments||[]).find(e=>e.course===course));
+    if(!users.length){con.innerHTML=`<p class="empty-info">No students enrolled in ${course}.</p>`;return;}
+    if(!tasks.length){con.innerHTML=`<p class="empty-info">No tasks assigned to ${course} yet.</p>`;return;}
+    con.innerHTML=`<div class="tbl-wrap"><table>
+      <thead><tr><th>Student</th><th>Email</th><th>Task</th><th>Answer</th><th>Submitted</th><th>Score/100</th></tr></thead>
+      <tbody>${users.flatMap(u=>tasks.map(t=>{
+        const subs=AuthDB.getSubmissions(u.email,course);
+        const sub=subs.find(s=>s.taskId===t.id);
+        return `<tr>
+          <td style="font-weight:600;">${u.name}</td>
+          <td style="font-size:.78rem;font-family:var(--font-mono);">${u.email}</td>
+          <td style="font-size:.82rem;">${t.title}</td>
+          <td style="font-size:.78rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sub?sub.answer:'<span style="color:var(--muted);">Not submitted</span>'}</td>
+          <td style="font-size:.75rem;color:var(--muted);font-family:var(--font-mono);">${sub?new Date(sub.submittedAt).toLocaleDateString('en-IN'):'—'}</td>
+          <td>${sub?`<div style="display:flex;gap:.4rem;align-items:center;"><input class="grade-input" type="number" min="0" max="100" value="${sub.score!==null?sub.score:''}" id="sc_${u.email.replace('@','_')}_${t.id}" placeholder="—"/><button class="grade-btn" onclick="gradeIt('${u.email}','${course}',${t.id},'sc_${u.email.replace('@','_')}_${t.id}')">Save</button></div>`:'—'}</td>
+        </tr>`;
+      })).join('')}</tbody>
+    </table></div>`;
+  }
+
+  function gradeIt(email,course,taskId,inputId){
+    const val=document.getElementById(inputId).value;
+    const score=parseInt(val);
+    if(isNaN(score)||score<0||score>100){showToast('Enter a score between 0–100','error');return;}
+    AuthDB.gradeSubmission(email,course,taskId,score);
+    showToast('Score saved! ✓','success');
+  }
+
+  // Recent Registrations
+  function renderRecent(){
+    const users=getAllUsers().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,10);
+    const el=document.getElementById('recentList');
+    if(!users.length){el.innerHTML='<p class="empty-info">No registrations yet.</p>';return;}
+    el.innerHTML=users.map(u=>`<div class="reg-item">
+      <div class="reg-av">${(u.name||'U')[0]}</div>
+      <div class="reg-info">
+        <h5>${u.name}</h5>
+        <p>${u.email} · ${(u.enrollments||[]).length} course${(u.enrollments||[]).length!==1?'s':''}</p>
+      </div>
+      <div class="reg-date">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'—'}</div>
+    </div>`).join('');
+  }
+
+  // CSV Download
+  function downloadCSV(){
+    const data=getAllEnrollments();
+    const header=['Name','Email','Phone','Course','Enrolled At'];
+    const rows=data.map(e=>[e.name||'',e.email,e.phone||'',e.course,e.enrolledAt?new Date(e.enrolledAt).toLocaleDateString('en-IN'):''].map(v=>`"${v}"`).join(','));
+    const csv=[header.join(','),...rows].join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=`marchub_enrollments_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    showToast('CSV downloaded! ✓','success');
+  }
+
+  document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
+</script>
+</body>
+</html>
