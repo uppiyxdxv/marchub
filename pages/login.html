@@ -135,19 +135,56 @@
     ['fp1','fp2','fp3'].forEach((id,i)=>document.getElementById(id).style.display=i===n-1?'block':'none');
     ['s1','s2','s3'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i<n));
   }
-  document.getElementById('fp-btn1').addEventListener('click',()=>{
-    const em=document.getElementById('fp-email').value.trim();
-    document.getElementById('fp-email-err').classList.remove('show');
-    document.getElementById('fp-email-err').textContent='No account with that email.';
-    if(!em||!/^[^@]+@[^@]+\.[^@]+$/.test(em)){document.getElementById('fp-email-err').classList.add('show');return;}
-    const u=AuthDB.getUser(em);
-    if(!u||u.isAdmin){document.getElementById('fp-email-err').classList.add('show');return;}
-    _fpemail=em;_code=String(Math.floor(100000+Math.random()*900000));
-    showToast('Demo OTP: '+_code,'success');
-    document.getElementById('fp-title').textContent='Verify Code';
-    document.getElementById('fp-desc').textContent=`Code sent to ${em}. (Demo: check toast)`;
-    fpStep(2);
-  });
+   document.getElementById("fp-btn1").addEventListener("click", async () => {
+
+    const em = document.getElementById("fp-email").value.trim();
+
+    document.getElementById("fp-email-err").classList.remove("show");
+
+    if (!em || !/^[^@]+@[^@]+\.[^@]+$/.test(em)) {
+        document.getElementById("fp-email-err").classList.add("show");
+        return;
+    }
+
+    try {
+
+        const response = await fetch(`${BACKEND}/check-user`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: em
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            document.getElementById("fp-email-err").textContent = result.message;
+            document.getElementById("fp-email-err").classList.add("show");
+            return;
+        }
+
+        _fpemail = em;
+
+        _code = String(Math.floor(100000 + Math.random() * 900000));
+
+        showToast("Demo OTP : " + _code, "success");
+
+        document.getElementById("fp-title").textContent = "Verify Code";
+        document.getElementById("fp-desc").textContent =
+            `Code sent to ${em}`;
+
+        fpStep(2);
+
+    } catch (err) {
+
+        showToast("Server Error", "error");
+
+    }
+
+});
   document.getElementById('fp-btn2').addEventListener('click',()=>{
     const c=document.getElementById('fp-code').value.trim();
     document.getElementById('fp-code-err').classList.remove('show');
@@ -156,16 +193,52 @@
     document.getElementById('fp-desc').textContent='Choose a strong new password.';
     fpStep(3);
   });
-  document.getElementById('fp-btn3').addEventListener('click',()=>{
+  document.getElementById('fp-btn3').addEventListener('click', async () => {
     const np=document.getElementById('fp-np').value;
     const cp=document.getElementById('fp-cp').value;
     document.getElementById('fp-np-err').classList.remove('show');
     document.getElementById('fp-cp-err').classList.remove('show');
     if(!np||np.length<6){document.getElementById('fp-np-err').classList.add('show');return;}
     if(np!==cp){document.getElementById('fp-cp-err').classList.add('show');return;}
-    const r=AuthDB.resetPassword(_fpemail,np);
-    if(r.ok){showToast('Password reset! Login now.','success');closeFP();}
-    else showToast(r.msg,'error');
+    try {
+
+    const response = await fetch(`${BACKEND}/reset-password`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            email: _fpemail,
+
+            newPassword: np
+
+        })
+
+    });
+
+    const result = await response.json();
+
+    if(result.success){
+
+        showToast("Password Reset Successfully", "success");
+
+        closeFP();
+
+    }else{
+
+        showToast(result.message,"error");
+
+    }
+
+  }catch(err){
+
+    showToast("Server Error","error");
+
+  }
   });
 </script>
 </body>
