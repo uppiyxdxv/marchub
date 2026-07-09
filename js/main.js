@@ -1,4 +1,5 @@
 // ── MAIN JS — MarcHub ──
+const BACKEND = "https://marchub-backend.onrender.com";
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 50);
@@ -34,104 +35,197 @@ window.showToast = function(msg, type='success') {
 
 window.AuthDB = {
   ADMIN_EMAIL:'marchub2026@gmail.com', ADMIN_PASS:'Uppiyxdxv@2004',
-  getUsers(){ return JSON.parse(localStorage.getItem('lv_users')||'[]'); },
-  saveUsers(u){ localStorage.setItem('lv_users',JSON.stringify(u)); },
-  getUser(email){
-    if(email===this.ADMIN_EMAIL) return {name:'Admin',email:this.ADMIN_EMAIL,isAdmin:true,phone:'',bio:'',avatar:''};
-    return this.getUsers().find(u=>u.email===email)||null;
-  },
-  verifyPassword(email, password) {
+  async getUsers() {
 
-    const user = this.getUsers().find(u => u.email === email);
+    const response = await fetch(`${BACKEND}/users`);
 
-    if (!user) {
-        return false;
-    }
+    return await response.json();
 
-    return user.password === password;
 },
-  registerUser(name,email,password,phone=''){
-    const users=this.getUsers();
-    if(users.find(u=>u.email===email)) return {ok:false,msg:'Email already registered.'};
-    users.push({
-    name,
-    email,
-    password,
-    phone,
-    bio:'',
-    avatar:'',
-    isAdmin:false,
-    enrollments:[],
-    createdAt:new Date().toISOString()
-});
-    this.saveUsers(users); return {ok:true};
-  },
-  loginUser(email,password){
+  
+   async getUser(email) {
 
-    if(email===this.ADMIN_EMAIL && password===this.ADMIN_PASS){
-
-        const s={
-            name:"Admin",
-            email:this.ADMIN_EMAIL,
-            isAdmin:true
-        };
-
-        localStorage.setItem("lv_session",JSON.stringify(s));
-
-        return {ok:true,user:s};
-    }
-
-    const u=this.getUsers().find(
-        user=>user.email===email && user.password===password
-    );
-
-    if(!u){
+    if (email === this.ADMIN_EMAIL) {
         return {
-            ok:false,
-            msg:"Invalid email or password."
+            name: "Admin",
+            email: this.ADMIN_EMAIL,
+            isAdmin: true,
+            phone: "",
+            bio: "",
+            avatar: ""
         };
     }
 
-    const s={
-        name:u.name,
-        email:u.email,
-        isAdmin:false
-    };
+    const users = await this.getUsers();
 
-    localStorage.setItem("lv_session",JSON.stringify(s));
+    return users.find(u => u.email === email) || null;
+},
+  async verifyPassword(email, password) {
 
-    return {
-        ok:true,
-        user:s
-    };
+    const response = await fetch(`${BACKEND}/verify-password`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            email,
+            password
+        })
+
+    });
+
+    const result = await response.json();
+
+    return result.success;
+
+},
+  async registerUser(name, email, password, phone = "") {
+
+    const response = await fetch(`${BACKEND}/register`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            name,
+            email,
+            password,
+            phone
+        })
+
+    });
+
+    return await response.json();
+
+},
+    async loginUser(email, password) {
+
+    // Admin Login
+    if (email === this.ADMIN_EMAIL && password === this.ADMIN_PASS) {
+
+        const session = {
+            name: "Admin",
+            email: this.ADMIN_EMAIL,
+            isAdmin: true
+        };
+
+        localStorage.setItem("lv_session", JSON.stringify(session));
+
+        return {
+            ok: true,
+            user: session
+        };
+    }
+
+    try {
+
+        const response = await fetch(`${BACKEND}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            return {
+                ok: false,
+                msg: result.message || "Invalid Email or Password"
+            };
+        }
+
+        const session = {
+            name: result.user.name,
+            email: result.user.email,
+            isAdmin: false
+        };
+
+        localStorage.setItem("lv_session", JSON.stringify(session));
+
+        return {
+            ok: true,
+            user: session
+        };
+
+    } catch (err) {
+
+        console.error(err);
+
+        return {
+            ok: false,
+            msg: "Unable to connect to server."
+        };
+
+    }
+
 },
   logout(){ localStorage.removeItem('lv_session'); },
   getSession(){ return JSON.parse(localStorage.getItem('lv_session')||'null'); },
-  updateProfile(email,updates){
-    const users=this.getUsers(); const idx=users.findIndex(u=>u.email===email);
-    if(idx===-1) return {ok:false,msg:'User not found.'};
-    Object.assign(users[idx],updates); this.saveUsers(users);
-    const s=this.getSession();
-    if(s&&s.email===email){if(updates.name)s.name=updates.name;localStorage.setItem('lv_session',JSON.stringify(s));}
-    return {ok:true};
-  },
-  resetPassword(email,newPass){
-    const users=this.getUsers(); const idx=users.findIndex(u=>u.email===email);
-    if(idx===-1) return {ok:false,msg:'No account with that email.'};
-    users[idx].password=newPass; this.saveUsers(users); return {ok:true};
-  },
-  enrollUser(email,course,phone=''){
-    const users=this.getUsers(); const idx=users.findIndex(u=>u.email===email);
-    if(idx===-1) return {ok:false,msg:'User not found.'};
-    if(!users[idx].enrollments) users[idx].enrollments=[];
-    if(users[idx].enrollments.find(e=>e.course===course)) return {ok:false,msg:`Already enrolled in ${course}.`};
-    users[idx].enrollments.push({course,phone,enrolledAt:new Date().toISOString(),progress:0});
-    this.saveUsers(users); return {ok:true};
-  },
-getEnrollments(email) {
-    const u = this.getUsers().find(u => u.email === email);
-    return u ? (u.enrollments || []) : [];
+ async updateProfile(email, updates) {
+
+    const response = await fetch(`${BACKEND}/update-profile`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            email,
+
+            ...updates
+
+        })
+
+    });
+
+    return await response.json();
+
 },
+  
+     async enrollUser(email, course, phone) {
+
+        const response = await fetch(`${BACKEND}/enroll`, {
+
+             method: "POST",
+
+             headers: {
+               "Content-Type": "application/json"
+            },
+
+             body: JSON.stringify({
+
+               email,
+               course,
+               phone
+
+           })
+
+        });
+
+         return await response.json();
+
+      },
+       async getEnrollments(email) {
+
+         const response = await fetch(`${BACKEND}/enrollments/${email}`);
+
+         return await response.json();
+
+      },
   getTasks(course){ return JSON.parse(localStorage.getItem(`lv_tasks_${course}`)||'[]'); },
   saveTasks(course,tasks){ localStorage.setItem(`lv_tasks_${course}`,JSON.stringify(tasks)); },
   addTask(course,title,desc,due){
@@ -152,20 +246,32 @@ getEnrollments(email) {
     const subs=this.getSubmissions(email,course);
     return tasks.every(t=>subs.find(s=>s.taskId===t.id));
   },
-  getAllEnrollments(){
-    const all=JSON.parse(localStorage.getItem('lv_enrollments')||'[]');
-    this.getUsers().forEach(u=>{
-      (u.enrollments||[]).forEach(e=>{
-        if(!all.find(x=>x.email===u.email&&x.course===e.course))
-          all.push({name:u.name,email:u.email,phone:e.phone||'',course:e.course,enrolledAt:e.enrolledAt});
-      });
-    }); return all;
-  },
-  deleteEnrollment(email,course){
-    const all=JSON.parse(localStorage.getItem('lv_enrollments')||'[]');
-    localStorage.setItem('lv_enrollments',JSON.stringify(all.filter(e=>!(e.email===email&&e.course===course))));
-    const users=this.getUsers(); const idx=users.findIndex(u=>u.email===email);
-    if(idx!==-1){users[idx].enrollments=(users[idx].enrollments||[]).filter(e=>e.course!==course);this.saveUsers(users);}
-  }
+  async getAllEnrollments() {
+
+    const response = await fetch(`${BACKEND}/all-enrollments`);
+
+    return await response.json();
+
+},
+   async deleteEnrollment(email, course) {
+
+    const response = await fetch(`${BACKEND}/delete-enrollment`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            email,
+            course
+        })
+
+    });
+
+    return await response.json();
+
+},
 };
 console.log('%cMarcHub 🚀','color:#00f5c4;font-size:1.5rem;font-weight:bold;');
