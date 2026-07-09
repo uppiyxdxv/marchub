@@ -110,14 +110,70 @@ window.AuthDB = {
     if(idx===-1) return {ok:false,msg:'No account with that email.'};
     users[idx].password=newPass; this.saveUsers(users); return {ok:true};
   },
-  enrollUser(email,course,phone=''){
-    const users=this.getUsers(); const idx=users.findIndex(u=>u.email===email);
-    if(idx===-1) return {ok:false,msg:'User not found.'};
-    if(!users[idx].enrollments) users[idx].enrollments=[];
-    if(users[idx].enrollments.find(e=>e.course===course)) return {ok:false,msg:`Already enrolled in ${course}.`};
-    users[idx].enrollments.push({course,phone,enrolledAt:new Date().toISOString(),progress:0});
-    this.saveUsers(users); return {ok:true};
-  },
+ async enrollUser(email, course, phone = '') {
+
+    const users = this.getUsers();
+    const idx = users.findIndex(u => u.email === email);
+
+    if (idx === -1) {
+        return { ok: false, msg: "User not found." };
+    }
+
+    if (!users[idx].enrollments) {
+        users[idx].enrollments = [];
+    }
+
+    if (users[idx].enrollments.find(e => e.course === course)) {
+        return { ok: false, msg: `Already enrolled in ${course}.` };
+    }
+
+    try {
+
+        const response = await fetch("https://marchub-backend.onrender.com/enroll", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: users[idx].name,
+                email: users[idx].email,
+                phone,
+                course
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                ok: false,
+                msg: data.message
+            };
+        }
+
+        users[idx].enrollments.push({
+            course,
+            phone,
+            enrolledAt: new Date().toISOString(),
+            progress: 0
+        });
+
+        this.saveUsers(users);
+
+        return {
+            ok: true
+        };
+
+    } catch (err) {
+
+        console.error(err);
+
+        return {
+            ok: false,
+            msg: "Unable to connect to server."
+        };
+    }
+},
 getEnrollments(email) {
     const u = this.getUsers().find(u => u.email === email);
     return u ? (u.enrollments || []) : [];
