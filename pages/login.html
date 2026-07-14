@@ -68,6 +68,7 @@
       <button class="btn-full" id="fp-btn1">Send Code →</button>
     </div>
     <div id="fp2" style="display:none">
+      <div id="otpDisplay" style="display:none;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.8rem;text-align:center;margin-bottom:1rem;font-size:.9rem;color:var(--accent);font-weight:700;"></div>
       <div class="form-group"><label>6-Digit Code</label>
         <input type="text" id="fp-code" placeholder="------" maxlength="6" style="letter-spacing:.3em;text-align:center;font-size:1.3rem;font-family:var(--font-mono)"/>
         <div class="form-error" id="fp-code-err">Incorrect code.</div>
@@ -134,6 +135,7 @@
     document.getElementById('fp1').style.display='block';
     document.getElementById('fp2').style.display='none';
     document.getElementById('fp3').style.display='none';
+    document.getElementById('otpDisplay').style.display='none';
     ['s1','s2','s3'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i===0));
     document.getElementById('fp-title').textContent='Reset Password';
     document.getElementById('fp-desc').textContent='Enter your registered email address.';
@@ -159,12 +161,14 @@
       const r=await fetch(`${BACKEND}/send-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
       const result=await r.json();
       _localOtp=result.otp||'';
-      if(result.emailFailed) showToast('Email delivery issue. Your OTP: '+_localOtp,'success');
+      if(result.emailFailed) showToast('Email issue — see OTP below','success');
       else showToast('OTP sent to your email ✓','success');
-    }catch(e){_localOtp=String(Math.floor(100000+Math.random()*900000));showToast('Demo OTP: '+_localOtp,'success');}
+    }catch(e){_localOtp=String(Math.floor(100000+Math.random()*900000));showToast('Demo OTP below','success');}
     btn1.disabled=false;btn1.textContent='Send Code →';
     document.getElementById('fp-title').textContent='Verify Code';
     document.getElementById('fp-desc').textContent=`Code sent to ${em}`;
+    const d=document.getElementById('otpDisplay');
+    d.textContent='🔑 Your OTP: '+_localOtp;d.style.display='block';
     fpStep(2);
 
 });
