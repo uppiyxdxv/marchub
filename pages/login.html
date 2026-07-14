@@ -154,12 +154,17 @@
     }
 
     _fpemail = em;
-    _localOtp = String(Math.floor(100000 + Math.random() * 900000));
-    // Attempt to send OTP via backend email (best-effort, may fail silently)
-    fetch(`${BACKEND}/send-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})}).catch(()=>{});
-    showToast("OTP sent to your email. Also use: " + _localOtp, "success");
-    document.getElementById("fp-title").textContent = "Verify Code";
-    document.getElementById("fp-desc").textContent = `Code sent to ${em}`;
+    const btn1=document.getElementById('fp-btn1');btn1.disabled=true;btn1.textContent='Sending…';
+    try {
+      const r=await fetch(`${BACKEND}/send-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
+      const result=await r.json();
+      _localOtp=result.otp||'';
+      if(result.emailFailed) showToast('Email delivery issue. Your OTP: '+_localOtp,'success');
+      else showToast('OTP sent to your email ✓','success');
+    }catch(e){_localOtp=String(Math.floor(100000+Math.random()*900000));showToast('Demo OTP: '+_localOtp,'success');}
+    btn1.disabled=false;btn1.textContent='Send Code →';
+    document.getElementById('fp-title').textContent='Verify Code';
+    document.getElementById('fp-desc').textContent=`Code sent to ${em}`;
     fpStep(2);
 
 });
