@@ -241,6 +241,11 @@ window.AuthDB = {
     subs.push({taskId,answer,submittedAt:new Date().toISOString(),score:null});
     localStorage.setItem(`lv_sub_${email}_${course}`,JSON.stringify(subs)); return {ok:true};
   },
+  gradeSubmission(email,course,taskId,score){
+    const subs=this.getSubmissions(email,course);
+    const sub=subs.find(s=>s.taskId===taskId);
+    if(sub){sub.score=score;localStorage.setItem(`lv_sub_${email}_${course}`,JSON.stringify(subs));}
+  },
   allTasksSubmitted(email,course){
     const tasks=this.getTasks(course); if(!tasks.length) return false;
     const subs=this.getSubmissions(email,course);
