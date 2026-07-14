@@ -128,7 +128,7 @@
   document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')loginBtn.click();}));
 
   // Forgot password
-  let _code='',_fpemail='';
+  let _otpVerified=false,_fpemail='';
   function closeFP(){
     document.getElementById('fpModal').classList.remove('show');
     document.getElementById('fp1').style.display='block';
@@ -154,62 +154,42 @@
     }
 
     try {
-
-        const response = await fetch(`${BACKEND}/check-user`, {
+        const r = await fetch(`${BACKEND}/send-otp`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email: em
-            })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: em })
         });
-
-        const result = await response.json();
-
+        const result = await r.json();
         if (!result.success) {
             document.getElementById("fp-email-err").textContent = result.message;
             document.getElementById("fp-email-err").classList.add("show");
             return;
         }
-
         _fpemail = em;
-
-        _code = String(Math.floor(100000 + Math.random() * 900000));
-
-        try {
-            await emailjs.send("service_63ztzjj", "template_0gbkr7y", {
-                user_name: em,
-                user_email: em,
-                registered_at: "Your OTP code is: " + _code
-            });
-            showToast("OTP sent to your email", "success");
-        } catch (mailErr) {
-            showToast("Demo OTP: " + _code, "success");
-        }
-
+        showToast("OTP sent to your email", "success");
         document.getElementById("fp-title").textContent = "Verify Code";
-        document.getElementById("fp-desc").textContent =
-            `Code sent to ${em}`;
-
+        document.getElementById("fp-desc").textContent = `Code sent to ${em}`;
         fpStep(2);
-
     } catch (err) {
-
         showToast("Server Error", "error");
-
     }
 
 });
-  document.getElementById('fp-btn2').addEventListener('click',()=>{
+  document.getElementById('fp-btn2').addEventListener('click',async()=>{
     const c=document.getElementById('fp-code').value.trim();
     document.getElementById('fp-code-err').classList.remove('show');
-    if(c!==_code){document.getElementById('fp-code-err').classList.add('show');return;}
+    try{
+      const r=await fetch(`${BACKEND}/verify-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpemail,otp:c})});
+      const result=await r.json();
+      if(!result.success){document.getElementById('fp-code-err').textContent=result.message;document.getElementById('fp-code-err').classList.add('show');return;}
+    }catch(e){document.getElementById('fp-code-err').textContent='Server error';document.getElementById('fp-code-err').classList.add('show');return;}
+    _otpVerified=true;
     document.getElementById('fp-title').textContent='New Password';
     document.getElementById('fp-desc').textContent='Choose a strong new password.';
     fpStep(3);
   });
   document.getElementById('fp-btn3').addEventListener('click', async () => {
+    if(!_otpVerified){showToast('Please verify OTP first.','error');closeFP();return;}
     const np=document.getElementById('fp-np').value;
     const cp=document.getElementById('fp-cp').value;
     document.getElementById('fp-np-err').classList.remove('show');
@@ -217,44 +197,11 @@
     if(!np||np.length<6){document.getElementById('fp-np-err').classList.add('show');return;}
     if(np!==cp){document.getElementById('fp-cp-err').classList.add('show');return;}
     try {
-
-    const response = await fetch(`${BACKEND}/reset-password`, {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-            email: _fpemail,
-
-            newPassword: np
-
-        })
-
-    });
-
-    const result = await response.json();
-
-    if(result.success){
-
-        showToast("Password Reset Successfully", "success");
-
-        closeFP();
-
-    }else{
-
-        showToast(result.message,"error");
-
-    }
-
-  }catch(err){
-
-    showToast("Server Error","error");
-
-  }
+      const r=await fetch(`${BACKEND}/reset-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpemail,newPassword:np})});
+      const result=await r.json();
+      if(result.success){showToast('Password Reset Successfully','success');closeFP();}
+      else showToast(result.message,'error');
+    }catch(err){showToast('Server Error','error');}
   });
 </script>
 </body>
