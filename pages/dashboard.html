@@ -5,6 +5,8 @@
   <title>Dashboard – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body{background:var(--bg);}
     .dashboard{padding:7rem 5% 4rem;min-height:100vh;}
@@ -204,7 +206,7 @@
         </div>
       </div>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨 Print / Download PDF</button>
+    <button class="btn-print" onclick="downloadCertPDF()">⬇ Download Certificate (PDF)</button>
   </div>
 </div>
 
@@ -357,6 +359,21 @@
     document.getElementById('cert-course').textContent=course+' – MarcHub';
     document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
     document.getElementById('certModal').classList.add('show');
+  }
+
+  async function downloadCertPDF(){
+    const el=document.querySelector('.cert-paper');
+    const origOverflow=document.body.style.overflow;
+    document.body.style.overflow='visible';
+    try {
+      const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
+      const imgData=canvas.toDataURL('image/png');
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width/2,canvas.height/2]});
+      pdf.addImage(imgData,'PNG',0,0,canvas.width/2,canvas.height/2);
+      pdf.save('MarcHub_Certificate.pdf');
+    } catch(e){showToast('Error generating PDF.','error');console.error(e);}
+    document.body.style.overflow=origOverflow;
   }
 
   // Settings
