@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Apply – MarcHub Internship</title>
+  <title>Apply â€“ MarcHub Internship</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
   <style>
@@ -12,21 +12,21 @@
   </style>
 </head>
 <body>
-<a href="../index.html" class="back-link">← Back to Home</a>
+<a href="../index.html" class="back-link">â† Back to Home</a>
 <div class="auth-page">
   <div class="auth-card">
-    <div class="auth-logo"><span class="logo-icon">💼</span> MarcHub Internship</div>
+    <div class="auth-logo"><span class="logo-icon">ðŸ’¼</span> MarcHub Internship</div>
     <h2 class="auth-title" id="int-title">Apply for Internship</h2>
     <p class="auth-sub" id="int-desc">Fill in your details to apply.</p>
     <div class="form-group"><label>Full Name</label><input type="text" id="app-name" placeholder="Your full name"/></div>
     <div class="form-group"><label>Email</label><input type="email" id="app-email" placeholder="you@example.com"/></div>
     <div class="form-group"><label>Phone</label><input type="tel" id="app-phone" placeholder="+91 9876543210"/></div>
     <div class="form-group"><label>Why are you a good fit?</label><textarea id="app-msg" rows="4" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;"></textarea></div>
-    <button class="btn-full" id="applyBtn">Submit Application →</button>
+    <button class="btn-full" id="applyBtn">Submit Application â†’</button>
     <div id="apply-result" style="margin-top:1rem;"></div>
   </div>
 </div>
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=2"></script>
 <script>
   const params=new URLSearchParams(window.location.search);
   const intId=params.get('id');
@@ -47,10 +47,10 @@
     document.getElementById('applyBtn').textContent='Submitting...';
     document.getElementById('applyBtn').disabled=true;
     const r=await AuthDB.registerForInternship({internshipId:parseInt(intId),name,email,phone,message:msg});
-    document.getElementById('applyBtn').textContent='Submit Application →';
+    document.getElementById('applyBtn').textContent='Submit Application â†’';
     document.getElementById('applyBtn').disabled=false;
     if(r.success){
-      document.querySelector('.auth-card').innerHTML='<h2>✅ Application Submitted!</h2><p>We\'ll review your application and get back to you via email.</p><a href="../index.html" class="btn-hero">Back to Home</a>';
+      document.querySelector('.auth-card').innerHTML='<h2>âœ… Application Submitted!</h2><p>We\'ll review your application and get back to you via email.</p><a href="../index.html" class="btn-hero">Back to Home</a>';
     }else{
       showToast(r.message||'Failed to submit','error');
     }

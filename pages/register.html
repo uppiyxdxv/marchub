@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register – MarcHub</title>
+  <title>Register â€“ MarcHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-  emailjs.init('rwHZkgqFwOWu7Cs9o'); // 🔧 replace with your actual public key
+  emailjs.init('rwHZkgqFwOWu7Cs9o'); // ðŸ”§ replace with your actual public key
   </script>
   <link rel="stylesheet" href="../css/style.css"/>
   <style>
@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<a href="../index.html" class="back-link">← Back to Home</a>
+<a href="../index.html" class="back-link">â† Back to Home</a>
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-logo"><span class="logo-icon"><img src="../images/logo.png" alt="MarcHub Logo" class="site-logo"></span> MarcHub</div>
@@ -49,12 +49,12 @@
       <div class="form-error" id="confirm-err">Passwords do not match.</div>
     </div>
     <div class="form-error" id="reg-err" style="margin-bottom:0.5rem;font-size:0.9rem;"></div>
-    <button class="btn-full" id="registerBtn">Create Account →</button>
+    <button class="btn-full" id="registerBtn">Create Account â†’</button>
     <div class="auth-switch">Already have an account? <a href="login.html">Login here</a></div>
   </div>
 </div>
 
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=2"></script>
 <script>
  const sess = AuthDB.getSession();
  if (sess) {
@@ -133,7 +133,7 @@ registerBtn.addEventListener('click', async () => {
     console.error("Email Error:", mailError);
   }
 
-  showToast('Account created! Welcome to MarcHub 🚀', 'success');
+  showToast('Account created! Welcome to MarcHub ðŸš€', 'success');
 
   setTimeout(() => {
     window.location.href = 'login.html';
@@ -154,7 +154,7 @@ registerBtn.addEventListener('click', async () => {
     err.classList.add('show');
   }
 
-  registerBtn.textContent = 'Create Account →';
+  registerBtn.textContent = 'Create Account â†’';
   registerBtn.disabled = false;
 });
 

@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Admin – MarcHub</title>
+  <title>Admin â€“ MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
   <style>
@@ -68,7 +68,7 @@
 </head>
 <body>
 <nav class="navbar" id="navbar">
-  <div class="nav-logo"><span class="logo-icon">⬡</span> MarcHub <span class="admin-badge">🔐 Admin</span></div>
+  <div class="nav-logo"><span class="logo-icon">â¬¡</span> MarcHub <span class="admin-badge">ðŸ” Admin</span></div>
   <ul class="nav-links">
     <li><button class="logout-btn" id="logoutBtn">Logout</button></li>
   </ul>
@@ -81,8 +81,8 @@
       <h1>MarcHub Dashboard</h1>
     </div>
     <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-      <button class="act-btn green" onclick="downloadCSV()">⬇ Download CSV</button>
-      <a href="../admin-react/index.html" class="act-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">⚛ Admin Panel (React) →</a>
+      <button class="act-btn green" onclick="downloadCSV()">â¬‡ Download CSV</button>
+      <a href="../admin-react/index.html" class="act-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">âš› Admin Panel (React) â†’</a>
     </div>
   </div>
 
@@ -91,20 +91,20 @@
 
   <!-- Tabs -->
   <div class="tab-row">
-    <button class="tab-btn active" onclick="switchTab('enrollments')" id="tab-enrollments">📋 Enrollments</button>
-    <button class="tab-btn" onclick="switchTab('students')" id="tab-students">👥 Students</button>
-    <button class="tab-btn" onclick="switchTab('courses')" id="tab-courses">📚 Courses</button>
-    <button class="tab-btn" onclick="switchTab('tasks')" id="tab-tasks">📝 Task Manager</button>
-    <button class="tab-btn" onclick="switchTab('submissions')" id="tab-submissions">✅ Submissions</button>
-    <button class="tab-btn" onclick="switchTab('certificates')" id="tab-certificates">🏆 Certificates</button>
-    <button class="tab-btn" onclick="switchTab('internships')" id="tab-internships">💼 Internships</button>
-    <button class="tab-btn" onclick="switchTab('recent')" id="tab-recent">🆕 Recent</button>
+    <button class="tab-btn active" onclick="switchTab('enrollments')" id="tab-enrollments">ðŸ“‹ Enrollments</button>
+    <button class="tab-btn" onclick="switchTab('students')" id="tab-students">ðŸ‘¥ Students</button>
+    <button class="tab-btn" onclick="switchTab('courses')" id="tab-courses">ðŸ“š Courses</button>
+    <button class="tab-btn" onclick="switchTab('tasks')" id="tab-tasks">ðŸ“ Task Manager</button>
+    <button class="tab-btn" onclick="switchTab('submissions')" id="tab-submissions">âœ… Submissions</button>
+    <button class="tab-btn" onclick="switchTab('certificates')" id="tab-certificates">ðŸ† Certificates</button>
+    <button class="tab-btn" onclick="switchTab('internships')" id="tab-internships">ðŸ’¼ Internships</button>
+    <button class="tab-btn" onclick="switchTab('recent')" id="tab-recent">ðŸ†• Recent</button>
   </div>
 
   <!-- Enrollments Tab -->
   <div class="tab-panel active" id="panel-enrollments">
     <div class="search-row">
-      <input type="text" id="enroll-search" placeholder="🔍 Search by name, email or course…" oninput="renderEnrollments()"/>
+      <input type="text" id="enroll-search" placeholder="ðŸ” Search by name, email or courseâ€¦" oninput="renderEnrollments()"/>
       <select id="enroll-filter" onchange="renderEnrollments()">
         <option value="">All Courses</option>
         <option>HTML</option><option>CSS</option><option>JavaScript</option>
@@ -123,7 +123,7 @@
   <!-- Students Tab -->
   <div class="tab-panel" id="panel-students">
     <div class="search-row">
-      <input type="text" id="stu-search" placeholder="🔍 Search students…" oninput="renderStudents()"/>
+      <input type="text" id="stu-search" placeholder="ðŸ” Search studentsâ€¦" oninput="renderStudents()"/>
     </div>
     <div class="tbl-wrap">
       <table>
@@ -137,7 +137,7 @@
   <div class="tab-panel" id="panel-tasks">
     <div class="task-mgmt">
       <div class="task-form-card">
-        <h3>➕ Assign New Task</h3>
+        <h3>âž• Assign New Task</h3>
         <div class="form-group">
           <label>Course</label>
           <select id="task-course">
@@ -147,12 +147,12 @@
           </select>
         </div>
         <div class="form-group"><label>Task Title</label><input type="text" id="task-title" placeholder="e.g. Build a landing page"/></div>
-        <div class="form-group"><label>Description</label><textarea id="task-desc" rows="3" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;" placeholder="Task instructions…"></textarea></div>
+        <div class="form-group"><label>Description</label><textarea id="task-desc" rows="3" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;" placeholder="Task instructionsâ€¦"></textarea></div>
         <div class="form-group"><label>Due Date</label><input type="date" id="task-due"/></div>
-        <button class="btn-full" id="addTaskBtn">Assign Task →</button>
+        <button class="btn-full" id="addTaskBtn">Assign Task â†’</button>
       </div>
       <div class="task-list-card">
-        <h3>📋 Existing Tasks</h3>
+        <h3>ðŸ“‹ Existing Tasks</h3>
         <div class="form-group">
           <select id="view-course" onchange="renderTaskList()">
             <option value="">-- Select Course to View --</option>
@@ -181,18 +181,18 @@
   <div class="tab-panel" id="panel-courses">
     <div class="task-mgmt">
       <div class="task-form-card">
-        <h3>➕ Add / Edit Course</h3>
+        <h3>âž• Add / Edit Course</h3>
         <div class="form-group"><label>Course Name</label><input type="text" id="c-name" placeholder="e.g. HTML"/></div>
         <div class="form-group"><label>Description</label><textarea id="c-desc" rows="2" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;"></textarea></div>
-        <div class="form-group"><label>Price (₹)</label><input type="number" id="c-price" placeholder="0"/></div>
+        <div class="form-group"><label>Price (â‚¹)</label><input type="number" id="c-price" placeholder="0"/></div>
         <div class="form-group"><label>Slots Left</label><input type="number" id="c-slots" placeholder="30"/></div>
         <div class="form-group"><label>Due Date</label><input type="date" id="c-due"/></div>
         <div class="form-group"><label>Next Batch Date</label><input type="date" id="c-next"/></div>
-        <button class="btn-full" id="saveCourseBtn">Save Course →</button>
+        <button class="btn-full" id="saveCourseBtn">Save Course â†’</button>
         <button class="act-btn" id="cancelCourseBtn" style="display:none;margin-top:.5rem;" onclick="cancelCourseEdit()">Cancel</button>
       </div>
       <div class="task-list-card">
-        <h3>📋 All Courses</h3>
+        <h3>ðŸ“‹ All Courses</h3>
         <div id="courseList"></div>
       </div>
     </div>
@@ -219,14 +219,14 @@
   <div class="tab-panel" id="panel-internships">
     <div class="task-mgmt">
       <div class="task-form-card">
-        <h3>➕ New Internship</h3>
+        <h3>âž• New Internship</h3>
         <div class="form-group"><label>Title</label><input type="text" id="int-title" placeholder="e.g. Web Dev Intern"/></div>
         <div class="form-group"><label>Description</label><textarea id="int-desc" rows="3" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;"></textarea></div>
         <div class="form-group"><label>Requirements</label><textarea id="int-req" rows="2" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;color:var(--text);font-family:var(--font-display);font-size:.9rem;resize:vertical;outline:none;" placeholder="One per line"></textarea></div>
-        <button class="btn-full" id="saveInternshipBtn">Create Internship →</button>
+        <button class="btn-full" id="saveInternshipBtn">Create Internship â†’</button>
       </div>
       <div class="task-list-card">
-        <h3>📋 Internships & Registrations</h3>
+        <h3>ðŸ“‹ Internships & Registrations</h3>
         <select id="int-select" onchange="renderInternRegs()" style="width:100%;margin-bottom:1rem;padding:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);outline:none;">
           <option value="">-- Select Internship --</option>
         </select>
@@ -238,18 +238,18 @@
   <!-- Recent Registrations Tab -->
   <div class="tab-panel" id="panel-recent">
     <div class="task-form-card" style="max-width:600px;">
-      <h3>🆕 Recent Registrations</h3>
+      <h3>ðŸ†• Recent Registrations</h3>
       <div id="recentList"></div>
     </div>
   </div>
 </div>
 
-<script src="../js/main.js"></script>
+<script src="../js/main.js?v=2"></script>
 <script>
   const sess=AuthDB.getSession();
   if(!sess||!sess.isAdmin){window.location.href='login.html';return;}
 
-  const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
+  const COURSE_ICONS={HTML:'ðŸŒ',CSS:'ðŸŽ¨',JavaScript:'âš¡',Java:'â˜•',Python:'ðŸ',SQL:'ðŸ—„ï¸',MongoDB:'ðŸƒ'};
   let cache = { users: [], enrolls: [], courses: [], certs: [], interns: [], regs: [] };
 
   async function loadCache() {
@@ -296,12 +296,12 @@
       ?'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem;">No enrollments found.</td></tr>'
       :data.map((e,i)=>`<tr>
         <td style="color:var(--muted);font-family:var(--font-mono);">${i+1}</td>
-        <td style="font-weight:600;">${e.name||'—'}</td>
+        <td style="font-weight:600;">${e.name||'â€”'}</td>
         <td style="font-family:var(--font-mono);font-size:.8rem;">${e.email}</td>
-        <td style="font-family:var(--font-mono);font-size:.8rem;">${e.phone||'—'}</td>
-        <td><span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;padding:.2rem .6rem;border-radius:6px;background:rgba(255,255,255,.06);">${COURSE_ICONS[e.course]||'📘'} ${e.course}</span></td>
-        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${e.enrolledAt?new Date(e.enrolledAt).toLocaleDateString('en-IN'):'—'}</td>
-        <td><button class="del-btn" onclick="deleteEnroll('${e.email}','${e.course}')">🗑 Delete</button></td>
+        <td style="font-family:var(--font-mono);font-size:.8rem;">${e.phone||'â€”'}</td>
+        <td><span style="display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;padding:.2rem .6rem;border-radius:6px;background:rgba(255,255,255,.06);">${COURSE_ICONS[e.course]||'ðŸ“˜'} ${e.course}</span></td>
+        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${e.enrolledAt?new Date(e.enrolledAt).toLocaleDateString('en-IN'):'â€”'}</td>
+        <td><button class="del-btn" onclick="deleteEnroll('${e.email}','${e.course}')">ðŸ—‘ Delete</button></td>
       </tr>`).join('');
   }
 
@@ -323,9 +323,9 @@
         <td style="color:var(--muted);font-family:var(--font-mono);">${i+1}</td>
         <td><div style="display:flex;align-items:center;gap:.6rem;"><div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:var(--bg);">${(u.name||'U')[0]}</div><span style="font-weight:600;">${u.name}</span></div></td>
         <td style="font-family:var(--font-mono);font-size:.8rem;">${u.email}</td>
-        <td style="font-size:.8rem;color:var(--muted);">${u.phone||'—'}</td>
+        <td style="font-size:.8rem;color:var(--muted);">${u.phone||'â€”'}</td>
         <td><span style="font-family:var(--font-mono);color:var(--accent);font-size:.9rem;">${(u.enrollments||[]).length}</span></td>
-        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN'):'—'}</td>
+        <td style="font-size:.8rem;color:var(--muted);font-family:var(--font-mono);">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN'):'â€”'}</td>
       </tr>`).join('');
   }
 
@@ -336,7 +336,7 @@
     const due=document.getElementById('task-due').value;
     if(!course||!title){showToast('Course and title are required.','error');return;}
     AuthDB.addTask(course,title,desc,due);
-    showToast(`Task assigned to ${course}! ✓`,'success');
+    showToast(`Task assigned to ${course}! âœ“`,'success');
     document.getElementById('task-title').value='';
     document.getElementById('task-desc').value='';
     document.getElementById('task-due').value='';
@@ -350,8 +350,8 @@
     const tasks=AuthDB.getTasks(course);
     if(!tasks.length){con.innerHTML=`<p class="empty-info">No tasks for ${course} yet.</p>`;return;}
     con.innerHTML=tasks.map(t=>`<div class="admin-task-item">
-      <div class="ti"><h5>${t.title}</h5><p>${t.desc||''}</p><div class="due">📅 ${t.due||'No deadline'}</div></div>
-      <button class="del-btn" onclick="deleteTask('${course}',${t.id})">🗑</button>
+      <div class="ti"><h5>${t.title}</h5><p>${t.desc||''}</p><div class="due">ðŸ“… ${t.due||'No deadline'}</div></div>
+      <button class="del-btn" onclick="deleteTask('${course}',${t.id})">ðŸ—‘</button>
     </div>`).join('');
   }
 
@@ -380,8 +380,8 @@
           <td style="font-size:.78rem;font-family:var(--font-mono);">${u.email}</td>
           <td style="font-size:.82rem;">${t.title}</td>
           <td style="font-size:.78rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sub?sub.answer:'<span style="color:var(--muted);">Not submitted</span>'}</td>
-          <td style="font-size:.75rem;color:var(--muted);font-family:var(--font-mono);">${sub?new Date(sub.submittedAt).toLocaleDateString('en-IN'):'—'}</td>
-          <td>${sub?`<div style="display:flex;gap:.4rem;align-items:center;"><input class="grade-input" type="number" min="0" max="100" value="${sub.score!==null?sub.score:''}" id="sc_${u.email.replace('@','_')}_${t.id}" placeholder="—"/><button class="grade-btn" onclick="gradeIt('${u.email}','${course}',${t.id},'sc_${u.email.replace('@','_')}_${t.id}')">Save</button></div>`:'—'}</td>
+          <td style="font-size:.75rem;color:var(--muted);font-family:var(--font-mono);">${sub?new Date(sub.submittedAt).toLocaleDateString('en-IN'):'â€”'}</td>
+          <td>${sub?`<div style="display:flex;gap:.4rem;align-items:center;"><input class="grade-input" type="number" min="0" max="100" value="${sub.score!==null?sub.score:''}" id="sc_${u.email.replace('@','_')}_${t.id}" placeholder="â€”"/><button class="grade-btn" onclick="gradeIt('${u.email}','${course}',${t.id},'sc_${u.email.replace('@','_')}_${t.id}')">Save</button></div>`:'â€”'}</td>
         </tr>`;
       })).join('')}</tbody>
     </table></div>`;
@@ -390,12 +390,12 @@
   function gradeIt(email,course,taskId,inputId){
     const val=document.getElementById(inputId).value;
     const score=parseInt(val);
-    if(isNaN(score)||score<0||score>100){showToast('Enter a score between 0–100','error');return;}
+    if(isNaN(score)||score<0||score>100){showToast('Enter a score between 0â€“100','error');return;}
     AuthDB.gradeSubmission(email,course,taskId,score);
-    showToast('Score saved! ✓','success');
+    showToast('Score saved! âœ“','success');
   }
 
-  // ── Courses ──
+  // â”€â”€ Courses â”€â”€
   let editingCourseId = null;
 
   async function renderCourses() {
@@ -405,12 +405,12 @@
     el.innerHTML=cache.courses.map(c=>`<div class="admin-task-item">
       <div class="ti">
         <h5>${c.name}</h5>
-        <p>₹${c.price} · ${c.slotsLeft} slots left · Due: ${c.dueDate||'N/A'} · Next: ${c.nextBatchDate||'N/A'}</p>
+        <p>â‚¹${c.price} Â· ${c.slotsLeft} slots left Â· Due: ${c.dueDate||'N/A'} Â· Next: ${c.nextBatchDate||'N/A'}</p>
         <p style="font-size:.78rem;color:var(--muted);">${c.description||''}</p>
       </div>
       <div style="display:flex;gap:.4rem;">
-        <button class="del-btn" style="border-color:var(--accent);color:var(--accent);" onclick="editCourse(${c.id})">✏</button>
-        <button class="del-btn" onclick="deleteCourse(${c.id})">🗑</button>
+        <button class="del-btn" style="border-color:var(--accent);color:var(--accent);" onclick="editCourse(${c.id})">âœ</button>
+        <button class="del-btn" onclick="deleteCourse(${c.id})">ðŸ—‘</button>
       </div>
     </div>`).join('');
   }
@@ -425,7 +425,7 @@
     document.getElementById('c-slots').value = c.slotsLeft;
     document.getElementById('c-due').value = c.dueDate||'';
     document.getElementById('c-next').value = c.nextBatchDate||'';
-    document.getElementById('saveCourseBtn').textContent = 'Update Course →';
+    document.getElementById('saveCourseBtn').textContent = 'Update Course â†’';
     document.getElementById('cancelCourseBtn').style.display = 'inline-block';
   }
 
@@ -437,7 +437,7 @@
     document.getElementById('c-slots').value='';
     document.getElementById('c-due').value='';
     document.getElementById('c-next').value='';
-    document.getElementById('saveCourseBtn').textContent = 'Save Course →';
+    document.getElementById('saveCourseBtn').textContent = 'Save Course â†’';
     document.getElementById('cancelCourseBtn').style.display = 'none';
   }
 
@@ -471,7 +471,7 @@
     showToast('Course deleted.','success');
   }
 
-  // ── Certificates ──
+  // â”€â”€ Certificates â”€â”€
   async function renderCertificates() {
     const cf=document.getElementById('cert-course').value;
     cache.certs = await AuthDB.getAllCertificates();
@@ -484,12 +484,12 @@
       const tasks=AuthDB.getTasks(c.course);
       const subs=AuthDB.getSubmissions(c.email,c.course);
       return `<tr>
-        <td style="font-weight:600;">${c.name||(user?user.name:'')||'—'}</td>
+        <td style="font-weight:600;">${c.name||(user?user.name:'')||'â€”'}</td>
         <td style="font-size:.78rem;font-family:var(--font-mono);">${c.email}</td>
         <td>${c.course}</td>
         <td style="font-family:var(--font-mono);">${subs.length}/${tasks.length}</td>
-        <td>${c.adminVerified?'<span style="color:#10b981;">✓ Verified</span>':'<span style="color:#eab308;">Pending</span>'}</td>
-        <td>${!c.adminVerified?`<button class="act-btn green" onclick="verifyCert('${c.email}','${c.course}')">Verify ✓</button>`:'<span style="color:var(--muted);font-size:.8rem;">Issued</span>'}</td>
+        <td>${c.adminVerified?'<span style="color:#10b981;">âœ“ Verified</span>':'<span style="color:#eab308;">Pending</span>'}</td>
+        <td>${!c.adminVerified?`<button class="act-btn green" onclick="verifyCert('${c.email}','${c.course}')">Verify âœ“</button>`:'<span style="color:var(--muted);font-size:.8rem;">Issued</span>'}</td>
       </tr>`;
     }).join('');
   }
@@ -501,7 +501,7 @@
     showToast('Certificate verified!','success');
   }
 
-  // ── Internships ──
+  // â”€â”€ Internships â”€â”€
   async function renderInternships() {
     cache.interns = await AuthDB.getAllInternships();
     const sel=document.getElementById('int-select');
@@ -510,7 +510,7 @@
     if(!cache.interns.length){list.innerHTML='<p class="empty-info">No internships yet.</p>';return;}
     list.innerHTML=cache.interns.map(i=>`<div class="admin-task-item">
       <div class="ti"><h5>${i.title}</h5><p>${(i.description||'').slice(0,100)}</p></div>
-      <button class="del-btn" onclick="deleteInternship(${i.id})">🗑</button>
+      <button class="del-btn" onclick="deleteInternship(${i.id})">ðŸ—‘</button>
     </div>`).join('');
   }
 
@@ -550,12 +550,12 @@
       <tbody>${regs.map(r=>`<tr>
         <td style="font-weight:600;">${r.name}</td>
         <td style="font-size:.78rem;font-family:var(--font-mono);">${r.email}</td>
-        <td style="font-size:.8rem;">${r.phone||'—'}</td>
+        <td style="font-size:.8rem;">${r.phone||'â€”'}</td>
         <td><span style="color:${r.status==='APPROVED'?'#10b981':r.status==='REJECTED'?'#ef4444':'#eab308'}">${r.status}</span></td>
         <td>${r.status==='PENDING'?`<div style="display:flex;gap:.4rem;">
           <button class="act-btn green" onclick="updateRegStatus(${r.id},'approve')">Approve</button>
           <button class="del-btn" onclick="updateRegStatus(${r.id},'reject')">Reject</button>
-        </div>`:r.status==='APPROVED'?`<button class="act-btn" onclick="updateRegStatus(${r.id},'complete')">Mark Complete</button>`:'—'}</td>
+        </div>`:r.status==='APPROVED'?`<button class="act-btn" onclick="updateRegStatus(${r.id},'complete')">Mark Complete</button>`:'â€”'}</td>
       </tr>`).join('')}</tbody>
     </table></div>`;
   }
@@ -573,8 +573,8 @@
     if(!users.length){el.innerHTML='<p class="empty-info">No registrations yet.</p>';return;}
     el.innerHTML=users.map(u=>`<div class="reg-item">
       <div class="reg-av">${(u.name||'U')[0]}</div>
-      <div class="reg-info"><h5>${u.name}</h5><p>${u.email} · ${(u.enrollments||[]).length} course${(u.enrollments||[]).length!==1?'s':''}</p></div>
-      <div class="reg-date">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'—'}</div>
+      <div class="reg-info"><h5>${u.name}</h5><p>${u.email} Â· ${(u.enrollments||[]).length} course${(u.enrollments||[]).length!==1?'s':''}</p></div>
+      <div class="reg-date">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'â€”'}</div>
     </div>`).join('');
   }
 
@@ -588,7 +588,7 @@
     a.href=URL.createObjectURL(blob);
     a.download=`marchub_enrollments_${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
-    showToast('CSV downloaded! ✓','success');
+    showToast('CSV downloaded! âœ“','success');
   }
 
   document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
