@@ -1,5 +1,5 @@
 // ── MAIN JS — MarcHub ──
-const BACKEND = "https://marchub-backend.onrender.com";
+const BACKEND = "https://marchub-backend-wexu.onrender.com";
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 50);
