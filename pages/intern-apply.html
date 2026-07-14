@@ -26,7 +26,7 @@
     <div id="apply-result" style="margin-top:1rem;"></div>
   </div>
 </div>
-<script src="../js/main.js?v=2"></script>
+<script src="../js/main.js?v=3"></script>
 <script>
   const params=new URLSearchParams(window.location.search);
   const intId=params.get('id');
@@ -43,7 +43,9 @@
     const email=document.getElementById('app-email').value.trim();
     const phone=document.getElementById('app-phone').value.trim();
     const msg=document.getElementById('app-msg').value.trim();
-    if(!name||!email){showToast('Name and email are required.','error');return;}
+    if(!name||name.length<2){showToast('Name is required (min 2 chars).','error');return;}
+    if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){showToast('Enter a valid email address.','error');return;}
+    if(!phone||phone.replace(/\D/g,'').length<7){showToast('Enter a valid phone number (min 7 digits).','error');return;}
     document.getElementById('applyBtn').textContent='Submitting...';
     document.getElementById('applyBtn').disabled=true;
     const r=await AuthDB.registerForInternship({internshipId:parseInt(intId),name,email,phone,message:msg});

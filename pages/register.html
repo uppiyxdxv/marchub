@@ -54,7 +54,7 @@
   </div>
 </div>
 
-<script src="../js/main.js?v=2"></script>
+<script src="../js/main.js?v=3"></script>
 <script>
  const sess = AuthDB.getSession();
  if (sess) {
@@ -73,7 +73,8 @@ registerBtn.addEventListener('click', async () => {
   document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
   document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
 
-  if (!name) {
+  if (!name||name.length<2||name.length>50) {
+    document.getElementById('name-err').textContent=name?'Name must be 2–50 characters.':'Full name is required.';
     document.getElementById('name-err').classList.add('show');
     document.getElementById('name').classList.add('input-error');
     valid = false;

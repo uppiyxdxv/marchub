@@ -238,7 +238,7 @@ window.AuthDB = {
   submitTask(email,course,taskId,answer){
     const subs=this.getSubmissions(email,course);
     if(subs.find(s=>s.taskId===taskId)) return {ok:false,msg:'Already submitted.'};
-    subs.push({taskId,answer,submittedAt:new Date().toISOString(),score:null});
+    subs.push({taskId,answer,submittedAt:new Date().toISOString(),score:null,verified:false});
     localStorage.setItem(`lv_sub_${email}_${course}`,JSON.stringify(subs)); return {ok:true};
   },
   gradeSubmission(email,course,taskId,score){
@@ -246,10 +246,25 @@ window.AuthDB = {
     const sub=subs.find(s=>s.taskId===taskId);
     if(sub){sub.score=score;localStorage.setItem(`lv_sub_${email}_${course}`,JSON.stringify(subs));}
   },
+  verifySubmission(email,course,taskId){
+    const subs=this.getSubmissions(email,course);
+    const sub=subs.find(s=>s.taskId===taskId);
+    if(sub){sub.verified=true;localStorage.setItem(`lv_sub_${email}_${course}`,JSON.stringify(subs));}
+  },
   allTasksSubmitted(email,course){
     const tasks=this.getTasks(course); if(!tasks.length) return false;
     const subs=this.getSubmissions(email,course);
     return tasks.every(t=>subs.find(s=>s.taskId===t.id));
+  },
+  allTasksGraded(email,course){
+    const tasks=this.getTasks(course); if(!tasks.length) return false;
+    const subs=this.getSubmissions(email,course);
+    return tasks.every(t=>{const s=subs.find(x=>x.taskId===t.id); return s && s.score!==null;});
+  },
+  allTasksVerified(email,course){
+    const tasks=this.getTasks(course); if(!tasks.length) return false;
+    const subs=this.getSubmissions(email,course);
+    return tasks.every(t=>{const s=subs.find(x=>x.taskId===t.id); return s && s.verified===true;});
   },
   async getAllEnrollments() {
 

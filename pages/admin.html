@@ -244,7 +244,7 @@
   </div>
 </div>
 
-<script src="../js/main.js?v=2"></script>
+<script src="../js/main.js?v=3"></script>
 <script>
   const sess=AuthDB.getSession();
   if(!sess||!sess.isAdmin){window.location.href='login.html';}
@@ -349,10 +349,36 @@
     if(!course){con.innerHTML='<p class="empty-info">Select a course above.</p>';return;}
     const tasks=AuthDB.getTasks(course);
     if(!tasks.length){con.innerHTML=`<p class="empty-info">No tasks for ${course} yet.</p>`;return;}
-    con.innerHTML=tasks.map(t=>`<div class="admin-task-item">
-      <div class="ti"><h5>${t.title}</h5><p>${t.desc||''}</p><div class="due">📅 ${t.due||'No deadline'}</div></div>
-      <button class="del-btn" onclick="deleteTask('${course}',${t.id})">🗑</button>
-    </div>`).join('');
+    const enrolledUsers=cache.users.filter(u=>(u.enrollments||[]).find(e=>e.course===course));
+    con.innerHTML=tasks.map(t=>{
+      let subsTotal=0, verifiedTotal=0;
+      const subRows=enrolledUsers.map(u=>{
+        const subs=AuthDB.getSubmissions(u.email,course);
+        const sub=subs.find(s=>s.taskId===t.id);
+        if(sub){subsTotal++;if(sub.verified)verifiedTotal++;}
+        return sub?`<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem .5rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;">
+          <span style="font-weight:600;">${u.name}</span>
+          <span style="font-size:.72rem;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sub.answer}</span>
+          <span style="color:var(--muted);font-family:var(--font-mono);font-size:.72rem;">${new Date(sub.submittedAt).toLocaleDateString('en-IN')}</span>
+          <span>${sub.verified?'<span style="color:#10b981;">✓ Verified</span>':`<button class="grade-btn" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#10b981;" onclick="verifyTask('${u.email}','${course}',${t.id})">OK ✓</button>`}</span>
+        </div>`:'';
+      }).filter(r=>r).join('');
+      return `<div style="background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;">
+          <div style="flex:1;">
+            <h5 style="font-size:.9rem;font-weight:700;margin-bottom:.2rem;">${t.title}</h5>
+            <p style="font-size:.78rem;color:var(--muted);">${t.desc||''}</p>
+            <div class="due">📅 ${t.due||'No deadline'}</div>
+            <div style="font-size:.75rem;font-family:var(--font-mono);margin-top:.3rem;">
+              <span style="color:${subsTotal===enrolledUsers.length?'#10b981':'#eab308'};">${subsTotal}/${enrolledUsers.length} submitted</span>
+              · <span style="color:${verifiedTotal===subsTotal&&subsTotal>0?'#10b981':'#eab308'};">${verifiedTotal}/${subsTotal} verified</span>
+            </div>
+          </div>
+          <button class="del-btn" onclick="deleteTask('${course}',${t.id})">🗑</button>
+        </div>
+        ${subRows?`<div style="margin-top:.5rem;border-top:1px solid var(--card-border);padding-top:.4rem;">${subRows}</div>`:'<p style="font-size:.78rem;color:var(--muted);padding:.5rem 0;">No submissions yet.</p>'}
+      </div>`;
+    }).join('');
   }
 
   function deleteTask(course,id){
@@ -371,7 +397,7 @@
     if(!users.length){con.innerHTML=`<p class="empty-info">No students enrolled in ${course}.</p>`;return;}
     if(!tasks.length){con.innerHTML=`<p class="empty-info">No tasks assigned to ${course} yet.</p>`;return;}
     con.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr><th>Student</th><th>Email</th><th>Task</th><th>Answer</th><th>Submitted</th><th>Score/100</th></tr></thead>
+      <thead><tr><th>Student</th><th>Email</th><th>Task</th><th>Answer</th><th>Submitted</th><th>Score/100</th><th>Verify</th></tr></thead>
       <tbody>${users.flatMap(u=>tasks.map(t=>{
         const subs=AuthDB.getSubmissions(u.email,course);
         const sub=subs.find(s=>s.taskId===t.id);
@@ -382,6 +408,7 @@
           <td style="font-size:.78rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sub?sub.answer:'<span style="color:var(--muted);">Not submitted</span>'}</td>
           <td style="font-size:.75rem;color:var(--muted);font-family:var(--font-mono);">${sub?new Date(sub.submittedAt).toLocaleDateString('en-IN'):'—'}</td>
           <td>${sub?`<div style="display:flex;gap:.4rem;align-items:center;"><input class="grade-input" type="number" min="0" max="100" value="${sub.score!==null?sub.score:''}" id="sc_${u.email.replace('@','_')}_${t.id}" placeholder="—"/><button class="grade-btn" onclick="gradeIt('${u.email}','${course}',${t.id},'sc_${u.email.replace('@','_')}_${t.id}')">Save</button></div>`:'—'}</td>
+          <td style="text-align:center;">${sub?`${sub.verified?'<span style="color:#10b981;font-size:1.1rem;">✓</span>':`<button class="grade-btn" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#10b981;" onclick="verifyIt('${u.email}','${course}',${t.id})">OK ✓</button>`}`:'—'}</td>
         </tr>`;
       })).join('')}</tbody>
     </table></div>`;
@@ -393,6 +420,17 @@
     if(isNaN(score)||score<0||score>100){showToast('Enter a score between 0–100','error');return;}
     AuthDB.gradeSubmission(email,course,taskId,score);
     showToast('Score saved! ✓','success');
+  }
+  function verifyIt(email,course,taskId){
+    if(!confirm(`Verify this task for ${email}?`)) return;
+    AuthDB.verifySubmission(email,course,taskId);
+    renderSubmissions();
+    showToast('Task verified! ✓','success');
+  }
+  function verifyTask(email,course,taskId){
+    AuthDB.verifySubmission(email,course,taskId);
+    renderTaskList();
+    showToast('Task verified! ✓','success');
   }
 
   // ── Courses ──

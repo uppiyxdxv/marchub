@@ -110,7 +110,7 @@
 </div>
 
 <!-- ── main.js (AuthDB, showToast) ── -->
-<script src="../js/main.js?v=2"></script>
+<script src="../js/main.js?v=3"></script>
 
 <!-- ── ENROLLMENT LOGIC ── -->
 <script>
@@ -167,7 +167,8 @@
     document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show'));
     document.querySelectorAll('input, select').forEach(i => i.classList.remove('input-error'));
 
-    if (!name) {
+    if (!name||name.length<2||name.length>50) {
+      document.getElementById('en-name-err').textContent=name?'Name must be 2–50 characters.':'Full name is required.';
       document.getElementById('en-name-err').classList.add('show');
       document.getElementById('enroll-name').classList.add('input-error');
       ok = false;
