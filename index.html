@@ -217,7 +217,6 @@
 <script src="js/three-bg.js"></script>
 <script src="js/main.js"></script>
 <script>
-  const BACKEND = "https://marchub-backend-wexu.onrender.com";
   fetch(`${BACKEND}/internships/active`).then(r=>r.json()).then(data=>{
     const grid=document.getElementById('internshipGrid');
     if(!data.length){grid.innerHTML='<p style="color:var(--muted);text-align:center;grid-column:1/-1;">No open internships right now. Check back soon!</p>';return;}
