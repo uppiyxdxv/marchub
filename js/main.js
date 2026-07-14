@@ -378,6 +378,10 @@ async getAllRegistrations() {
     const r = await fetch(`${BACKEND}/internships/all-registrations`);
     return await r.json();
 },
+async getUserRegistrations(email) {
+    const all = await this.getAllRegistrations();
+    return all.filter(r => r.email === email);
+},
 async updateInternshipStatus(data) {
     const r = await fetch(`${BACKEND}/internships/update-status`, {
         method: "POST",
@@ -385,6 +389,45 @@ async updateInternshipStatus(data) {
         body: JSON.stringify(data)
     });
     return await r.json();
+},
+// --- Internship Tasks ---
+getInternshipSubmissions(email, internshipId){
+    return JSON.parse(localStorage.getItem(`lv_int_sub_${email}_${internshipId}`)||'null');
+},
+saveInternshipSubmission(email, internshipId, data){
+    localStorage.setItem(`lv_int_sub_${email}_${internshipId}`, JSON.stringify(data));
+},
+submitInternshipTask(email, internshipId, taskType, url){
+    let sub = this.getInternshipSubmissions(email, internshipId);
+    if(!sub) sub = { github: null, linkedin: null };
+    if(sub[taskType]) return { ok: false, msg: `${taskType} URL already submitted.` };
+    sub[taskType] = { url, submittedAt: new Date().toISOString(), verified: false };
+    this.saveInternshipSubmission(email, internshipId, sub);
+    this.syncInternshipSubmissionBackend(email, internshipId, sub);
+    return { ok: true };
+},
+verifyInternshipTask(email, internshipId, taskType){
+    const sub = this.getInternshipSubmissions(email, internshipId);
+    if(!sub || !sub[taskType]) return;
+    sub[taskType].verified = true;
+    this.saveInternshipSubmission(email, internshipId, sub);
+    this.syncInternshipSubmissionBackend(email, internshipId, sub);
+},
+async syncInternshipSubmissionBackend(email, internshipId, data){
+    try {
+        const all = await this.getAllRegistrations();
+        const reg = all.find(r => r.email === email && r.internshipId == internshipId);
+        if (!reg) return;
+        await fetch(`${BACKEND}/internships/update-status`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id: reg.id,
+                action: 'sync_tasks',
+                taskData: JSON.stringify(data)
+            })
+        });
+    } catch(e) { console.warn('Backend sync failed', e); }
 },
 };
 // --- Password show/hide toggle ---

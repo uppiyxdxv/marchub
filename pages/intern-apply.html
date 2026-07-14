@@ -38,6 +38,8 @@
     document.getElementById('app-email').value=sess.email||'';
   }
 
+  let _intName='',_intEmail='';
+
   document.getElementById('applyBtn').addEventListener('click',async()=>{
     const name=document.getElementById('app-name').value.trim();
     const email=document.getElementById('app-email').value.trim();
@@ -52,11 +54,42 @@
     document.getElementById('applyBtn').textContent='Submit Application →';
     document.getElementById('applyBtn').disabled=false;
     if(r.success){
-      document.querySelector('.auth-card').innerHTML='<h2>✅ Application Submitted!</h2><p>We\'ll review your application and get back to you via email.</p><a href="../index.html" class="btn-hero">Back to Home</a>';
+      _intName=name; _intEmail=email;
+      document.querySelector('.auth-card').innerHTML=`<h2>✅ Application Submitted!</h2>
+        <p style="color:var(--muted);margin-bottom:1.5rem;">Now submit your internship tasks below.</p>
+        <hr style="border:none;border-top:1px solid var(--card-border);margin:1rem 0;">
+        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:1rem;">📋 Submit Your Work</h3>
+        <div class="form-group"><label>GitHub URL <span style="color:var(--accent3);">*</span></label>
+          <input type="url" id="int-github" placeholder="https://github.com/your-repo"/>
+          <div id="int-github-err" class="form-error" style="display:none;color:#ef4444;font-size:.82rem;margin-top:.3rem;"></div></div>
+        <div class="form-group"><label>LinkedIn Video Post URL <span style="color:var(--accent3);">*</span></label>
+          <input type="url" id="int-linkedin" placeholder="https://www.linkedin.com/posts/..."/>
+          <div id="int-linkedin-err" class="form-error" style="display:none;color:#ef4444;font-size:.82rem;margin-top:.3rem;"></div></div>
+        <button class="btn-full" id="intTaskBtn">Submit Tasks →</button>
+        <div id="int-task-err" style="color:#ef4444;font-size:.85rem;margin-top:.5rem;display:none;"></div>`;
+      document.getElementById('intTaskBtn').addEventListener('click', submitIntTasks);
     }else{
       showToast(r.message||'Failed to submit','error');
     }
   });
+
+  async function submitIntTasks(){
+    const github=document.getElementById('int-github').value.trim();
+    const linkedin=document.getElementById('int-linkedin').value.trim();
+    document.getElementById('int-github-err').style.display='none';
+    document.getElementById('int-linkedin-err').style.display='none';
+    document.getElementById('int-task-err').style.display='none';
+    if(!github||!/^https?:\/\/github\.com\/[^\s]+$/.test(github)){document.getElementById('int-github-err').textContent='Enter a valid GitHub URL.';document.getElementById('int-github-err').style.display='block';return;}
+    if(!linkedin||!/^https?:\/\/(www\.)?linkedin\.com\/[^\s]+$/.test(linkedin)){document.getElementById('int-linkedin-err').textContent='Enter a valid LinkedIn URL.';document.getElementById('int-linkedin-err').style.display='block';return;}
+    const btn=document.getElementById('intTaskBtn');
+    btn.textContent='Saving...';btn.disabled=true;
+    const g=AuthDB.submitInternshipTask(_intEmail,parseInt(intId),'github',github);
+    if(!g.ok){document.getElementById('int-task-err').textContent=g.msg;document.getElementById('int-task-err').style.display='block';btn.textContent='Submit Tasks →';btn.disabled=false;return;}
+    const l=AuthDB.submitInternshipTask(_intEmail,parseInt(intId),'linkedin',linkedin);
+    if(!l.ok){document.getElementById('int-task-err').textContent=l.msg;document.getElementById('int-task-err').style.display='block';btn.textContent='Submit Tasks →';btn.disabled=false;return;}
+    document.querySelector('.auth-card').innerHTML='<h2>✅ All Tasks Submitted!</h2><p>Your work has been submitted. The admin will review and verify it.</p><a href="../index.html" class="btn-hero">Back to Home</a>';
+    showToast('Tasks submitted! ✓','success');
+  }
 </script>
 </body>
 </html>

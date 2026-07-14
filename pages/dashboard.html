@@ -116,6 +116,7 @@
   <!-- Tabs -->
   <div class="tab-row">
     <button class="tab-btn active" onclick="switchTab('courses')" id="tab-courses">📚 My Courses</button>
+    <button class="tab-btn" onclick="switchTab('internships')" id="tab-internships">💼 Internships</button>
     <button class="tab-btn" onclick="switchTab('performance')" id="tab-performance">📊 Performance</button>
     <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">⚙ Settings</button>
   </div>
@@ -123,6 +124,11 @@
   <!-- Courses Tab -->
   <div class="tab-panel active" id="panel-courses">
     <div class="course-grid" id="courseGrid"></div>
+  </div>
+
+  <!-- Internships Tab -->
+  <div class="tab-panel" id="panel-internships">
+    <div class="course-grid" id="internshipGrid"></div>
   </div>
 
   <!-- Performance Tab -->
@@ -199,6 +205,8 @@ if(!session){window.location.href='login.html';}else if(session.isAdmin){window.
 
 let user=session;
 let enrollments=[];
+let _intRegs=null;
+let _intCache=[];
 
 // --- Global functions for onclick handlers ---
 function renderAvatar(el,name,avatar){
@@ -212,6 +220,7 @@ function switchTab(t){
   document.getElementById('tab-'+t)?.classList.add('active');
   if(t==='settings') loadSettings();
   if(t==='performance') renderPerformance();
+  if(t==='internships') renderInternships();
 }
 function renderPerformance(){
   const el=document.getElementById('perfContent'); if(!el) return;
@@ -246,9 +255,11 @@ async function loadSettings(){
 }
 function submitTask(email,course,taskId,ansId){
   const answer=document.getElementById(ansId).value.trim();
-  if(!answer){showToast('Please write an answer or link first.','error');return;}
+  if(!answer){showToast('Please enter your GitHub URL.','error');return;}
   if(answer.length>5000){showToast('Answer too long (max 5000 chars).','error');return;}
-  if(/https?:\/\/.+/.test(answer)&&!/^https?:\/\/[^\s]+$/.test(answer)){showToast('Invalid URL format.','error');return;}
+  if(!/^https?:\/\/github\.com\/[^\s]+$/.test(answer)){showToast('Enter a valid GitHub URL (https://github.com/...).','error');return;}
+  const subs=AuthDB.getSubmissions(email,course);
+  if(subs.find(s=>s.answer===answer)){showToast('This GitHub URL was already submitted.','error');return;}
   const r=AuthDB.submitTask(email,course,taskId,answer);
   if(r.ok){showToast('Task submitted! ✓','success');renderCourses();}
   else showToast(r.msg,'error');
@@ -309,6 +320,54 @@ function renderCourses(){
   }).join('');
 }
 
+async function submitInternshipTaskDash(internshipId, type){
+  const input=document.getElementById(`int-${type}-${internshipId}`);
+  const err=document.getElementById(`int-${type}-err-${internshipId}`);
+  const url=input.value.trim();
+  if(err)err.style.display='none';
+  if(!url||!/^https?:\/\/github\.com\/[^\s]+$/.test(url)&&type==='github'||!/^https?:\/\/(www\.)?linkedin\.com\/[^\s]+$/.test(url)&&type==='linkedin'){
+    if(err){err.textContent=`Enter a valid ${type==='github'?'GitHub':'LinkedIn'} URL.`;err.style.display='block';}
+    return;
+  }
+  const r=AuthDB.submitInternshipTask(session.email,internshipId,type,url);
+  if(r.ok){showToast(`${type} task submitted! ✓`,'success');renderInternships();}
+  else showToast(r.msg,'error');
+}
+async function renderInternships(){
+  const grid=document.getElementById('internshipGrid'); if(!grid) return;
+  if(!_intRegs||!_intRegs.length){grid.innerHTML='<div class="empty-state"><div class="big">💼</div><h3>No internship applications yet</h3><p><a href="intern-apply.html?id=1" class="btn-hero" style="margin-top:1rem;display:inline-block;">Apply for Internship →</a></p></div>';return;}
+  grid.innerHTML=_intRegs.map(r=>{
+    const int=_intCache.find(i=>i.id==r.internshipId);
+    const title=int?int.title:'Internship #'+r.internshipId;
+    const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId)||(r.taskData?JSON.parse(r.taskData):null);
+    const gh=sub&&sub.github;
+    const li=sub&&sub.linkedin;
+    const approved=r.status==='APPROVED';
+    const completed=r.status==='COMPLETED';
+    const color=approved?'#10b981':r.status==='REJECTED'?'#ef4444':'#eab308';
+    return `<div class="c-card" style="box-shadow:inset 0 3px 0 ${color},0 4px 20px rgba(0,0,0,.08);">
+      <div class="c-card-top"><span class="c-icon">💼</span><div><h4>${title}</h4></div></div>
+      <div style="margin-bottom:.75rem;"><span style="display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span></div>
+      ${completed?`<p style="color:var(--muted);font-size:.85rem;">✅ Internship completed!</p>`:
+      approved?`<div>
+        <p style="color:var(--muted);font-size:.82rem;margin-bottom:1rem;">Submit your tasks below:</p>
+        <div class="form-group"><label>GitHub URL <span style="color:var(--accent3);">*</span></label>
+          <input type="url" id="int-github-${r.internshipId}" placeholder="https://github.com/your-repo" value="${gh?gh.url:''}" ${gh?'readonly':''}/>
+          <div id="int-github-err-${r.internshipId}" class="form-error" style="display:none;color:#ef4444;font-size:.82rem;margin-top:.3rem;"></div></div>
+        <div class="form-group"><label>LinkedIn Video Post URL <span style="color:var(--accent3);">*</span></label>
+          <input type="url" id="int-linkedin-${r.internshipId}" placeholder="https://www.linkedin.com/posts/..." value="${li?li.url:''}" ${li?'readonly':''}/>
+          <div id="int-linkedin-err-${r.internshipId}" class="form-error" style="display:none;color:#ef4444;font-size:.82rem;margin-top:.3rem;"></div></div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem;">
+          ${!gh?`<button class="btn-full" style="flex:1;" onclick="submitInternshipTaskDash(${r.internshipId},'github')">Submit GitHub →</button>`:`<span style="color:#10b981;font-size:.85rem;">✓ GitHub ${gh.verified?'Verified':'Submitted'}</span>`}
+          ${!li?`<button class="btn-full" style="flex:1;" onclick="submitInternshipTaskDash(${r.internshipId},'linkedin')">Submit LinkedIn →</button>`:`<span style="color:#10b981;font-size:.85rem;">✓ LinkedIn ${li.verified?'Verified':'Submitted'}</span>`}
+        </div>
+      </div>`:
+      r.status==='PENDING'?`<p style="color:var(--muted);font-size:.85rem;">⏳ Your application is under review.</p>`:
+      `<p style="color:var(--muted);font-size:.85rem;">❌ Application not accepted.</p>`}
+    </div>`;
+  }).join('');
+}
+
 // --- Logout button (always works immediately) ---
 document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 
@@ -335,6 +394,12 @@ if(session&&!session.isAdmin){(async()=>{
     <div class="stat-box"><div class="n">${totalSubs}</div><div class="l">Submitted</div></div>
     <div class="stat-box"><div class="n">${enrollments.filter(e=>AuthDB.allTasksVerified(session.email,e.course)).length}</div><div class="l">Completed</div></div>`;
   renderCourses();
+
+  // Fetch internships for the tab
+  try{
+    _intCache=await AuthDB.getAllInternships();
+    _intRegs=await AuthDB.getUserRegistrations(session.email);
+  }catch(e){console.warn('Internships fetch failed',e);}
 
   // Avatar file upload
   document.getElementById('avatarInput').addEventListener('change',function(){
