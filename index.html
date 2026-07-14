@@ -20,6 +20,7 @@
   <ul class="nav-links">
 
     <li><a href="#courses">Courses</a></li>
+    <li><a href="#internships">Internships</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="pages/login.html" class="btn-nav">Login</a></li>
     <li><a href="pages/register.html" class="btn-nav btn-primary-nav">Register</a></li>
@@ -138,6 +139,16 @@
   </div>
 </section>
 
+<!-- ── INTERNSHIPS ── -->
+<section class="courses" id="internships" style="background:var(--bg2);">
+  <div class="section-label">Gain Experience</div>
+  <h2 class="section-title">Internships</h2>
+  <p class="section-sub">Work on real projects, build your portfolio, and earn a certificate.</p>
+  <div id="internshipGrid" class="courses-grid">
+    <p style="color:var(--muted);text-align:center;grid-column:1/-1;">Loading internships...</p>
+  </div>
+</section>
+
 <!-- ── ABOUT ── -->
 <section class="about" id="about">
   <div class="about-inner">
@@ -205,5 +216,22 @@
 </div>
 <script src="js/three-bg.js"></script>
 <script src="js/main.js"></script>
+<script>
+  const BACKEND = "https://marchub-backend-wexu.onrender.com";
+  fetch(`${BACKEND}/internships/active`).then(r=>r.json()).then(data=>{
+    const grid=document.getElementById('internshipGrid');
+    if(!data.length){grid.innerHTML='<p style="color:var(--muted);text-align:center;grid-column:1/-1;">No open internships right now. Check back soon!</p>';return;}
+    grid.innerHTML=data.map(i=>`<div class="course-card" data-color="#7c3aed">
+      <div class="card-glow"></div>
+      <div class="card-icon">💼</div>
+      <h3>${i.title}</h3>
+      <p>${(i.description||'').slice(0,120)}</p>
+      <div class="card-meta"><span>🎯 ${(i.requirements||'').split('\n').length||0} requirements</span></div>
+      <a href="pages/intern-apply.html?id=${i.id}" class="card-btn">Apply Now →</a>
+    </div>`).join('');
+  }).catch(()=>{
+    document.getElementById('internshipGrid').innerHTML='<p style="color:var(--muted);text-align:center;grid-column:1/-1;">Unable to load internships.</p>';
+  });
+</script>
 </body>
 </html>

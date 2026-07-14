@@ -5,6 +5,8 @@
   <title>Login – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
   <style>
     .auth-page{background:radial-gradient(ellipse at 60% 40%,rgba(124,58,237,.12),transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(0,245,196,.08),transparent 50%),var(--bg);}
     .back-link{position:fixed;top:1.5rem;left:2rem;color:var(--muted);font-size:.9rem;z-index:10;}
@@ -170,7 +172,16 @@
 
         _code = String(Math.floor(100000 + Math.random() * 900000));
 
-        showToast("Demo OTP : " + _code, "success");
+        try {
+            await emailjs.send("service_63ztzjj", "template_0gbkr7y", {
+                user_name: em,
+                user_email: em,
+                registered_at: "Your OTP code is: " + _code
+            });
+            showToast("OTP sent to your email", "success");
+        } catch (mailErr) {
+            showToast("Demo OTP: " + _code, "success");
+        }
 
         document.getElementById("fp-title").textContent = "Verify Code";
         document.getElementById("fp-desc").textContent =

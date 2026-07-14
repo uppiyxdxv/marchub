@@ -273,5 +273,98 @@ window.AuthDB = {
     return await response.json();
 
 },
+// ─── Courses ───
+async getCourses() {
+    const r = await fetch(`${BACKEND}/courses`);
+    return await r.json();
+},
+async createCourse(data) {
+    const r = await fetch(`${BACKEND}/courses`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
+async updateCourse(id, data) {
+    const r = await fetch(`${BACKEND}/courses/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
+async deleteCourse(id) {
+    await fetch(`${BACKEND}/courses/${id}`, { method: "DELETE" });
+},
+// ─── Certificates ───
+async getUserCertificates(email) {
+    const r = await fetch(`${BACKEND}/certificates/user/${email}`);
+    return await r.json();
+},
+async getAllCertificates() {
+    const r = await fetch(`${BACKEND}/certificates`);
+    return await r.json();
+},
+async verifyCertificate(email, course) {
+    const r = await fetch(`${BACKEND}/certificates/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, course, action: "verify" })
+    });
+    return await r.json();
+},
+// ─── Internships ───
+async getActiveInternships() {
+    const r = await fetch(`${BACKEND}/internships/active`);
+    return await r.json();
+},
+async getAllInternships() {
+    const r = await fetch(`${BACKEND}/internships`);
+    return await r.json();
+},
+async createInternship(data) {
+    const r = await fetch(`${BACKEND}/internships`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
+async updateInternship(id, data) {
+    const r = await fetch(`${BACKEND}/internships/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
+async deleteInternship(id) {
+    await fetch(`${BACKEND}/internships/${id}`, { method: "DELETE" });
+},
+async registerForInternship(data) {
+    const r = await fetch(`${BACKEND}/internships/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
+async getInternshipRegistrations(id) {
+    const r = await fetch(`${BACKEND}/internships/registrations/${id}`);
+    return await r.json();
+},
+async getAllRegistrations() {
+    const r = await fetch(`${BACKEND}/internships/all-registrations`);
+    return await r.json();
+},
+async updateInternshipStatus(data) {
+    const r = await fetch(`${BACKEND}/internships/update-status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+    return await r.json();
+},
 };
 console.log('%cMarcHub 🚀','color:#00f5c4;font-size:1.5rem;font-weight:bold;');

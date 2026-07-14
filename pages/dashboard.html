@@ -67,15 +67,14 @@
     /* Cert modal */
     .cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
     .cert-overlay.show{display:flex;}
-    .cert-paper{background:#fff;border-radius:12px;padding:3rem;max-width:600px;width:90%;text-align:center;position:relative;}
-    .cert-paper h1{font-size:2rem;color:#1a1a1a;font-weight:800;margin:.5rem 0;}
-    .cert-paper .sub{color:#666;margin-bottom:1.5rem;}
-    .cert-paper .name{font-size:1.8rem;color:#7c3aed;font-weight:800;border-bottom:2px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:1rem 0;}
-    .cert-paper .course-nm{font-size:1.2rem;color:#1a1a1a;font-weight:600;margin-top:.5rem;}
-    .cert-paper .date{color:#666;font-size:.85rem;margin-top:1rem;}
-    .cert-paper .seal{font-size:3rem;margin:1rem 0;}
-    .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;}
-    .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;}
+    .cert-paper{background:#fff;border-radius:16px;padding:2.5rem;max-width:650px;width:92%;text-align:center;position:relative;box-shadow:0 0 60px rgba(124,58,237,.3);}
+    .cert-paper .cert-border{border:3px solid #7c3aed;border-radius:12px;padding:.5rem;}
+    .cert-paper .cert-inner{border:2px solid #e5e7eb;border-radius:8px;padding:2rem 2.5rem;}
+    .cert-paper .cert-logo img{max-height:60px;margin-bottom:.5rem;}
+    .cert-paper .cert-seal{font-size:3rem;margin:.2rem 0;}
+    .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;z-index:10;}
+    .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;}
+    .btn-print:hover{background:#6d28d9;transform:translateY(-1px);}
     /* Logout */
     .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:none;transition:all .2s;}
     .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
@@ -178,23 +177,34 @@
   </div>
 </div>
 
-<!-- Certificate Modal -->
 <div class="cert-overlay" id="certModal">
   <div class="cert-paper">
     <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">✕</button>
-    <div class="seal">🏆</div>
-    <div style="font-size:.9rem;color:#888;text-transform:uppercase;letter-spacing:.15em;">Certificate of Completion</div>
-    <h1>MarcHub</h1>
-    <div class="sub">This certifies that</div>
-    <div class="name" id="cert-name"></div>
-    <div class="sub">has successfully completed</div>
-    <div class="course-nm" id="cert-course"></div>
-    <div class="date" id="cert-date"></div>
-    <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee;">
-      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div></div>
-      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">MarcHub Director</div></div>
+    <div class="cert-border">
+      <div class="cert-inner">
+        <div class="cert-logo"><img src="../images/logo.png" alt="MarcHub" onerror="this.style.display='none'"></div>
+        <div style="font-size:.85rem;color:#888;text-transform:uppercase;letter-spacing:.2em;margin-top:1rem;">Certificate of Completion</div>
+        <h1 style="font-size:2.2rem;color:#7c3aed;font-weight:800;margin:.3rem 0;">MarcHub</h1>
+        <div class="cert-seal">🏆</div>
+        <div class="sub" style="color:#666;margin:.5rem 0;font-size:1rem;">This certifies that</div>
+        <div class="name" id="cert-name" style="font-size:2rem;color:#1a1a1a;font-weight:800;border-bottom:3px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:.5rem 0 1rem;"></div>
+        <div class="sub" style="color:#666;margin-bottom:.3rem;">has successfully completed</div>
+        <div class="course-nm" id="cert-course" style="font-size:1.3rem;color:#7c3aed;font-weight:700;margin:.5rem 0;"></div>
+        <div class="date" id="cert-date" style="color:#888;font-size:.85rem;margin-top:.5rem;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:end;margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e5e7eb;">
+          <div style="text-align:left;">
+            <div style="border-top:2px solid #333;width:140px;"></div>
+            <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:.8rem;color:#7c3aed;font-weight:700;font-style:italic;">— MarcHub CEO</div>
+            <div style="border-top:2px solid #333;width:140px;margin-left:auto;"></div>
+            <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Authorized Signature</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨 Print Certificate</button>
+    <button class="btn-print" onclick="window.print()">🖨 Print / Download PDF</button>
   </div>
 </div>
 
@@ -208,8 +218,15 @@
   if(!session) {window.location.href='login.html';}
   if(session && session.isAdmin) {window.location.href='admin.html';}
 
-  // Load full user profile
-  const user=AuthDB.getUser(session.email)||session;
+  // Load full user profile & init dashboard
+  let user = session;
+  AuthDB.getUser(session.email).then(u => {
+    if (u) user = u;
+    initDashboard();
+  });
+  if (!user.email && !user.name) initDashboard();
+
+  async function initDashboard() {
 
   // Render profile card
   function renderAvatar(el, name, avatar){
@@ -224,7 +241,7 @@
 
   // Load enrollments
   const globalEnroll=JSON.parse(localStorage.getItem('lv_enrollments')||'[]');
-  const userEnroll=AuthDB.getEnrollments(session.email);
+  const userEnroll = await AuthDB.getEnrollments(session.email);
   const mergedMap={};
   globalEnroll.filter(e=>e.email===session.email).forEach(e=>mergedMap[e.course]=e);
   userEnroll.forEach(e=>mergedMap[e.course]=Object.assign(mergedMap[e.course]||{},e));
@@ -343,8 +360,8 @@
   }
 
   // Settings
-  function loadSettings(){
-    const u=AuthDB.getUser(session.email)||session;
+  async function loadSettings(){
+    const u = await AuthDB.getUser(session.email) || session;
     document.getElementById('set-name').value=u.name||'';
     document.getElementById('set-phone').value=u.phone||'';
     document.getElementById('set-bio').value=u.bio||'';
@@ -356,12 +373,12 @@
   document.getElementById('avatarInput').addEventListener('change',function(){
     const file=this.files[0]; if(!file) return;
     if(file.size>2*1024*1024){showToast('Image must be under 2MB','error');return;}
-    const reader=new FileReader();
-    reader.onload = e => {
+    var reader = new FileReader();
+    reader.onload = async e => {
 
     selectedAvatar = e.target.result;
 
-  const currentUser = AuthDB.getUser(session.email) || session;
+  const currentUser = await AuthDB.getUser(session.email) || session;
 
 renderAvatar(
     document.getElementById('settingsAvatar'),
@@ -375,7 +392,7 @@ renderAvatar(
     reader.readAsDataURL(file);
   });
 
-  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
 
     const name = document.getElementById('set-name').value.trim();
     const phone = document.getElementById('set-phone').value.trim();
@@ -392,15 +409,18 @@ renderAvatar(
    }
 
     // Verify current password
-    if (!AuthDB.verifyPassword(session.email, curpass)) {
+    const pwValid = await AuthDB.verifyPassword(session.email, curpass);
+    if (!pwValid) {
         showToast('Current password is incorrect.', 'error');
+        document.getElementById('set-curpass').value = '';
         return;
     }
 
-    const r = AuthDB.updateProfile(session.email, updates);
+    const r = await AuthDB.updateProfile(session.email, updates);
+    document.getElementById('set-curpass').value = '';
 
    if (r.ok) {
-    const updatedUser = AuthDB.getUser(session.email);
+    const updatedUser = await AuthDB.getUser(session.email) || session;
 
     renderAvatar(
        document.getElementById("avatarEl"),
@@ -430,14 +450,13 @@ renderAvatar(
     document.getElementById('profileBio').textContent =
         updates.bio ? '"' + updates.bio + '"' : '';
 
-    document.getElementById('set-curpass').value = '';
-
 } else {
     showToast(r.msg, 'error');
 }
 
 });
   document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
+  } // end initDashboard
 </script>
 </body>
 </html>
