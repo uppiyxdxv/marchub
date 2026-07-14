@@ -200,8 +200,7 @@ const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef
 const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
 
 const session=AuthDB.getSession();
-if(!session){window.location.href='login.html';return;}
-if(session.isAdmin){window.location.href='admin.html';return;}
+if(!session){window.location.href='login.html';}else if(session.isAdmin){window.location.href='admin.html';}
 
 let user=session;
 let enrollments=[];
@@ -315,7 +314,7 @@ function renderCourses(){
 document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 
 // --- Init: fetch user profile & enrollment data (async) ---
-(async()=>{
+if(session&&!session.isAdmin){(async()=>{
   try{const u=await AuthDB.getUser(session.email);if(u)user=u;}catch(e){}
   renderAvatar(document.getElementById('avatarEl'),user.name,user.avatar);
   document.getElementById('profileName').textContent=user.name||'Student';
@@ -383,7 +382,7 @@ document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout
       document.getElementById('set-conpass').value='';
     }else showToast(r.msg,'error');
   });
-})();
+})();}
 </script>
 </body>
 </html>
