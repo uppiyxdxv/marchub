@@ -1,12 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Dashboard – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body{background:var(--bg);}
     .dashboard{padding:7rem 5% 4rem;min-height:100vh;}
@@ -69,14 +67,15 @@
     /* Cert modal */
     .cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
     .cert-overlay.show{display:flex;}
-    .cert-paper{background:#fff;border-radius:16px;padding:2.5rem;max-width:650px;width:92%;text-align:center;position:relative;box-shadow:0 0 60px rgba(124,58,237,.3);}
-    .cert-paper .cert-border{border:3px solid #7c3aed;border-radius:12px;padding:.5rem;}
-    .cert-paper .cert-inner{border:2px solid #e5e7eb;border-radius:8px;padding:2rem 2.5rem;}
-    .cert-paper .cert-logo img{max-height:60px;margin-bottom:.5rem;}
-    .cert-paper .cert-seal{font-size:3rem;margin:.2rem 0;}
-    .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;z-index:10;}
-    .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;transition:all .2s;}
-    .btn-print:hover{background:#6d28d9;transform:translateY(-1px);}
+    .cert-paper{background:#fff;border-radius:12px;padding:3rem;max-width:600px;width:90%;text-align:center;position:relative;}
+    .cert-paper h1{font-size:2rem;color:#1a1a1a;font-weight:800;margin:.5rem 0;}
+    .cert-paper .sub{color:#666;margin-bottom:1.5rem;}
+    .cert-paper .name{font-size:1.8rem;color:#7c3aed;font-weight:800;border-bottom:2px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:1rem 0;}
+    .cert-paper .course-nm{font-size:1.2rem;color:#1a1a1a;font-weight:600;margin-top:.5rem;}
+    .cert-paper .date{color:#666;font-size:.85rem;margin-top:1rem;}
+    .cert-paper .seal{font-size:3rem;margin:1rem 0;}
+    .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;}
+    .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;}
     /* Logout */
     .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:none;transition:all .2s;}
     .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
@@ -156,57 +155,41 @@
         <textarea id="set-bio" rows="3" placeholder="Tell us about yourself…" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.95rem;resize:vertical;outline:none;"></textarea>
       </div>
       <hr class="section-sep"/>
-
-     <h3>Security Verification</h3>
-
-     <div class="form-group">
-         <label>Current Password</label>
-        <input
-           type="password"
-           id="set-curpass"
-           placeholder="Enter your current password"
-         />
-         <div class="form-error" id="set-pass-err">
-            Incorrect password.
-     </div>
- </div>
-
-<button class="btn-full" id="saveSettingsBtn">
-    Save Changes →
-</button>
-     
+      <h3>Change Password</h3>
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="set-curpass" placeholder="••••••••"/>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="set-newpass" placeholder="Min. 6 characters"/>
+      </div>
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" id="set-conpass" placeholder="Repeat password"/>
+      </div>
+      <button class="btn-full" id="saveSettingsBtn">Save Changes →</button>
     </div>
   </div>
 </div>
 
+<!-- Certificate Modal -->
 <div class="cert-overlay" id="certModal">
   <div class="cert-paper">
     <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">✕</button>
-    <div class="cert-border">
-      <div class="cert-inner">
-        <div class="cert-logo"><img src="../images/logo.png" alt="MarcHub" onerror="this.style.display='none'"></div>
-        <div style="font-size:.85rem;color:#888;text-transform:uppercase;letter-spacing:.2em;margin-top:1rem;">Certificate of Completion</div>
-        <h1 style="font-size:2.2rem;color:#7c3aed;font-weight:800;margin:.3rem 0;">MarcHub</h1>
-        <div class="cert-seal">🏆</div>
-        <div class="sub" style="color:#666;margin:.5rem 0;font-size:1rem;">This certifies that</div>
-        <div class="name" id="cert-name" style="font-size:2rem;color:#1a1a1a;font-weight:800;border-bottom:3px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:.5rem 0 1rem;"></div>
-        <div class="sub" style="color:#666;margin-bottom:.3rem;">has successfully completed</div>
-        <div class="course-nm" id="cert-course" style="font-size:1.3rem;color:#7c3aed;font-weight:700;margin:.5rem 0;"></div>
-        <div class="date" id="cert-date" style="color:#888;font-size:.85rem;margin-top:.5rem;"></div>
-        <div style="display:flex;justify-content:space-between;align-items:end;margin-top:2rem;padding-top:1.5rem;border-top:2px solid #e5e7eb;">
-          <div style="text-align:left;">
-            <div style="border-top:2px solid #333;width:140px;"></div>
-            <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-size:.8rem;color:#7c3aed;font-weight:700;font-style:italic;">— MarcHub CEO</div>
-            <div style="border-top:2px solid #333;width:140px;margin-left:auto;"></div>
-            <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Authorized Signature</div>
-          </div>
-        </div>
-      </div>
+    <div class="seal">🏆</div>
+    <div style="font-size:.9rem;color:#888;text-transform:uppercase;letter-spacing:.15em;">Certificate of Completion</div>
+    <h1>MarcHub</h1>
+    <div class="sub">This certifies that</div>
+    <div class="name" id="cert-name"></div>
+    <div class="sub">has successfully completed</div>
+    <div class="course-nm" id="cert-course"></div>
+    <div class="date" id="cert-date"></div>
+    <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee;">
+      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div></div>
+      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">MarcHub Director</div></div>
     </div>
-    <button class="btn-print" onclick="downloadCertPDF()">⬇ Download Certificate (PDF)</button>
+    <button class="btn-print" onclick="window.print()">🖨 Print Certificate</button>
   </div>
 </div>
 
@@ -215,14 +198,15 @@
 const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
 const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef4444',Python:'#8b5cf6',SQL:'#06b6d4',MongoDB:'#10b981'};
 const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
+
 const session=AuthDB.getSession();
 if(!session){window.location.href='login.html';return;}
 if(session.isAdmin){window.location.href='admin.html';return;}
-let dashboardInitialized=false;
+
 let user=session;
 let enrollments=[];
 
-// --- Global functions (available immediately for onclick handlers) ---
+// --- Global functions for onclick handlers ---
 function renderAvatar(el,name,avatar){
   if(avatar){el.innerHTML=`<img src="${avatar}" alt="avatar"/>`;}
   else{el.textContent=(name||'U')[0].toUpperCase();}
@@ -236,8 +220,7 @@ function switchTab(t){
   if(t==='performance') renderPerformance();
 }
 function renderPerformance(){
-  const el=document.getElementById('perfContent');
-  if(!el) return;
+  const el=document.getElementById('perfContent'); if(!el) return;
   if(!enrollments.length){el.innerHTML='<div class="empty-state"><div class="big">📊</div><h3>Enroll in a course to see performance.</h3></div>';return;}
   el.innerHTML=`<div class="course-grid">${enrollments.map(e=>{
     const tasks=AuthDB.getTasks(e.course);
@@ -261,7 +244,7 @@ function renderPerformance(){
   }).join('')}</div>`;
 }
 async function loadSettings(){
-  const u = await AuthDB.getUser(session.email) || session;
+  const u=await AuthDB.getUser(session.email)||session;
   document.getElementById('set-name').value=u.name||'';
   document.getElementById('set-phone').value=u.phone||'';
   document.getElementById('set-bio').value=u.bio||'';
@@ -280,23 +263,8 @@ function openCert(course){
   document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('certModal').classList.add('show');
 }
-async function downloadCertPDF(){
-  const el=document.querySelector('.cert-paper');
-  const origOverflow=document.body.style.overflow;
-  document.body.style.overflow='visible';
-  try {
-    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
-    const imgData=canvas.toDataURL('image/png');
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width/2,canvas.height/2]});
-    pdf.addImage(imgData,'PNG',0,0,canvas.width/2,canvas.height/2);
-    pdf.save('MarcHub_Certificate.pdf');
-  } catch(e){showToast('Error generating PDF.','error');console.error(e);}
-  document.body.style.overflow=origOverflow;
-}
 function renderCourses(){
-  const grid=document.getElementById('courseGrid');
-  if(!grid) return;
+  const grid=document.getElementById('courseGrid'); if(!grid) return;
   if(!enrollments.length){
     grid.innerHTML=`<div class="empty-state"><div class="big">📚</div><h3>No courses yet</h3><p>Enroll to start learning.</p><a href="enroll.html" class="btn-hero" style="margin-top:1rem;display:inline-block;">Browse Courses →</a></div>`;
     return;
@@ -346,12 +314,9 @@ function renderCourses(){
 // --- Logout button (always works immediately) ---
 document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 
-// --- Load user profile & init dashboard data ---
-AuthDB.getUser(session.email).then(u=>{if(u)user=u;initDashboard();}).catch(()=>initDashboard());
-setTimeout(()=>{if(typeof initDashboard==='function')initDashboard();},3000);
-
-async function initDashboard(){
-  if(dashboardInitialized)return;dashboardInitialized=true;
+// --- Init: fetch user profile & enrollment data (async) ---
+(async()=>{
+  try{const u=await AuthDB.getUser(session.email);if(u)user=u;}catch(e){}
   renderAvatar(document.getElementById('avatarEl'),user.name,user.avatar);
   document.getElementById('profileName').textContent=user.name||'Student';
   document.getElementById('profileEmail').textContent=user.email||'';
@@ -372,46 +337,53 @@ async function initDashboard(){
     <div class="stat-box"><div class="n">${totalSubs}</div><div class="l">Submitted</div></div>
     <div class="stat-box"><div class="n">${enrollments.filter(e=>AuthDB.allTasksSubmitted(session.email,e.course)).length}</div><div class="l">Completed</div></div>`;
   renderCourses();
-  let selectedAvatar=null;
+
+  // Avatar file upload
   document.getElementById('avatarInput').addEventListener('change',function(){
     const file=this.files[0];if(!file)return;
     if(file.size>2*1024*1024){showToast('Image must be under 2MB','error');return;}
-    var reader=new FileReader();
+    const reader=new FileReader();
     reader.onload=async e=>{
-      selectedAvatar=e.target.result;
-      const currentUser=await AuthDB.getUser(session.email)||session;
-      renderAvatar(document.getElementById('settingsAvatar'),currentUser.name,selectedAvatar);
-      showToast("Photo selected. Click 'Save Changes' to save.","success");
+      const avatar=e.target.result;
+      await AuthDB.updateProfile(session.email,{avatar});
+      renderAvatar(document.getElementById('avatarEl'),user.name,avatar);
+      renderAvatar(document.getElementById('settingsAvatar'),user.name,avatar);
+      showToast('Photo updated!','success');
     };
     reader.readAsDataURL(file);
   });
+
+  // Save settings
   document.getElementById('saveSettingsBtn').addEventListener('click',async()=>{
     const name=document.getElementById('set-name').value.trim();
     const phone=document.getElementById('set-phone').value.trim();
     const bio=document.getElementById('set-bio').value.trim();
     const curpass=document.getElementById('set-curpass').value;
+    const newpass=document.getElementById('set-newpass').value;
+    const conpass=document.getElementById('set-conpass').value;
     const updates={};
     if(name)updates.name=name;
     if(phone)updates.phone=phone;
-    updates.bio=bio;
-    if(selectedAvatar)updates.avatar=selectedAvatar;
-    const pwValid=await AuthDB.verifyPassword(session.email,curpass);
-    if(!pwValid){showToast('Current password is incorrect.','error');document.getElementById('set-curpass').value='';return;}
+    if(bio!==undefined)updates.bio=bio;
+    if(curpass||newpass||conpass){
+      const u=await AuthDB.getUser(session.email);
+      if(!u||u.password!==curpass){showToast('Current password is incorrect.','error');return;}
+      if(!newpass||newpass.length<6){showToast('New password must be 6+ characters.','error');return;}
+      if(newpass!==conpass){showToast('New passwords don\'t match.','error');return;}
+      updates.password=newpass;
+    }
     const r=await AuthDB.updateProfile(session.email,updates);
-    document.getElementById('set-curpass').value='';
     if(r.ok){
-      const updatedUser=await AuthDB.getUser(session.email)||session;
-      renderAvatar(document.getElementById("avatarEl"),updatedUser.name,updatedUser.avatar);
-      renderAvatar(document.getElementById("settingsAvatar"),updatedUser.name,updatedUser.avatar);
-      selectedAvatar=null;
       showToast('Profile updated! ✓','success');
-      session.name=updatedUser.name;
-      document.getElementById('profileName').textContent=updatedUser.name;
+      document.getElementById('profileName').textContent=updates.name||name||session.name;
       if(updates.phone)document.getElementById('profilePhone').textContent='📞 '+updates.phone;
-      document.getElementById('profileBio').textContent=updates.bio?'"'+updates.bio+'"':'';
-    }else{showToast(r.msg,'error');}
+      if(updates.bio!==undefined)document.getElementById('profileBio').textContent=updates.bio?'"'+updates.bio+'"':'';
+      document.getElementById('set-curpass').value='';
+      document.getElementById('set-newpass').value='';
+      document.getElementById('set-conpass').value='';
+    }else showToast(r.msg,'error');
   });
-}
+})();
 </script>
 </body>
 </html>
