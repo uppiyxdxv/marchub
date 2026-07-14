@@ -372,4 +372,23 @@ async updateInternshipStatus(data) {
     return await r.json();
 },
 };
+// --- Password show/hide toggle ---
+document.querySelectorAll('input[type="password"]').forEach(input => {
+  const wrapper = document.createElement('div');
+  wrapper.style.position = 'relative';
+  input.parentNode.insertBefore(wrapper, input);
+  wrapper.appendChild(input);
+  const toggle = document.createElement('span');
+  toggle.textContent = '👁';
+  toggle.style.cssText = 'position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1.1rem;color:#888;user-select:none;line-height:1;z-index:2;';
+  toggle.title = 'Show password';
+  toggle.onclick = () => {
+    const pw = input.type === 'password';
+    input.type = pw ? 'text' : 'password';
+    toggle.textContent = pw ? '👁️‍🗨️' : '👁';
+    toggle.title = pw ? 'Hide password' : 'Show password';
+  };
+  wrapper.appendChild(toggle);
+});
+
 console.log('%cMarcHub ??','color:#00f5c4;font-size:1.5rem;font-weight:bold;');
