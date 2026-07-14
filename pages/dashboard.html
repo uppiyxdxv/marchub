@@ -217,8 +217,8 @@
   const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
 
   const session=AuthDB.getSession();
-  if(!session) {window.location.href='login.html';}
-  if(session && session.isAdmin) {window.location.href='admin.html';}
+  if(!session) {window.location.href='login.html';return;}
+  if(session.isAdmin) {window.location.href='admin.html';return;}
 
   // Load full user profile & init dashboard
   let user = session;
