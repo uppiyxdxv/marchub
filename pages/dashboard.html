@@ -212,275 +212,206 @@
 
 <script src="../js/main.js?v=2"></script>
 <script>
-  const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
-  const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef4444',Python:'#8b5cf6',SQL:'#06b6d4',MongoDB:'#10b981'};
-  const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
+const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
+const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef4444',Python:'#8b5cf6',SQL:'#06b6d4',MongoDB:'#10b981'};
+const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
+const session=AuthDB.getSession();
+if(!session){window.location.href='login.html';return;}
+if(session.isAdmin){window.location.href='admin.html';return;}
+let dashboardInitialized=false;
+let user=session;
+let enrollments=[];
 
-  const session=AuthDB.getSession();
-  if(!session) {window.location.href='login.html';return;}
-  if(session.isAdmin) {window.location.href='admin.html';return;}
-
-  let dashboardInitialized = false;
-
-  // Load full user profile & init dashboard
-  let user = session;
-  AuthDB.getUser(session.email).then(u => {
-    if (u) user = u;
-    initDashboard();
-  }).catch(() => initDashboard());
-  // Fallback: init even if getUser fails
-  setTimeout(() => { if (typeof initDashboard === 'function') initDashboard(); }, 3000);
-
-  async function initDashboard() {
-  if(dashboardInitialized) return; dashboardInitialized = true;
-
-  // Render profile card
-  function renderAvatar(el, name, avatar){
-    if(avatar){el.innerHTML=`<img src="${avatar}" alt="avatar"/>`;}
-    else{el.textContent=(name||'U')[0].toUpperCase();}
+// --- Global functions (available immediately for onclick handlers) ---
+function renderAvatar(el,name,avatar){
+  if(avatar){el.innerHTML=`<img src="${avatar}" alt="avatar"/>`;}
+  else{el.textContent=(name||'U')[0].toUpperCase();}
+}
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  document.getElementById('tab-'+t)?.classList.add('active');
+  if(t==='settings') loadSettings();
+  if(t==='performance') renderPerformance();
+}
+function renderPerformance(){
+  const el=document.getElementById('perfContent');
+  if(!el) return;
+  if(!enrollments.length){el.innerHTML='<div class="empty-state"><div class="big">📊</div><h3>Enroll in a course to see performance.</h3></div>';return;}
+  el.innerHTML=`<div class="course-grid">${enrollments.map(e=>{
+    const tasks=AuthDB.getTasks(e.course);
+    const subs=AuthDB.getSubmissions(session.email,e.course);
+    const prog=tasks.length?Math.round((subs.length/tasks.length)*100):0;
+    const color=COURSE_COLORS[e.course]||'#00f5c4';
+    const scoreTotal=subs.filter(s=>s.score!==null).reduce((a,s)=>a+s.score,0);
+    const scored=subs.filter(s=>s.score!==null).length;
+    const avg=scored?Math.round(scoreTotal/scored):null;
+    return `<div class="c-card" style="border-top:3px solid ${color};">
+      <div class="c-card-top"><span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span><div><h4>${e.course}</h4></div></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
+      <div class="prog-label" style="margin-bottom:.75rem;">${prog}% complete</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem;">
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--accent);">${subs.length}</div><div style="color:var(--muted);">Submitted</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:${color};">${tasks.length-subs.length}</div><div style="color:var(--muted);">Pending</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#f59e0b;">${avg!==null?avg+'%':'—'}</div><div style="color:var(--muted);">Avg Score</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#10b981;">${prog===100?'✓':'✗'}</div><div style="color:var(--muted);">Completed</div></div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+async function loadSettings(){
+  const u = await AuthDB.getUser(session.email) || session;
+  document.getElementById('set-name').value=u.name||'';
+  document.getElementById('set-phone').value=u.phone||'';
+  document.getElementById('set-bio').value=u.bio||'';
+  renderAvatar(document.getElementById('settingsAvatar'),u.name,u.avatar);
+}
+function submitTask(email,course,taskId,ansId){
+  const answer=document.getElementById(ansId).value.trim();
+  if(!answer){showToast('Please write an answer first.','error');return;}
+  const r=AuthDB.submitTask(email,course,taskId,answer);
+  if(r.ok){showToast('Task submitted! ✓','success');renderCourses();}
+  else showToast(r.msg,'error');
+}
+function openCert(course){
+  document.getElementById('cert-name').textContent=user.name||session.name;
+  document.getElementById('cert-course').textContent=course+' – MarcHub';
+  document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('certModal').classList.add('show');
+}
+async function downloadCertPDF(){
+  const el=document.querySelector('.cert-paper');
+  const origOverflow=document.body.style.overflow;
+  document.body.style.overflow='visible';
+  try {
+    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
+    const imgData=canvas.toDataURL('image/png');
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width/2,canvas.height/2]});
+    pdf.addImage(imgData,'PNG',0,0,canvas.width/2,canvas.height/2);
+    pdf.save('MarcHub_Certificate.pdf');
+  } catch(e){showToast('Error generating PDF.','error');console.error(e);}
+  document.body.style.overflow=origOverflow;
+}
+function renderCourses(){
+  const grid=document.getElementById('courseGrid');
+  if(!grid) return;
+  if(!enrollments.length){
+    grid.innerHTML=`<div class="empty-state"><div class="big">📚</div><h3>No courses yet</h3><p>Enroll to start learning.</p><a href="enroll.html" class="btn-hero" style="margin-top:1rem;display:inline-block;">Browse Courses →</a></div>`;
+    return;
   }
-  renderAvatar(document.getElementById('avatarEl'), user.name, user.avatar);
+  grid.innerHTML=enrollments.map(e=>{
+    const tasks=AuthDB.getTasks(e.course);
+    const subs=AuthDB.getSubmissions(session.email,e.course);
+    const prog=tasks.length?Math.round((subs.length/tasks.length)*100):0;
+    const done=AuthDB.allTasksSubmitted(session.email,e.course)&&tasks.length>0;
+    const color=COURSE_COLORS[e.course]||'#00f5c4';
+    const taskHtml=tasks.length===0
+      ?`<p style="color:var(--muted);font-size:.82rem;text-align:center;padding:1rem 0;">No tasks assigned yet.</p>`
+      :tasks.map(task=>{
+        const sub=subs.find(s=>s.taskId===task.id);
+        return `<div class="task-item">
+          <h5>${task.title}</h5>
+          <p>${task.desc||''}</p>
+          <div class="task-meta">
+            <span class="due">📅 Due: ${task.due||'No deadline'}</span>
+            ${sub?`<span class="submitted-badge">✓ Submitted</span>`:`<span class="pending-badge">Pending</span>`}
+          </div>
+          ${!sub?`<div class="submit-form">
+            <textarea id="ans_${task.id}" rows="2" placeholder="Your answer or GitHub link…"></textarea>
+            <button onclick="submitTask('${session.email}','${e.course}',${task.id},'ans_${task.id}')">Submit →</button>
+          </div>`:''}
+        </div>`;
+      }).join('');
+    return `<div class="c-card" style="border-top:3px solid ${color};">
+      <div class="c-card-top">
+        <span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span>
+        <div><h4>${e.course}</h4><span class="c-badge">${tasks.length} task${tasks.length!==1?'s':''}</span></div>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
+      <div class="prog-label">${prog}% complete · ${subs.length}/${tasks.length} submitted</div>
+      <div class="task-list">${taskHtml}</div>
+      <a href="${WHATSAPP[e.course]||'#'}" target="_blank" class="wa-btn" style="margin-top:1rem;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Join Community
+      </a>
+      <button class="cert-btn" ${!done?'disabled':''} onclick="openCert('${e.course}')">
+        ${done?'🏆 View Certificate':'🔒 Complete all tasks to unlock'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// --- Logout button (always works immediately) ---
+document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
+
+// --- Load user profile & init dashboard data ---
+AuthDB.getUser(session.email).then(u=>{if(u)user=u;initDashboard();}).catch(()=>initDashboard());
+setTimeout(()=>{if(typeof initDashboard==='function')initDashboard();},3000);
+
+async function initDashboard(){
+  if(dashboardInitialized)return;dashboardInitialized=true;
+  renderAvatar(document.getElementById('avatarEl'),user.name,user.avatar);
   document.getElementById('profileName').textContent=user.name||'Student';
   document.getElementById('profileEmail').textContent=user.email||'';
-  if(user.phone) document.getElementById('profilePhone').textContent='📞 '+user.phone;
-  if(user.bio) document.getElementById('profileBio').textContent='"'+user.bio+'"';
-
-  // Load enrollments
+  if(user.phone)document.getElementById('profilePhone').textContent='📞 '+user.phone;
+  if(user.bio)document.getElementById('profileBio').textContent='"'+user.bio+'"';
   const globalEnroll=JSON.parse(localStorage.getItem('lv_enrollments')||'[]');
-  let userEnroll = [];
-  try { userEnroll = await AuthDB.getEnrollments(session.email); } catch(e) { console.warn('Enrollments fetch failed',e); }
+  let userEnroll=[];
+  try{userEnroll=await AuthDB.getEnrollments(session.email);}catch(e){console.warn('Enrollments fetch failed',e);}
   const mergedMap={};
   globalEnroll.filter(e=>e.email===session.email).forEach(e=>mergedMap[e.course]=e);
   userEnroll.forEach(e=>mergedMap[e.course]=Object.assign(mergedMap[e.course]||{},e));
-  const enrollments=Object.values(mergedMap);
-
-  // Stats
+  enrollments=Object.values(mergedMap);
   const totalTasks=enrollments.reduce((a,e)=>a+AuthDB.getTasks(e.course).length,0);
   const totalSubs=enrollments.reduce((a,e)=>a+AuthDB.getSubmissions(session.email,e.course).length,0);
   document.getElementById('statRow').innerHTML=`
     <div class="stat-box"><div class="n">${enrollments.length}</div><div class="l">Courses</div></div>
     <div class="stat-box"><div class="n">${totalTasks}</div><div class="l">Tasks Assigned</div></div>
     <div class="stat-box"><div class="n">${totalSubs}</div><div class="l">Submitted</div></div>
-    <div class="stat-box"><div class="n">${enrollments.filter(e=>AuthDB.allTasksSubmitted(session.email,e.course)).length}</div><div class="l">Completed</div></div>
-  `;
-
-  // Switch tab
-  function switchTab(t){
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('panel-'+t).classList.add('active');
-    document.getElementById('tab-'+t)?.classList.add('active');
-    if(t==='settings') loadSettings();
-    if(t==='performance') renderPerformance();
-  }
-
-  // Render courses tab
-  function renderCourses(){
-    const grid=document.getElementById('courseGrid');
-    if(!enrollments.length){
-      grid.innerHTML=`<div class="empty-state"><div class="big">📚</div><h3>No courses yet</h3><p>Enroll to start learning.</p><a href="enroll.html" class="btn-hero" style="margin-top:1rem;display:inline-block;">Browse Courses →</a></div>`;
-      return;
-    }
-    grid.innerHTML=enrollments.map(e=>{
-      const tasks=AuthDB.getTasks(e.course);
-      const subs=AuthDB.getSubmissions(session.email,e.course);
-      const prog=tasks.length?Math.round((subs.length/tasks.length)*100):0;
-      const done=AuthDB.allTasksSubmitted(session.email,e.course)&&tasks.length>0;
-      const color=COURSE_COLORS[e.course]||'#00f5c4';
-      const taskHtml=tasks.length===0
-        ?`<p style="color:var(--muted);font-size:.82rem;text-align:center;padding:1rem 0;">No tasks assigned yet.</p>`
-        :tasks.map(task=>{
-          const sub=subs.find(s=>s.taskId===task.id);
-          return `<div class="task-item">
-            <h5>${task.title}</h5>
-            <p>${task.desc||''}</p>
-            <div class="task-meta">
-              <span class="due">📅 Due: ${task.due||'No deadline'}</span>
-              ${sub?`<span class="submitted-badge">✓ Submitted</span>`:`<span class="pending-badge">Pending</span>`}
-            </div>
-            ${!sub?`<div class="submit-form">
-              <textarea id="ans_${task.id}" rows="2" placeholder="Your answer or GitHub link…"></textarea>
-              <button onclick="submitTask('${session.email}','${e.course}',${task.id},'ans_${task.id}')">Submit →</button>
-            </div>`:''}
-          </div>`;
-        }).join('');
-      return `<div class="c-card" style="border-top:3px solid ${color};">
-        <div class="c-card-top">
-          <span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span>
-          <div><h4>${e.course}</h4><span class="c-badge">${tasks.length} task${tasks.length!==1?'s':''}</span></div>
-        </div>
-        <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
-        <div class="prog-label">${prog}% complete · ${subs.length}/${tasks.length} submitted</div>
-        <div class="task-list">${taskHtml}</div>
-        <a href="${WHATSAPP[e.course]||'#'}" target="_blank" class="wa-btn" style="margin-top:1rem;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-          Join Community
-        </a>
-        <button class="cert-btn" ${!done?'disabled':''} onclick="openCert('${e.course}')">
-          ${done?'🏆 View Certificate':'🔒 Complete all tasks to unlock'}
-        </button>
-      </div>`;
-    }).join('');
-  }
+    <div class="stat-box"><div class="n">${enrollments.filter(e=>AuthDB.allTasksSubmitted(session.email,e.course)).length}</div><div class="l">Completed</div></div>`;
   renderCourses();
-
-  function submitTask(email,course,taskId,ansId){
-    const answer=document.getElementById(ansId).value.trim();
-    if(!answer){showToast('Please write an answer first.','error');return;}
-    const r=AuthDB.submitTask(email,course,taskId,answer);
-    if(r.ok){showToast('Task submitted! ✓','success');renderCourses();}
-    else showToast(r.msg,'error');
-  }
-
-  // Performance tab
-  function renderPerformance(){
-    const el=document.getElementById('perfContent');
-    if(!enrollments.length){el.innerHTML='<div class="empty-state"><div class="big">📊</div><h3>Enroll in a course to see performance.</h3></div>';return;}
-    el.innerHTML=`<div class="course-grid">${enrollments.map(e=>{
-      const tasks=AuthDB.getTasks(e.course);
-      const subs=AuthDB.getSubmissions(session.email,e.course);
-      const prog=tasks.length?Math.round((subs.length/tasks.length)*100):0;
-      const color=COURSE_COLORS[e.course]||'#00f5c4';
-      const scoreTotal=subs.filter(s=>s.score!==null).reduce((a,s)=>a+s.score,0);
-      const scored=subs.filter(s=>s.score!==null).length;
-      const avg=scored?Math.round(scoreTotal/scored):null;
-      return `<div class="c-card" style="border-top:3px solid ${color};">
-        <div class="c-card-top"><span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span><div><h4>${e.course}</h4></div></div>
-        <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
-        <div class="prog-label" style="margin-bottom:.75rem;">${prog}% complete</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem;">
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--accent);">${subs.length}</div><div style="color:var(--muted);">Submitted</div></div>
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:${color};">${tasks.length-subs.length}</div><div style="color:var(--muted);">Pending</div></div>
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#f59e0b;">${avg!==null?avg+'%':'—'}</div><div style="color:var(--muted);">Avg Score</div></div>
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#10b981;">${prog===100?'✓':'✗'}</div><div style="color:var(--muted);">Completed</div></div>
-        </div>
-      </div>`;
-    }).join('')}</div>`;
-  }
-
-  // Certificate
-  function openCert(course){
-    document.getElementById('cert-name').textContent=user.name||session.name;
-    document.getElementById('cert-course').textContent=course+' – MarcHub';
-    document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-    document.getElementById('certModal').classList.add('show');
-  }
-
-  async function downloadCertPDF(){
-    const el=document.querySelector('.cert-paper');
-    const origOverflow=document.body.style.overflow;
-    document.body.style.overflow='visible';
-    try {
-      const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff'});
-      const imgData=canvas.toDataURL('image/png');
-      const {jsPDF}=window.jspdf;
-      const pdf=new jsPDF({orientation:'landscape',unit:'px',format:[canvas.width/2,canvas.height/2]});
-      pdf.addImage(imgData,'PNG',0,0,canvas.width/2,canvas.height/2);
-      pdf.save('MarcHub_Certificate.pdf');
-    } catch(e){showToast('Error generating PDF.','error');console.error(e);}
-    document.body.style.overflow=origOverflow;
-  }
-
-  // Settings
-  async function loadSettings(){
-    const u = await AuthDB.getUser(session.email) || session;
-    document.getElementById('set-name').value=u.name||'';
-    document.getElementById('set-phone').value=u.phone||'';
-    document.getElementById('set-bio').value=u.bio||'';
-    renderAvatar(document.getElementById('settingsAvatar'),u.name,u.avatar);
-  }
-
-  // Avatar file upload
-  let selectedAvatar = null;
+  let selectedAvatar=null;
   document.getElementById('avatarInput').addEventListener('change',function(){
-    const file=this.files[0]; if(!file) return;
+    const file=this.files[0];if(!file)return;
     if(file.size>2*1024*1024){showToast('Image must be under 2MB','error');return;}
-    var reader = new FileReader();
-    reader.onload = async e => {
-
-    selectedAvatar = e.target.result;
-
-  const currentUser = await AuthDB.getUser(session.email) || session;
-
-renderAvatar(
-    document.getElementById('settingsAvatar'),
-    currentUser.name,
-    selectedAvatar
-);
-
-    showToast("Photo selected. Click 'Save Changes' to save.", "success");
-
-};
+    var reader=new FileReader();
+    reader.onload=async e=>{
+      selectedAvatar=e.target.result;
+      const currentUser=await AuthDB.getUser(session.email)||session;
+      renderAvatar(document.getElementById('settingsAvatar'),currentUser.name,selectedAvatar);
+      showToast("Photo selected. Click 'Save Changes' to save.","success");
+    };
     reader.readAsDataURL(file);
   });
-
-  document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-
-    const name = document.getElementById('set-name').value.trim();
-    const phone = document.getElementById('set-phone').value.trim();
-    const bio = document.getElementById('set-bio').value.trim();
-    const curpass = document.getElementById('set-curpass').value;
-
-    const updates = {};
-
-    if (name) updates.name = name;
-    if (phone) updates.phone = phone;
-    updates.bio = bio;
-    if (selectedAvatar) {
-    updates.avatar = selectedAvatar;
-   }
-
-    // Verify current password
-    const pwValid = await AuthDB.verifyPassword(session.email, curpass);
-    if (!pwValid) {
-        showToast('Current password is incorrect.', 'error');
-        document.getElementById('set-curpass').value = '';
-        return;
-    }
-
-    const r = await AuthDB.updateProfile(session.email, updates);
-    document.getElementById('set-curpass').value = '';
-
-   if (r.ok) {
-    const updatedUser = await AuthDB.getUser(session.email) || session;
-
-    renderAvatar(
-       document.getElementById("avatarEl"),
-       updatedUser.name,
-       updatedUser.avatar
-    );
-
-    renderAvatar(
-        document.getElementById("settingsAvatar"),
-        updatedUser.name,
-        updatedUser.avatar
-    );
-
-    selectedAvatar = null;
-
-    showToast('Profile updated! ✓', 'success');
-
-    // Update session and profile name
-    session.name = updatedUser.name;
-
-    document.getElementById('profileName').textContent = updatedUser.name;
-
-    if (updates.phone) {
-        document.getElementById('profilePhone').textContent = '📞 ' + updates.phone;
-    }
-
-    document.getElementById('profileBio').textContent =
-        updates.bio ? '"' + updates.bio + '"' : '';
-
-} else {
-    showToast(r.msg, 'error');
+  document.getElementById('saveSettingsBtn').addEventListener('click',async()=>{
+    const name=document.getElementById('set-name').value.trim();
+    const phone=document.getElementById('set-phone').value.trim();
+    const bio=document.getElementById('set-bio').value.trim();
+    const curpass=document.getElementById('set-curpass').value;
+    const updates={};
+    if(name)updates.name=name;
+    if(phone)updates.phone=phone;
+    updates.bio=bio;
+    if(selectedAvatar)updates.avatar=selectedAvatar;
+    const pwValid=await AuthDB.verifyPassword(session.email,curpass);
+    if(!pwValid){showToast('Current password is incorrect.','error');document.getElementById('set-curpass').value='';return;}
+    const r=await AuthDB.updateProfile(session.email,updates);
+    document.getElementById('set-curpass').value='';
+    if(r.ok){
+      const updatedUser=await AuthDB.getUser(session.email)||session;
+      renderAvatar(document.getElementById("avatarEl"),updatedUser.name,updatedUser.avatar);
+      renderAvatar(document.getElementById("settingsAvatar"),updatedUser.name,updatedUser.avatar);
+      selectedAvatar=null;
+      showToast('Profile updated! ✓','success');
+      session.name=updatedUser.name;
+      document.getElementById('profileName').textContent=updatedUser.name;
+      if(updates.phone)document.getElementById('profilePhone').textContent='📞 '+updates.phone;
+      document.getElementById('profileBio').textContent=updates.bio?'"'+updates.bio+'"':'';
+    }else{showToast(r.msg,'error');}
+  });
 }
-
-});
-  window.switchTab=switchTab;window.submitTask=submitTask;window.openCert=openCert;window.downloadCertPDF=downloadCertPDF;window.renderPerformance=renderPerformance;window.loadSettings=loadSettings;
-  } // end initDashboard
-
-document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 </script>
 </body>
 </html>
