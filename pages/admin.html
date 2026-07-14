@@ -247,7 +247,7 @@
 <script src="../js/main.js?v=2"></script>
 <script>
   const sess=AuthDB.getSession();
-  if(!sess||!sess.isAdmin){window.location.href='login.html';return;}
+  if(!sess||!sess.isAdmin){window.location.href='login.html';}
 
   const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
   let cache = { users: [], enrolls: [], courses: [], certs: [], interns: [], regs: [] };
