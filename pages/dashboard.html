@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Dashboard â€“ MarcHub</title>
+  <title>Dashboard – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -87,7 +87,7 @@
 </head>
 <body>
 <nav class="navbar" id="navbar">
-  <div class="nav-logo"><span class="logo-icon">â¬¡</span> MarcHub</div>
+  <div class="nav-logo"><span class="logo-icon">⬡</span> MarcHub</div>
   <ul class="nav-links">
     <li><a href="../index.html#courses">Courses</a></li>
     <li><a href="enroll.html" class="btn-nav btn-primary-nav">+ Enroll</a></li>
@@ -100,13 +100,13 @@
   <div class="profile-card" id="profileCard">
     <div class="avatar" id="avatarEl"></div>
     <div class="profile-info">
-      <h2 id="profileName">Loadingâ€¦</h2>
+      <h2 id="profileName">Loading…</h2>
       <p id="profileEmail"></p>
       <p id="profilePhone" style="margin-top:.2rem;"></p>
       <p id="profileBio" style="margin-top:.3rem;font-style:italic;"></p>
     </div>
     <div class="profile-actions">
-      <button class="tab-btn" onclick="switchTab('settings')">âš™ Settings</button>
+      <button class="tab-btn" onclick="switchTab('settings')">⚙ Settings</button>
       <a href="enroll.html" class="btn-hero" style="padding:.6rem 1.2rem;font-size:.9rem;">+ New Course</a>
     </div>
   </div>
@@ -116,9 +116,9 @@
 
   <!-- Tabs -->
   <div class="tab-row">
-    <button class="tab-btn active" onclick="switchTab('courses')" id="tab-courses">ðŸ“š My Courses</button>
-    <button class="tab-btn" onclick="switchTab('performance')" id="tab-performance">ðŸ“Š Performance</button>
-    <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">âš™ Settings</button>
+    <button class="tab-btn active" onclick="switchTab('courses')" id="tab-courses">📚 My Courses</button>
+    <button class="tab-btn" onclick="switchTab('performance')" id="tab-performance">📊 Performance</button>
+    <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">⚙ Settings</button>
   </div>
 
   <!-- Courses Tab -->
@@ -139,7 +139,7 @@
         <div class="avatar-lg" id="settingsAvatar"></div>
         <div>
           <input type="file" id="avatarInput" accept="image/*" style="display:none"/>
-          <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">ðŸ“· Change Photo</button>
+          <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">📷 Change Photo</button>
           <p style="font-size:.78rem;color:var(--muted);margin-top:.4rem;">JPG/PNG, max 2MB</p>
         </div>
       </div>
@@ -153,7 +153,7 @@
       </div>
       <div class="form-group">
         <label>Bio</label>
-        <textarea id="set-bio" rows="3" placeholder="Tell us about yourselfâ€¦" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.95rem;resize:vertical;outline:none;"></textarea>
+        <textarea id="set-bio" rows="3" placeholder="Tell us about yourself…" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;color:var(--text);font-family:var(--font-display);font-size:.95rem;resize:vertical;outline:none;"></textarea>
       </div>
       <hr class="section-sep"/>
 
@@ -172,7 +172,7 @@
  </div>
 
 <button class="btn-full" id="saveSettingsBtn">
-    Save Changes â†’
+    Save Changes →
 </button>
      
     </div>
@@ -181,13 +181,13 @@
 
 <div class="cert-overlay" id="certModal">
   <div class="cert-paper">
-    <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">âœ•</button>
+    <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">✕</button>
     <div class="cert-border">
       <div class="cert-inner">
         <div class="cert-logo"><img src="../images/logo.png" alt="MarcHub" onerror="this.style.display='none'"></div>
         <div style="font-size:.85rem;color:#888;text-transform:uppercase;letter-spacing:.2em;margin-top:1rem;">Certificate of Completion</div>
         <h1 style="font-size:2.2rem;color:#7c3aed;font-weight:800;margin:.3rem 0;">MarcHub</h1>
-        <div class="cert-seal">ðŸ†</div>
+        <div class="cert-seal">🏆</div>
         <div class="sub" style="color:#666;margin:.5rem 0;font-size:1rem;">This certifies that</div>
         <div class="name" id="cert-name" style="font-size:2rem;color:#1a1a1a;font-weight:800;border-bottom:3px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:.5rem 0 1rem;"></div>
         <div class="sub" style="color:#666;margin-bottom:.3rem;">has successfully completed</div>
@@ -199,26 +199,28 @@
             <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div>
           </div>
           <div style="text-align:right;">
-            <div style="font-size:.8rem;color:#7c3aed;font-weight:700;font-style:italic;">â€” MarcHub CEO</div>
+            <div style="font-size:.8rem;color:#7c3aed;font-weight:700;font-style:italic;">— MarcHub CEO</div>
             <div style="border-top:2px solid #333;width:140px;margin-left:auto;"></div>
             <div style="font-size:.75rem;color:#666;margin-top:.3rem;">Authorized Signature</div>
           </div>
         </div>
       </div>
     </div>
-    <button class="btn-print" onclick="downloadCertPDF()">â¬‡ Download Certificate (PDF)</button>
+    <button class="btn-print" onclick="downloadCertPDF()">⬇ Download Certificate (PDF)</button>
   </div>
 </div>
 
 <script src="../js/main.js?v=2"></script>
 <script>
-  const COURSE_ICONS={HTML:'ðŸŒ',CSS:'ðŸŽ¨',JavaScript:'âš¡',Java:'â˜•',Python:'ðŸ',SQL:'ðŸ—„ï¸',MongoDB:'ðŸƒ'};
+  const COURSE_ICONS={HTML:'🌐',CSS:'🎨',JavaScript:'⚡',Java:'☕',Python:'🐍',SQL:'🗄️',MongoDB:'🍃'};
   const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef4444',Python:'#8b5cf6',SQL:'#06b6d4',MongoDB:'#10b981'};
   const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
 
   const session=AuthDB.getSession();
   if(!session) {window.location.href='login.html';return;}
   if(session.isAdmin) {window.location.href='admin.html';return;}
+
+  let dashboardInitialized = false;
 
   // Load full user profile & init dashboard
   let user = session;
@@ -230,6 +232,7 @@
   setTimeout(() => { if (typeof initDashboard === 'function') initDashboard(); }, 3000);
 
   async function initDashboard() {
+  if(dashboardInitialized) return; dashboardInitialized = true;
 
   // Render profile card
   function renderAvatar(el, name, avatar){
@@ -239,12 +242,13 @@
   renderAvatar(document.getElementById('avatarEl'), user.name, user.avatar);
   document.getElementById('profileName').textContent=user.name||'Student';
   document.getElementById('profileEmail').textContent=user.email||'';
-  if(user.phone) document.getElementById('profilePhone').textContent='ðŸ“ž '+user.phone;
+  if(user.phone) document.getElementById('profilePhone').textContent='📞 '+user.phone;
   if(user.bio) document.getElementById('profileBio').textContent='"'+user.bio+'"';
 
   // Load enrollments
   const globalEnroll=JSON.parse(localStorage.getItem('lv_enrollments')||'[]');
-  const userEnroll = await AuthDB.getEnrollments(session.email);
+  let userEnroll = [];
+  try { userEnroll = await AuthDB.getEnrollments(session.email); } catch(e) { console.warn('Enrollments fetch failed',e); }
   const mergedMap={};
   globalEnroll.filter(e=>e.email===session.email).forEach(e=>mergedMap[e.course]=e);
   userEnroll.forEach(e=>mergedMap[e.course]=Object.assign(mergedMap[e.course]||{},e));
@@ -274,7 +278,7 @@
   function renderCourses(){
     const grid=document.getElementById('courseGrid');
     if(!enrollments.length){
-      grid.innerHTML=`<div class="empty-state"><div class="big">ðŸ“š</div><h3>No courses yet</h3><p>Enroll to start learning.</p><a href="enroll.html" class="btn-hero" style="margin-top:1rem;display:inline-block;">Browse Courses â†’</a></div>`;
+      grid.innerHTML=`<div class="empty-state"><div class="big">📚</div><h3>No courses yet</h3><p>Enroll to start learning.</p><a href="enroll.html" class="btn-hero" style="margin-top:1rem;display:inline-block;">Browse Courses →</a></div>`;
       return;
     }
     grid.innerHTML=enrollments.map(e=>{
@@ -291,29 +295,29 @@
             <h5>${task.title}</h5>
             <p>${task.desc||''}</p>
             <div class="task-meta">
-              <span class="due">ðŸ“… Due: ${task.due||'No deadline'}</span>
-              ${sub?`<span class="submitted-badge">âœ“ Submitted</span>`:`<span class="pending-badge">Pending</span>`}
+              <span class="due">📅 Due: ${task.due||'No deadline'}</span>
+              ${sub?`<span class="submitted-badge">✓ Submitted</span>`:`<span class="pending-badge">Pending</span>`}
             </div>
             ${!sub?`<div class="submit-form">
-              <textarea id="ans_${task.id}" rows="2" placeholder="Your answer or GitHub linkâ€¦"></textarea>
-              <button onclick="submitTask('${session.email}','${e.course}',${task.id},'ans_${task.id}')">Submit â†’</button>
+              <textarea id="ans_${task.id}" rows="2" placeholder="Your answer or GitHub link…"></textarea>
+              <button onclick="submitTask('${session.email}','${e.course}',${task.id},'ans_${task.id}')">Submit →</button>
             </div>`:''}
           </div>`;
         }).join('');
       return `<div class="c-card" style="border-top:3px solid ${color};">
         <div class="c-card-top">
-          <span class="c-icon">${COURSE_ICONS[e.course]||'ðŸ“˜'}</span>
+          <span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span>
           <div><h4>${e.course}</h4><span class="c-badge">${tasks.length} task${tasks.length!==1?'s':''}</span></div>
         </div>
         <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
-        <div class="prog-label">${prog}% complete Â· ${subs.length}/${tasks.length} submitted</div>
+        <div class="prog-label">${prog}% complete · ${subs.length}/${tasks.length} submitted</div>
         <div class="task-list">${taskHtml}</div>
         <a href="${WHATSAPP[e.course]||'#'}" target="_blank" class="wa-btn" style="margin-top:1rem;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
           Join Community
         </a>
         <button class="cert-btn" ${!done?'disabled':''} onclick="openCert('${e.course}')">
-          ${done?'ðŸ† View Certificate':'ðŸ”’ Complete all tasks to unlock'}
+          ${done?'🏆 View Certificate':'🔒 Complete all tasks to unlock'}
         </button>
       </div>`;
     }).join('');
@@ -324,14 +328,14 @@
     const answer=document.getElementById(ansId).value.trim();
     if(!answer){showToast('Please write an answer first.','error');return;}
     const r=AuthDB.submitTask(email,course,taskId,answer);
-    if(r.ok){showToast('Task submitted! âœ“','success');renderCourses();}
+    if(r.ok){showToast('Task submitted! ✓','success');renderCourses();}
     else showToast(r.msg,'error');
   }
 
   // Performance tab
   function renderPerformance(){
     const el=document.getElementById('perfContent');
-    if(!enrollments.length){el.innerHTML='<div class="empty-state"><div class="big">ðŸ“Š</div><h3>Enroll in a course to see performance.</h3></div>';return;}
+    if(!enrollments.length){el.innerHTML='<div class="empty-state"><div class="big">📊</div><h3>Enroll in a course to see performance.</h3></div>';return;}
     el.innerHTML=`<div class="course-grid">${enrollments.map(e=>{
       const tasks=AuthDB.getTasks(e.course);
       const subs=AuthDB.getSubmissions(session.email,e.course);
@@ -341,14 +345,14 @@
       const scored=subs.filter(s=>s.score!==null).length;
       const avg=scored?Math.round(scoreTotal/scored):null;
       return `<div class="c-card" style="border-top:3px solid ${color};">
-        <div class="c-card-top"><span class="c-icon">${COURSE_ICONS[e.course]||'ðŸ“˜'}</span><div><h4>${e.course}</h4></div></div>
+        <div class="c-card-top"><span class="c-icon">${COURSE_ICONS[e.course]||'📘'}</span><div><h4>${e.course}</h4></div></div>
         <div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:linear-gradient(90deg,${color},${color}99);"></div></div>
         <div class="prog-label" style="margin-bottom:.75rem;">${prog}% complete</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem;">
           <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:var(--accent);">${subs.length}</div><div style="color:var(--muted);">Submitted</div></div>
           <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:${color};">${tasks.length-subs.length}</div><div style="color:var(--muted);">Pending</div></div>
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#f59e0b;">${avg!==null?avg+'%':'â€”'}</div><div style="color:var(--muted);">Avg Score</div></div>
-          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#10b981;">${prog===100?'âœ“':'âœ—'}</div><div style="color:var(--muted);">Completed</div></div>
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#f59e0b;">${avg!==null?avg+'%':'—'}</div><div style="color:var(--muted);">Avg Score</div></div>
+          <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;"><div style="font-size:1.4rem;font-weight:800;color:#10b981;">${prog===100?'✓':'✗'}</div><div style="color:var(--muted);">Completed</div></div>
         </div>
       </div>`;
     }).join('')}</div>`;
@@ -357,7 +361,7 @@
   // Certificate
   function openCert(course){
     document.getElementById('cert-name').textContent=user.name||session.name;
-    document.getElementById('cert-course').textContent=course+' â€“ MarcHub';
+    document.getElementById('cert-course').textContent=course+' – MarcHub';
     document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
     document.getElementById('certModal').classList.add('show');
   }
@@ -454,7 +458,7 @@ renderAvatar(
 
     selectedAvatar = null;
 
-    showToast('Profile updated! âœ“', 'success');
+    showToast('Profile updated! ✓', 'success');
 
     // Update session and profile name
     session.name = updatedUser.name;
@@ -462,7 +466,7 @@ renderAvatar(
     document.getElementById('profileName').textContent = updatedUser.name;
 
     if (updates.phone) {
-        document.getElementById('profilePhone').textContent = 'ðŸ“ž ' + updates.phone;
+        document.getElementById('profilePhone').textContent = '📞 ' + updates.phone;
     }
 
     document.getElementById('profileBio').textContent =
@@ -473,8 +477,10 @@ renderAvatar(
 }
 
 });
-  document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
+  window.switchTab=switchTab;window.submitTask=submitTask;window.openCert=openCert;window.downloadCertPDF=downloadCertPDF;window.renderPerformance=renderPerformance;window.loadSettings=loadSettings;
   } // end initDashboard
+
+document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
 </script>
 </body>
 </html>

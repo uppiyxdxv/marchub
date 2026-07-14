@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Login â€“ MarcHub</title>
+  <title>Login – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -28,7 +28,7 @@
   </style>
 </head>
 <body>
-<a href="../index.html" class="back-link">â† Back</a>
+<a href="../index.html" class="back-link">← Back</a>
 <div class="auth-page">
   <div class="auth-card">
     <div class="auth-logo">
@@ -42,17 +42,17 @@
     </div>
     <div class="form-group">
       <label>Password</label>
-      <input type="password" id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" view-password="true"/>
+      <input type="password" id="password" placeholder="••••••••" view-password="true"/>
       <div class="form-error" id="pass-err">Password required.</div>
       <span class="forgot-link" onclick="document.getElementById('fpModal').classList.add('show')">Forgot password?</span>
     </div>
     <div class="form-error" id="login-err" style="margin-bottom:.75rem;font-size:.9rem;"></div>
-    <button class="btn-full" id="loginBtn">Login â†’</button>
+    <button class="btn-full" id="loginBtn">Login →</button>
     <div class="auth-switch">No account? <a href="register.html">Register here</a></div>
   </div>
 </div>
 
-<!-- Forgot Password Modal â€“ 3 steps -->
+<!-- Forgot Password Modal – 3 steps -->
 <div class="fp-overlay" id="fpModal">
   <div class="fp-box">
     <h3 id="fp-title">Reset Password</h3>
@@ -65,14 +65,14 @@
         <input type="email" id="fp-email" placeholder="you@example.com"/>
         <div class="form-error" id="fp-email-err">No account with that email.</div>
       </div>
-      <button class="btn-full" id="fp-btn1">Send Code â†’</button>
+      <button class="btn-full" id="fp-btn1">Send Code →</button>
     </div>
     <div id="fp2" style="display:none">
       <div class="form-group"><label>6-Digit Code</label>
         <input type="text" id="fp-code" placeholder="------" maxlength="6" style="letter-spacing:.3em;text-align:center;font-size:1.3rem;font-family:var(--font-mono)"/>
         <div class="form-error" id="fp-code-err">Incorrect code.</div>
       </div>
-      <button class="btn-full" id="fp-btn2">Verify â†’</button>
+      <button class="btn-full" id="fp-btn2">Verify →</button>
     </div>
     <div id="fp3" style="display:none">
       <div class="form-group"><label>New Password</label>
@@ -83,9 +83,9 @@
         <input type="password" id="fp-cp" placeholder="Repeat password" view-password="true "/>
         <div class="form-error" id="fp-cp-err">Passwords don't match.</div>
       </div>
-      <button class="btn-full" id="fp-btn3">Reset Password â†’</button>
+      <button class="btn-full" id="fp-btn3">Reset Password →</button>
     </div>
-    <div class="fp-close" onclick="closeFP()">âœ• Cancel</div>
+    <div class="fp-close" onclick="closeFP()">✕ Cancel</div>
   </div>
 </div>
 
@@ -110,20 +110,20 @@
     if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){document.getElementById('email-err').classList.add('show');document.getElementById('email').classList.add('input-error');ok=false;}
     if(!pw){document.getElementById('pass-err').classList.add('show');document.getElementById('password').classList.add('input-error');ok=false;}
     if(!ok)return;
-    loginBtn.innerHTML='<span class="spinner"></span>Logging inâ€¦';loginBtn.disabled=true;
+    loginBtn.innerHTML='<span class="spinner"></span>Logging in…';loginBtn.disabled=true;
     // Try backend first, fallback to localStorage
     let loggedIn=false;
     try{
       const r=await fetch(`${BACKEND}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
       const d=await r.json();
-      if(d.success){localStorage.setItem('lv_session',JSON.stringify(d.user));loggedIn=true;showToast('Welcome back! ðŸŽ‰','success');setTimeout(()=>window.location.href=d.user.isAdmin?'admin.html':'dashboard.html',800);}
+      if(d.success){localStorage.setItem('lv_session',JSON.stringify(d.user));loggedIn=true;showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.href=d.user.isAdmin?'admin.html':'dashboard.html',800);}
     }catch(e){}
     if(!loggedIn){
       const res=await AuthDB.loginUser(email,pw);
-      if(res.ok){showToast('Welcome back! ðŸŽ‰','success');setTimeout(()=>window.location.href=res.user.isAdmin?'admin.html':'dashboard.html',800);}
+      if(res.ok){showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.href=res.user.isAdmin?'admin.html':'dashboard.html',800);}
       else{const el=document.getElementById('login-err');el.textContent=res.msg;el.classList.add('show');}
     }
-    loginBtn.innerHTML='Login â†’';loginBtn.disabled=false;
+    loginBtn.innerHTML='Login →';loginBtn.disabled=false;
   });
   document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')loginBtn.click();}));
 

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Enroll â€“ MarcHub</title>
+  <title>Enroll – MarcHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
 
-  <!-- â”€â”€ EmailJS SDK must load BEFORE init is called â”€â”€ -->
+  <!-- ── EmailJS SDK must load BEFORE init is called ── -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>window.BACKEND = "https://marchub-backend-wexu.onrender.com";</script>
-  <!-- â”€â”€ Init EmailJS immediately after the SDK loads â”€â”€ -->
+  <!-- ── Init EmailJS immediately after the SDK loads ── -->
   <script>
     window.addEventListener('load', function () {
       emailjs.init('rwHZkgqFwOWu7Cs9o');
@@ -29,9 +29,9 @@
 </head>
 <body>
 
-<!-- â”€â”€ NAV â”€â”€ -->
+<!-- ── NAV ── -->
 <nav class="navbar" id="navbar">
-  <div class="nav-logo"><span class="logo-icon">â¬¡</span> MarcHub</div>
+  <div class="nav-logo"><span class="logo-icon">⬡</span> MarcHub</div>
   <ul class="nav-links">
     <li><a href="../index.html#courses">Courses</a></li>
     <li><a href="login.html"     class="btn-nav">Login</a></li>
@@ -39,7 +39,7 @@
   </ul>
 </nav>
 
-<!-- â”€â”€ FORM â”€â”€ -->
+<!-- ── FORM ── -->
 <div class="enroll-page">
   <div class="enroll-header">
     <div class="section-label">Get Started</div>
@@ -69,30 +69,30 @@
       <label>Course Interest *</label>
       <select id="enroll-course">
         <option value="">-- Select a Course --</option>
-        <option value="HTML">HTML â€“ Web Structure Fundamentals</option>
-        <option value="CSS">CSS â€“ Styling &amp; Responsive Design</option>
-        <option value="JavaScript">JavaScript â€“ Interactive Web Dev</option>
-        <option value="Java">Java â€“ Object Oriented Programming</option>
-        <option value="Python">Python â€“ Scripting &amp; Data Science</option>
-        <option value="SQL">SQL â€“ Relational Databases</option>
-        <option value="MongoDB">MongoDB â€“ NoSQL &amp; Atlas Cloud</option>
+        <option value="HTML">HTML – Web Structure Fundamentals</option>
+        <option value="CSS">CSS – Styling &amp; Responsive Design</option>
+        <option value="JavaScript">JavaScript – Interactive Web Dev</option>
+        <option value="Java">Java – Object Oriented Programming</option>
+        <option value="Python">Python – Scripting &amp; Data Science</option>
+        <option value="SQL">SQL – Relational Databases</option>
+        <option value="MongoDB">MongoDB – NoSQL &amp; Atlas Cloud</option>
       </select>
       <div class="form-error" id="en-course-err">Please select a course.</div>
     </div>
     <div class="form-group">
       <label>Message (Optional)</label>
       <textarea id="enroll-message" rows="3"
-        placeholder="Any questions or background about yourselfâ€¦"
+        placeholder="Any questions or background about yourself…"
         style="resize:vertical;"></textarea>
     </div>
-    <button class="btn-full" id="enrollBtn">Submit Enrollment â†’</button>
+    <button class="btn-full" id="enrollBtn">Submit Enrollment →</button>
   </div>
 </div>
 
-<!-- â”€â”€ SUCCESS MODAL â”€â”€ -->
+<!-- ── SUCCESS MODAL ── -->
 <div class="modal-overlay" id="successModal">
   <div class="modal-box">
-    <div class="modal-icon">ðŸŽ‰</div>
+    <div class="modal-icon">🎉</div>
     <h2>Enrollment Confirmed!</h2>
     <p>
       Thank you, <strong id="modal-name">Student</strong>!
@@ -105,30 +105,30 @@
       </svg>
       Join WhatsApp Community
     </a>
-    <a class="modal-close" id="modalClose">Continue to Dashboard â†’</a>
+    <a class="modal-close" id="modalClose">Continue to Dashboard →</a>
   </div>
 </div>
 
-<!-- â”€â”€ main.js (AuthDB, showToast) â”€â”€ -->
+<!-- ── main.js (AuthDB, showToast) ── -->
 <script src="../js/main.js?v=2"></script>
 
-<!-- â”€â”€ ENROLLMENT LOGIC â”€â”€ -->
+<!-- ── ENROLLMENT LOGIC ── -->
 <script>
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  //  CONFIG  â€” only these values need updating
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
+  //  CONFIG  — only these values need updating
+  // ════════════════════════════════════════════════════════════
 
-  // MongoDB Atlas App Services endpoint (from Atlas â†’ App Services â†’ HTTPS Endpoints)
-  // ðŸ”§ Replace YOUR_APP_ID with your real App Services app ID
+  // MongoDB Atlas App Services endpoint (from Atlas → App Services → HTTPS Endpoints)
+  // 🔧 Replace YOUR_APP_ID with your real App Services app ID
 
 
-  // EmailJS IDs â€” already in your account, just copy here
+  // EmailJS IDs — already in your account, just copy here
   const EJS_SERVICE_ID  = 'service_63ztzjj';
   const EJS_ADMIN_TPL   = 'template_e5c8udj';
-  const EJS_STUDENT_TPL = 'template_0gbkr7y';   // â† fixed: was missing the "t" in "template_"
+  const EJS_STUDENT_TPL = 'template_0gbkr7y';   // ← fixed: was missing the "t" in "template_"
 
-  // WhatsApp group links â€” already set correctly from your file
+  // WhatsApp group links — already set correctly from your file
   const WHATSAPP_LINKS = {
     HTML:       'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',
     CSS:        'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',
@@ -139,9 +139,9 @@
     MongoDB:    'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh',
   };
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  //  PRE-FILL  â€” course from URL, name/email if logged in
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
+  //  PRE-FILL  — course from URL, name/email if logged in
+  // ════════════════════════════════════════════════════════════
 
   const params = new URLSearchParams(window.location.search);
   const pre    = params.get('course');
@@ -158,9 +158,9 @@
     document.getElementById('enroll-name').value  = session.name;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
   //  VALIDATE
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
 
   function validate(name, email, phone, course) {
     let ok = true;
@@ -190,10 +190,10 @@
     return ok;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
   //  SAVE TO MONGODB  via Atlas App Services HTTP Endpoint
   //  (replaces all Firebase code)
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
 
   async function saveToMongoDB(name, email, phone, course, message) {
 
@@ -214,7 +214,7 @@
     const result = await response.json();
 
       if (response.status === 409) {
-      // 409 = duplicate â€” the Atlas function returns this when already enrolled
+      // 409 = duplicate — the Atlas function returns this when already enrolled
       showToast(`You're already enrolled in ${course}!`, 'error');
       return false;
     }
@@ -230,9 +230,9 @@
 
   
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  //  FALLBACK  â€” localStorage when MongoDB not configured yet
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
+  //  FALLBACK  — localStorage when MongoDB not configured yet
+  // ════════════════════════════════════════════════════════════
 
   function saveToLocalStorage(name, email, phone, course, message) {
     const list = JSON.parse(localStorage.getItem('lv_enrollments') || '[]');
@@ -248,9 +248,9 @@
     return true;
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
   //  SEND EMAILS  via EmailJS
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
 
   async function sendEmails(name, email, phone, course, message) {
     // Admin notification
@@ -273,9 +273,9 @@
     });
   }
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
   //  SUBMIT HANDLER
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ════════════════════════════════════════════════════════════
 
   const btn = document.getElementById('enrollBtn');
 
@@ -288,34 +288,34 @@
 
     if (!validate(name, email, phone, course)) return;
 
-    btn.textContent = 'Saving to databaseâ€¦';
+    btn.textContent = 'Saving to database…';
     btn.disabled    = true;
 
     try {
-      // 1ï¸âƒ£  Save to MongoDB (or localStorage fallback)
+      // 1️⃣  Save to MongoDB (or localStorage fallback)
       const saved = await saveToMongoDB(name, email, phone, course, message);
       if (!saved) {
-        btn.textContent = 'Submit Enrollment â†’';
+        btn.textContent = 'Submit Enrollment →';
         btn.disabled    = false;
         return;
       }
 
-      // 2ï¸âƒ£  Update in-memory user record if logged in
+      // 2️⃣  Update in-memory user record if logged in
       if (session) {
     await AuthDB.enrollUser(session.email, course, phone);
 }
 
-      // 3ï¸âƒ£  Send emails â€” wrapped so an email failure never blocks enrollment
-      btn.textContent = 'Sending confirmation emailâ€¦';
+      // 3️⃣  Send emails — wrapped so an email failure never blocks enrollment
+      btn.textContent = 'Sending confirmation email…';
       try {
         await sendEmails(name, email, phone, course, message);
       } catch (emailErr) {
-        // Enrollment already saved â€” email failure is non-critical
+        // Enrollment already saved — email failure is non-critical
         console.warn('Email send failed (enrollment still saved):', emailErr);
-        showToast('Enrolled! (Email notification failed â€” check EmailJS config)', 'error');
+        showToast('Enrolled! (Email notification failed — check EmailJS config)', 'error');
       }
 
-      // 4ï¸âƒ£  Show success modal
+      // 4️⃣  Show success modal
       document.getElementById('modal-name').textContent   = name;
       document.getElementById('modal-course').textContent = course;
       document.getElementById('whatsapp-link').href       = WHATSAPP_LINKS[course] || '#';
@@ -325,12 +325,12 @@
       console.error('Enrollment error:', err);
       showToast('Error: ' + (err.message || 'Something went wrong. Check the console.'), 'error');
     } finally {
-      btn.textContent = 'Submit Enrollment â†’';
+      btn.textContent = 'Submit Enrollment →';
       btn.disabled    = false;
     }
   });
 
-  // â”€â”€ Close modal â†’ dashboard â”€â”€
+  // ── Close modal → dashboard ──
   document.getElementById('modalClose').addEventListener('click', () => {
     document.getElementById('successModal').classList.remove('show');
     window.location.href = 'dashboard.html';

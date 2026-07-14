@@ -1,4 +1,4 @@
-// ── MAIN JS — MarcHub ──
+﻿// -- MAIN JS � MarcHub --
 window.BACKEND = "https://marchub-backend-wexu.onrender.com";
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
@@ -273,7 +273,7 @@ window.AuthDB = {
     return await response.json();
 
 },
-// ─── Courses ───
+// --- Courses ---
 async getCourses() {
     const r = await fetch(`${BACKEND}/courses`);
     return await r.json();
@@ -297,7 +297,7 @@ async updateCourse(id, data) {
 async deleteCourse(id) {
     await fetch(`${BACKEND}/courses/${id}`, { method: "DELETE" });
 },
-// ─── Certificates ───
+// --- Certificates ---
 async getUserCertificates(email) {
     const r = await fetch(`${BACKEND}/certificates/user/${email}`);
     return await r.json();
@@ -314,7 +314,7 @@ async verifyCertificate(email, course) {
     });
     return await r.json();
 },
-// ─── Internships ───
+// --- Internships ---
 async getActiveInternships() {
     const r = await fetch(`${BACKEND}/internships/active`);
     return await r.json();
@@ -367,4 +367,4 @@ async updateInternshipStatus(data) {
     return await r.json();
 },
 };
-console.log('%cMarcHub 🚀','color:#00f5c4;font-size:1.5rem;font-weight:bold;');
+console.log('%cMarcHub ??','color:#00f5c4;font-size:1.5rem;font-weight:bold;');
