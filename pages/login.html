@@ -166,7 +166,8 @@
             return;
         }
         _fpemail = em;
-        showToast("OTP sent to your email", "success");
+        if(result.otp) showToast("OTP: " + result.otp + " (also sent to your email)", "success");
+        else showToast("OTP sent to your email", "success");
         document.getElementById("fp-title").textContent = "Verify Code";
         document.getElementById("fp-desc").textContent = `Code sent to ${em}`;
         fpStep(2);
