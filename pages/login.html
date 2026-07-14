@@ -93,7 +93,12 @@
 <script>
   
   const sess=AuthDB.getSession();
-  if(sess) window.location.href=sess.isAdmin?'admin.html':'dashboard.html';
+  if(sess && sess.email) {
+    // Verify session is valid before auto-redirecting
+    AuthDB.getUser(sess.email).then(u => {
+      if (u) window.location.href = sess.isAdmin ? 'admin.html' : 'dashboard.html';
+    });
+  }
 
   const loginBtn=document.getElementById('loginBtn');
   loginBtn.addEventListener('click',async()=>{

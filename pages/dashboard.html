@@ -225,8 +225,9 @@
   AuthDB.getUser(session.email).then(u => {
     if (u) user = u;
     initDashboard();
-  });
-  if (!user.email && !user.name) initDashboard();
+  }).catch(() => initDashboard());
+  // Fallback: init even if getUser fails
+  setTimeout(() => { if (typeof initDashboard === 'function') initDashboard(); }, 3000);
 
   async function initDashboard() {
 

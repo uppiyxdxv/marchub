@@ -56,7 +56,10 @@
 
 <script src="../js/main.js"></script>
 <script>
- if (AuthDB.getSession()) window.location.href = 'dashboard.html';
+ const sess = AuthDB.getSession();
+ if (sess) {
+   AuthDB.getUser(sess.email).then(u => { if (u) window.location.href = 'dashboard.html'; });
+ }
 const registerBtn = document.getElementById('registerBtn');
 
 registerBtn.addEventListener('click', async () => {
