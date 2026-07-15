@@ -77,6 +77,41 @@
     /* ── Footer ── */
     .dash-foot{text-align:center;padding:2rem 0 1rem;border-top:1px solid var(--card-border);color:var(--muted);font-size:.8rem;}
     .dash-foot strong{color:var(--accent);}
+    /* ── Manage Task ── */
+    .add-int-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;background:linear-gradient(135deg,var(--accent),#00c9a7);color:var(--bg);font-weight:700;border:none;border-radius:10px;cursor:pointer;font-family:var(--font-display);font-size:.9rem;transition:all .3s;margin-bottom:1.5rem;}
+    .add-int-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,245,196,.3);}
+    .verify-form{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:2rem;max-width:480px;margin-bottom:2rem;}
+    .verify-form h3{font-size:1.1rem;font-weight:800;margin-bottom:.5rem;}
+    .verify-form .sub{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem;}
+    .verify-form .form-group{margin-bottom:1.25rem;}
+    .verify-form label{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-mono);margin-bottom:.5rem;}
+    .verify-form .hint{font-size:.75rem;color:var(--muted);margin-top:.3rem;}
+    .verify-form .error-msg{color:#ef4444;font-size:.82rem;display:none;margin-top:.3rem;}
+    .int-list-table{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--card-border);margin-bottom:2rem;}
+    .int-list-table table{width:100%;border-collapse:collapse;font-size:.82rem;min-width:1000px;}
+    .int-list-table thead{background:rgba(255,255,255,.04);}
+    .int-list-table th{padding:.75rem .6rem;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;white-space:nowrap;border-bottom:1px solid var(--card-border);}
+    .int-list-table td{padding:.7rem .6rem;border-bottom:1px solid var(--card-border);vertical-align:top;}
+    .int-list-table tr:hover td{background:rgba(255,255,255,.02);}
+    .int-list-table .sr{color:var(--muted);font-family:var(--font-mono);font-size:.8rem;text-align:center;vertical-align:middle;}
+    .int-detail{line-height:1.6;}
+    .int-detail .title{font-weight:700;font-size:.85rem;}
+    .int-detail .id{font-size:.78rem;color:var(--accent);font-family:var(--font-mono);}
+    .int-detail .name{font-weight:600;font-size:.82rem;}
+    .int-detail .dates{font-size:.75rem;color:var(--muted);}
+    .int-detail .status{display:inline-block;font-size:.7rem;padding:.15rem .5rem;border-radius:99px;background:rgba(16,185,129,.12);color:#10b981;border:1px solid rgba(16,185,129,.25);font-weight:600;margin-top:.3rem;}
+    .dl-link{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:6px;background:rgba(0,245,196,.1);border:1px solid rgba(0,245,196,.25);color:var(--accent);font-size:.75rem;cursor:pointer;transition:all .2s;font-family:var(--font-display);text-decoration:none;font-weight:600;}
+    .dl-link:hover{background:rgba(0,245,196,.2);}
+    .task-cell{font-size:.75rem;line-height:1.5;}
+    .task-cell .done{color:#10b981;font-weight:700;}
+    .task-cell .ts{color:var(--muted);font-size:.7rem;font-family:var(--font-mono);display:block;}
+    .cert-dl{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .7rem;border-radius:6px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#f59e0b;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:var(--font-display);text-decoration:none;font-weight:600;}
+    .cert-dl:hover{background:rgba(245,158,11,.2);}
+    .cert-dl .cong{display:block;font-size:.65rem;color:var(--muted);font-weight:400;}
+    .empty-state{text-align:center;padding:3rem 2rem;color:var(--muted);}
+    .empty-state .big{font-size:3rem;margin-bottom:1rem;}
+    .act-btn{padding:.55rem 1.1rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:var(--font-display);border:1px solid var(--card-border);background:transparent;color:var(--muted);transition:all .2s;}
+    .act-btn:hover{border-color:var(--accent);color:var(--accent);}
     /* ── Responsive ── */
     @media(max-width:768px){
       .sidebar{width:100%;position:relative;height:auto;border-right:none;border-bottom:1px solid var(--card-border);padding:1rem;}
@@ -157,28 +192,14 @@
         <p><span>Daily Tip:</span> Add this internship to your LinkedIn under experience section with certificate.</p>
       </div>
 
-      <!-- Internship Progress Card -->
-      <div class="int-progress-card">
+      <!-- Summary Card -->
+      <div class="int-progress-card" id="homeSummaryCard">
         <div class="title-section">
           <span class="ico">🎓</span>
-          <div><h3>Web Development with HTML, CSS, and JavaScript Internship</h3></div>
+          <div><h3>Your Internship Summary</h3></div>
         </div>
-        <div class="prog-section">
-          <div class="prog-bar"><div class="prog-fill" style="width:100%;"></div></div>
-          <div class="prog-label"><span>Progress</span><span class="pct">100% Complete</span></div>
-        </div>
-        <div class="task-grid" id="intTaskGrid">
-          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 1</h5><p>Submitted</p></div></div>
-          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 2</h5><p>Submitted</p></div></div>
-          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 3</h5><p>Submitted</p></div></div>
-          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 4</h5><p>Submitted</p></div></div>
-          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 5</h5><p>Submitted</p></div></div>
-        </div>
-        <div class="cert-section">
-          <div class="trophy">🏆</div>
-          <h4>Certificate of Completion</h4>
-          <p>You've completed all tasks! Claim your certificate.</p>
-          <button class="cert-btn" id="claimCertBtn">🎓 View Certificate</button>
+        <div id="homeSummaryContent">
+          <p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add your internship.</p>
         </div>
       </div>
 
@@ -187,7 +208,49 @@
 
     <!-- Placeholder tabs -->
     <div class="tab-content" id="tab-manager"><p style="color:var(--muted);padding:2rem;">Admin Manager section coming soon.</p></div>
-    <div class="tab-content" id="tab-tasks"><p style="color:var(--muted);padding:2rem;">Manage Task section coming soon.</p></div>
+    <!-- Tab: Manage Task -->
+    <div class="tab-content" id="tab-tasks">
+      <div id="manageTaskRoot">
+        <!-- State 1: No internship added yet -->
+        <div id="taskEmptyState" class="empty-state">
+          <div class="big">📋</div>
+          <h3 style="margin-bottom:.5rem;">No Internships Added</h3>
+          <p style="margin-bottom:1.5rem;">Add your internship using your Offer Letter ID to view and manage tasks.</p>
+          <button class="add-int-btn" onclick="showVerifyForm()">＋ Add Internship</button>
+        </div>
+
+        <!-- State 2: Verification Form (hidden by default) -->
+        <div id="verifyForm" class="verify-form" style="display:none;">
+          <h3>🔐 Verify Internship</h3>
+          <p class="sub">Enter your details to access your internship tasks.</p>
+          <div class="form-group">
+            <label>📜 Offer Letter ID *</label>
+            <input type="text" id="vl-offer" placeholder="APSPL0000000" style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;"/>
+            <p class="hint">Please provide the Offer Letter ID for record verification purposes. For Example - APSPL0000000</p>
+            <div class="error-msg" id="vl-offer-err">Please enter a valid Offer Letter ID.</div>
+          </div>
+          <div class="form-group">
+            <label>📧 Email ID *</label>
+            <input type="email" id="vl-email" placeholder="you@example.com" style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;"/>
+            <p class="hint">Please provide email given during fill internship form for record verification purposes.</p>
+            <div class="error-msg" id="vl-email-err">Please enter the email used during registration.</div>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-top:1.5rem;">
+            <button class="btn-full" onclick="verifyInternship()" style="flex:1;">Submit →</button>
+            <button class="act-btn" onclick="hideVerifyForm()" style="padding:.85rem 1.5rem;">Cancel</button>
+          </div>
+        </div>
+
+        <!-- State 3: Internship List Table (hidden by default) -->
+        <div id="internshipList" style="display:none;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+            <h3 style="font-size:1.1rem;font-weight:800;">📋 Internship List</h3>
+            <button class="add-int-btn" onclick="showVerifyForm()" style="font-size:.82rem;padding:.5rem 1rem;">＋ Add Another</button>
+          </div>
+          <div id="intListTableContainer"></div>
+        </div>
+      </div>
+    </div>
     <div class="tab-content" id="tab-feedback"><p style="color:var(--muted);padding:2rem;">Feedback section coming soon.</p></div>
     <div class="tab-content" id="tab-courses"><p style="color:var(--muted);padding:2rem;">Interest Course section coming soon.</p></div>
     <div class="tab-content" id="tab-help"><p style="color:var(--muted);padding:2rem;">Help & Support section coming soon.</p></div>
@@ -214,6 +277,39 @@
   </div>
 </div>
 
+<!-- ── Payment Modal ── -->
+<div class="pay-overlay" id="payModal">
+  <div class="pay-panel">
+    <button class="pay-close" onclick="closePayModal()">✕</button>
+    <div class="pay-icon">💳</div>
+    <h3 style="text-align:center;">Complete Payment</h3>
+    <p class="pay-sub">Pay ₹49 to unlock your certificate download.</p>
+    <div class="amt-box">
+      <div class="lbl">Certificate Fee</div>
+      <div class="amt">₹49</div>
+      <div class="note">One-time payment for certificate generation</div>
+    </div>
+    <div class="upi-detail">📱 UPI ID: <span id="payUpiDisplay">marchub@upi</span></div>
+    <!-- UTR Form -->
+    <div id="payFormArea">
+      <label>📝 UTR Number *</label>
+      <input type="text" id="payUtrInput" placeholder="Enter UPI transaction UTR" />
+      <p class="pay-hint">Enter the UTR/Reference number from your UPI payment confirmation.</p>
+      <div class="pay-err" id="payUtrErr">Please enter a valid UTR number.</div>
+      <div style="display:flex;gap:.75rem;margin-top:1.25rem;">
+        <button class="btn-full" onclick="submitPayment()" style="flex:1;">Submit & Download →</button>
+        <button class="act-btn" onclick="closePayModal()" style="padding:.85rem 1.5rem;">Cancel</button>
+      </div>
+    </div>
+    <!-- Success state -->
+    <div class="pay-done" id="payDoneArea">
+      <div class="ok">✅</div>
+      <p>Payment verified! You can now download your certificate.</p>
+      <button class="cert-btn" onclick="openCertFromPay()" style="margin-top:1rem;">🎓 View Certificate</button>
+    </div>
+  </div>
+</div>
+
 <style>
   .cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
   .cert-overlay.show{display:flex;}
@@ -226,6 +322,28 @@
   .cert-paper .seal{font-size:3rem;margin:1rem 0;}
   .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;}
   .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;}
+  /* ── Payment Modal ── */
+  .pay-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9998;align-items:center;justify-content:center;}
+  .pay-overlay.show{display:flex;}
+  .pay-panel{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:2.5rem;max-width:440px;width:90%;position:relative;}
+  .pay-panel .pay-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);}
+  .pay-panel .pay-icon{font-size:3rem;text-align:center;margin-bottom:.5rem;}
+  .pay-panel h3{font-size:1.2rem;font-weight:800;margin-bottom:.3rem;color:var(--text);}
+  .pay-panel .pay-sub{color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;text-align:center;}
+  .pay-panel .amt-box{background:linear-gradient(135deg,rgba(0,245,196,.1),rgba(124,58,237,.1));border:1px solid rgba(0,245,196,.2);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem;}
+  .pay-panel .amt-box .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+  .pay-panel .amt-box .amt{font-size:2.2rem;font-weight:800;color:var(--accent);font-family:var(--font-display);}
+  .pay-panel .amt-box .note{font-size:.75rem;color:var(--muted);margin-top:.3rem;}
+  .pay-panel .upi-detail{background:rgba(255,255,255,.03);border-radius:8px;padding:.75rem 1rem;font-family:var(--font-mono);font-size:.85rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+  .pay-panel .upi-detail span{color:var(--accent);font-weight:700;}
+  .pay-panel label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.5rem;}
+  .pay-panel input[type="text"]{width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;}
+  .pay-panel input[type="text"]:focus{border-color:var(--accent);}
+  .pay-panel .pay-hint{font-size:.72rem;color:var(--muted);margin-top:.35rem;}
+  .pay-panel .pay-err{color:#ef4444;font-size:.8rem;display:none;margin-top:.3rem;}
+  .pay-panel .pay-done{display:none;text-align:center;padding:1rem;}
+  .pay-panel .pay-done .ok{font-size:3rem;margin-bottom:.5rem;}
+  .pay-panel .pay-done p{color:#10b981;font-weight:700;font-size:1rem;}
 </style>
 
 <script src="../js/main.js?v=3"></script>
@@ -258,12 +376,234 @@
     });
   });
 
-  // ── Certificate ──
-  document.getElementById('claimCertBtn').addEventListener('click',()=>{
+  // ── Task Helpers ──
+  function getTasks(offerId){
+    const all=JSON.parse(localStorage.getItem('lv_int_tasks_all')||'{}');
+    return all[offerId]||null;
+  }
+  function saveTasks(offerId,tasks){
+    const all=JSON.parse(localStorage.getItem('lv_int_tasks_all')||'{}');
+    all[offerId]=tasks;
+    localStorage.setItem('lv_int_tasks_all',JSON.stringify(all));
+  }
+  function initTasks(offerId){
+    let tasks=getTasks(offerId);
+    if(!tasks){
+      tasks=[];
+      for(let i=1;i<=5;i++)tasks.push({taskNo:i,status:'pending',verifiedAt:null});
+      saveTasks(offerId,tasks);
+    }
+    return tasks;
+  }
+
+  // ── Certificate (guarded by payment + all tasks verified) ──
+  function canDownloadCert(offerId){
+    const tasks=getTasks(offerId);
+    if(!tasks||tasks.length<5)return false;
+    if(!tasks.every(t=>t.status==='verified'))return false;
+    const payments=JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
+    return !!payments[offerId];
+  }
+  function allTasksVerified(offerId){
+    const tasks=getTasks(offerId);
+    if(!tasks||tasks.length<5)return false;
+    return tasks.every(t=>t.status==='verified');
+  }
+  function showCertModal(){
     document.getElementById('cert-name').textContent=user.name||session.name;
     document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
     document.getElementById('certModal').classList.add('show');
-  });
+  }
+  function openCertTable(offerId){
+    if(canDownloadCert(offerId)){showCertModal();return;}
+    if(!allTasksVerified(offerId)){alert('All 5 tasks must be verified by admin first.');return;}
+    showPayModal(offerId);
+  }
+
+  // ── Payment ──
+  function showPayModal(offerId){
+    document.getElementById('payUtrInput').value='';
+    document.getElementById('payFormArea').style.display='block';
+    document.getElementById('payDoneArea').style.display='none';
+    document.getElementById('payUtrErr').style.display='none';
+    document.getElementById('payModal').dataset.offer=offerId;
+    document.getElementById('payModal').classList.add('show');
+  }
+  function closePayModal(){
+    document.getElementById('payModal').classList.remove('show');
+  }
+  function submitPayment(){
+    const offer=document.getElementById('payModal').dataset.offer;
+    const utr=document.getElementById('payUtrInput').value.trim();
+    document.getElementById('payUtrErr').style.display='none';
+    if(!utr||utr.length<4){document.getElementById('payUtrErr').style.display='block';return;}
+    const payments=JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
+    payments[offer]={utr,paidAt:new Date().toISOString(),status:'verified'};
+    localStorage.setItem('lv_int_payments',JSON.stringify(payments));
+    document.getElementById('payFormArea').style.display='none';
+    document.getElementById('payDoneArea').style.display='block';
+    renderInternshipList();
+    renderHomeSummary();
+  }
+  function openCertFromPay(){
+    closePayModal();
+    showCertModal();
+  }
+
+  // ── Admin verify task (inline in table) ──
+  function verifyTaskByAdmin(offerId,taskNo){
+    const tasks=getTasks(offerId);
+    const task=tasks.find(t=>t.taskNo===taskNo);
+    if(!task||task.status==='verified')return;
+    task.status='verified';
+    task.verifiedAt=new Date().toLocaleString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    saveTasks(offerId,tasks);
+    renderInternshipList();
+    renderHomeSummary();
+  }
+
+  // ── Manage Task ──
+  function showVerifyForm(){
+    document.getElementById('taskEmptyState').style.display='none';
+    document.getElementById('verifyForm').style.display='block';
+    document.getElementById('vl-offer').value='';
+    document.getElementById('vl-email').value='';
+    document.querySelectorAll('.verify-form .error-msg').forEach(e=>e.style.display='none');
+  }
+  function hideVerifyForm(){
+    document.getElementById('verifyForm').style.display='none';
+    document.getElementById('taskEmptyState').style.display='block';
+  }
+  function verifyInternship(){
+    const offer=document.getElementById('vl-offer').value.trim();
+    const email=document.getElementById('vl-email').value.trim();
+    document.querySelectorAll('.verify-form .error-msg').forEach(e=>e.style.display='none');
+    let ok=true;
+    if(!offer||!/^APSPL\d+$/i.test(offer)){document.getElementById('vl-offer-err').style.display='block';ok=false;}
+    if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){document.getElementById('vl-email-err').style.display='block';ok=false;}
+    if(!ok)return;
+    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    if(!list.find(v=>v.offer===offer&&v.email===email)){
+      list.push({offer,email,verifiedAt:new Date().toISOString()});
+      localStorage.setItem('lv_int_verified',JSON.stringify(list));
+    }
+    initTasks(offer);
+    document.getElementById('verifyForm').style.display='none';
+    renderInternshipList();
+    renderHomeSummary();
+  }
+  function renderInternshipList(){
+    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    const container=document.getElementById('intListTableContainer');
+    const root=document.getElementById('internshipList');
+    if(!list.length){root.style.display='none';document.getElementById('taskEmptyState').style.display='block';return;}
+    root.style.display='block';
+    document.getElementById('taskEmptyState').style.display='none';
+    document.getElementById('verifyForm').style.display='none';
+    const names=['Pallolla upendra','Ravi Kumar','Sita Sharma','Akash Verma','Neha Singh'];
+    container.innerHTML=list.map((v,i)=>renderIntRow(i+1,v,names[i%names.length])).join('');
+  }
+  function renderIntRow(sr,data,name){
+    const tasks=initTasks(data.offer);
+    const allVerified=allTasksVerified(data.offer);
+    const paid=!!(JSON.parse(localStorage.getItem('lv_int_payments')||'{}')[data.offer]);
+
+    let certHtml;
+    if(paid) certHtml=`<a href="#" class="cert-dl" onclick="openCertTable('${data.offer}');return false;">🎓 Download<span class="cong">Congratulations!<br/>Internship done.</span></a>`;
+    else if(allVerified) certHtml=`<a href="#" class="cert-dl" onclick="openCertTable('${data.offer}');return false;" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;">💳 Pay ₹49<span class="cong" style="color:#ef4444;">Pay & Download<br/>Certificate</span></a>`;
+    else certHtml=`<a href="#" class="cert-dl" style="opacity:.4;cursor:not-allowed;border-color:var(--card-border);background:transparent;color:var(--muted);pointer-events:none;">🔒 Locked<span class="cong" style="color:var(--muted);">Admin must verify<br/>all 5 tasks first</span></a>`;
+
+    const taskCells=tasks.map(t=>{
+      if(t.status==='verified'){
+        return `<div class="task-cell"><span class="done">✓ Completed</span><span class="ts">${t.verifiedAt}</span></div>`;
+      }
+      return `<div class="task-cell" style="display:flex;flex-direction:column;gap:.3rem;">
+        <span style="color:#eab308;font-size:.75rem;">⏳ Pending</span>
+        <span style="color:var(--muted);font-size:.68rem;">(waiting for admin)</span>
+        <button onclick="verifyTaskByAdmin('${data.offer}',${t.taskNo})" style="padding:.25rem .5rem;font-size:.68rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:6px;cursor:pointer;font-family:var(--font-display);font-weight:600;">Approve ✓</button>
+      </div>`;
+    }).join('');
+
+    return `<div class="int-list-table"><table>
+      <thead><tr>
+        <th style="width:40px;">Sr. No</th>
+        <th>Intern's Details</th>
+        <th>Download Task</th>
+        <th>Task-1</th><th>Task-2</th><th>Task-3</th><th>Task-4</th><th>Task-5</th>
+        <th>Enrolled At</th>
+        <th>Download certificate</th>
+      </tr></thead>
+      <tbody><tr>
+        <td class="sr">${sr}</td>
+        <td>
+          <div class="int-detail">
+            <div class="title">Web Development with HTML, CSS, and JavaScript</div>
+            <div class="id">${data.offer}</div>
+            <div class="name">${name}</div>
+            <div class="dates">Start: 11 May 2026</div>
+            <div class="dates">End: 24 Jun 2026</div>
+            ${allVerified?'<span class="status">Completed</span>':'<span class="status" style="background:rgba(234,179,8,.12);color:#eab308;border-color:rgba(234,179,8,.25);">In Progress</span>'}
+          </div>
+        </td>
+        <td><a href="#" class="dl-link" onclick="alert('Task file download started.');return false;">📥 Download</a></td>
+        ${taskCells}
+        <td style="font-size:.75rem;font-family:var(--font-mono);color:var(--muted);vertical-align:middle;">12 May 2026</td>
+        <td>${certHtml}</td>
+      </tr></tbody>
+    </table></div>`;
+  }
+
+  // ── Home Summary ──
+  function renderHomeSummary(){
+    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    const container=document.getElementById('homeSummaryContent');
+    if(!list.length){
+      container.innerHTML='<p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add your internship.</p>';
+      return;
+    }
+    const v=list[0];
+    const tasks=initTasks(v.offer);
+    const done=tasks.filter(t=>t.status==='verified').length;
+    const pct=Math.round(done/5*100);
+    const allDone=done===5;
+    const paid=!!(JSON.parse(localStorage.getItem('lv_int_payments')||'{}')[v.offer]);
+
+    container.innerHTML=`
+      <div style="margin-bottom:1rem;">
+        <div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);font-family:var(--font-mono);margin-bottom:.5rem;">
+          <span>Progress</span>
+          <span style="color:#10b981;font-weight:700;">${pct}% (${done}/5 tasks)</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;"></div></div>
+      </div>
+      <div class="task-grid" style="grid-template-columns:repeat(5,1fr);">
+        ${tasks.map(t=>{
+          const vd=t.status==='verified';
+          return `<div class="task-item" style="${vd?'border-color:rgba(16,185,129,.3);':''}">
+            <div class="check ${vd?'done':'pending'}">${vd?'✓':'⏳'}</div>
+            <div class="ti"><h5>Task ${t.taskNo}</h5><p>${vd?'Verified':'Pending'}</p></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div class="cert-section" style="margin-top:1rem;">
+        <div class="trophy">🏆</div>
+        <h4>Certificate of Completion</h4>
+        ${allDone ? `<p>All tasks verified! ${paid?'You can now download your certificate.':'Pay ₹49 to download your certificate.'}</p>` : `<p>Complete all 5 tasks to unlock the certificate.</p>`}
+        ${paid
+          ? `<button class="cert-btn" onclick="showCertModal()">🎓 View Certificate</button>`
+          : allDone
+            ? `<button class="cert-btn" onclick="showPayModal('${v.offer}')">💳 Pay ₹49 & Download</button><p style="font-size:.75rem;color:#ef4444;margin-top:.5rem;">Pay ₹49 to unlock certificate download</p>`
+            : `<button class="cert-btn" disabled style="opacity:.4;cursor:not-allowed;">🔒 Locked</button>`
+        }
+      </div>`;
+  }
+
+  // ── Init ──
+  (function initManageTask(){
+    const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    if(verified.length){renderInternshipList();}
+    renderHomeSummary();
+  })();
 
   // ── Logout ──
   document.getElementById('logoutBtnSide').addEventListener('click',e=>{
