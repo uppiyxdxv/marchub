@@ -117,6 +117,7 @@
   <div class="tab-row">
     <button class="tab-btn active" onclick="switchTab('courses')" id="tab-courses">📚 My Courses</button>
     <button class="tab-btn" onclick="switchTab('internships')" id="tab-internships">💼 Internships</button>
+    <a href="intern-dashboard.html" class="tab-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">🎓 Intern Dashboard</a>
     <button class="tab-btn" onclick="switchTab('performance')" id="tab-performance">📊 Performance</button>
     <button class="tab-btn" onclick="switchTab('settings')" id="tab-settings">⚙ Settings</button>
   </div>
@@ -128,6 +129,9 @@
 
   <!-- Internships Tab -->
   <div class="tab-panel" id="panel-internships">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+      <a href="intern-dashboard.html" class="btn-hero" style="padding:.6rem 1.2rem;font-size:.85rem;">🎓 Open Intern Dashboard →</a>
+    </div>
     <div class="course-grid" id="internshipGrid"></div>
   </div>
 

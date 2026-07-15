@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Intern Dashboard – MarcHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    body{background:var(--bg);overflow-x:hidden;}
+    .int-dash{display:flex;min-height:100vh;}
+    /* ── Sidebar ── */
+    .sidebar{width:270px;background:var(--bg2);border-right:1px solid var(--card-border);padding:2rem 1.5rem;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+    .sidebar-logo{display:flex;align-items:center;gap:.75rem;margin-bottom:2rem;}
+    .sidebar-logo img{width:42px;height:42px;border-radius:50%;object-fit:cover;}
+    .sidebar-logo span{font-size:1.2rem;font-weight:800;color:var(--text);}
+    .sidebar-user{text-align:center;padding:1.5rem 0;border-bottom:1px solid var(--card-border);margin-bottom:1.5rem;}
+    .sidebar-user .av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:var(--bg);margin:0 auto .75rem;overflow:hidden;}
+    .sidebar-user .av img{width:100%;height:100%;object-fit:cover;}
+    .sidebar-user .nm{font-size:1rem;font-weight:700;}
+    .sidebar-user .em{font-size:.78rem;color:var(--muted);font-family:var(--font-mono);margin-top:.2rem;}
+    .sidebar-nav{display:flex;flex-direction:column;gap:.25rem;flex:1;}
+    .sidebar-nav a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:var(--muted);font-size:.9rem;font-weight:600;transition:all .2s;text-decoration:none;}
+    .sidebar-nav a:hover,.sidebar-nav a.active{background:rgba(0,245,196,.1);color:var(--accent);}
+    .sidebar-nav a .ico{font-size:1.2rem;width:24px;text-align:center;}
+    .sidebar-foot{padding-top:1.5rem;border-top:1px solid var(--card-border);margin-top:1rem;}
+    .sidebar-foot a{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:var(--muted);font-size:.85rem;font-weight:600;transition:all .2s;text-decoration:none;}
+    .sidebar-foot a:hover{background:rgba(239,68,68,.1);color:#ef4444;}
+    /* ── Main ── */
+    .main{flex:1;margin-left:270px;padding:2rem 3rem;min-height:100vh;}
+    .main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
+    .main-header h1{font-size:1.6rem;font-weight:800;}
+    .main-header .bread{font-size:.82rem;color:var(--muted);font-family:var(--font-mono);}
+    .bread span{color:var(--accent);}
+    .welcome-card{background:linear-gradient(135deg,rgba(0,245,196,.08),rgba(124,58,237,.08));border:1px solid var(--card-border);border-radius:var(--radius);padding:2rem;margin-bottom:2rem;}
+    .welcome-card h2{font-size:1.5rem;font-weight:800;margin-bottom:.5rem;}
+    .welcome-card p{color:var(--muted);font-size:.95rem;}
+    /* ── Notices ── */
+    .notices{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem;}
+    .notices h3{font-size:1.1rem;font-weight:800;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+    .notices h3 .badge{font-size:.7rem;background:#ef4444;color:#fff;padding:.15rem .5rem;border-radius:99px;font-family:var(--font-mono);}
+    .notice-item{padding:.85rem 0;border-bottom:1px solid var(--card-border);}
+    .notice-item:last-child{border-bottom:none;}
+    .notice-item h4{font-size:.9rem;font-weight:700;color:var(--accent);margin-bottom:.3rem;}
+    .notice-item p{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .notice-item p.date{font-size:.75rem;font-family:var(--font-mono);color:var(--accent3);margin-top:.3rem;}
+    /* ── Tip ── */
+    .tip-card{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(245,158,11,.08));border:1px solid rgba(249,115,22,.2);border-radius:var(--radius);padding:1.2rem 1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:1rem;}
+    .tip-card .bulb{font-size:2rem;}
+    .tip-card p{font-size:.9rem;color:var(--text);}
+    .tip-card p span{color:var(--accent3);font-weight:700;}
+    /* ── Internship Card ── */
+    .int-progress-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:2rem;margin-bottom:2rem;}
+    .int-progress-card .title-section{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;}
+    .int-progress-card .title-section .ico{font-size:2rem;}
+    .int-progress-card .title-section h3{font-size:1.2rem;font-weight:800;}
+    .int-progress-card .prog-section{margin-bottom:1.5rem;}
+    .int-progress-card .prog-bar{height:10px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+    .int-progress-card .prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#10b981);transition:width .6s;}
+    .int-progress-card .prog-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:.5rem;font-family:var(--font-mono);}
+    .int-progress-card .prog-label .pct{color:#10b981;font-weight:700;}
+    .task-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+    .task-item{display:flex;align-items:center;gap:.75rem;background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:10px;padding:.85rem 1rem;}
+    .task-item .check{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+    .task-item .check.done{background:rgba(16,185,129,.15);color:#10b981;}
+    .task-item .check.pending{background:rgba(234,179,8,.1);color:#eab308;}
+    .task-item .ti{flex:1;}
+    .task-item .ti h5{font-size:.85rem;font-weight:700;}
+    .task-item .ti p{font-size:.75rem;color:var(--muted);}
+    .cert-section{text-align:center;padding:1.5rem;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:var(--radius);}
+    .cert-section .trophy{font-size:3rem;margin-bottom:.5rem;}
+    .cert-section h4{font-size:1.1rem;font-weight:800;margin-bottom:.3rem;}
+    .cert-section p{color:var(--muted);font-size:.85rem;margin-bottom:1rem;}
+    .cert-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-family:var(--font-display);font-size:.9rem;transition:all .3s;}
+    .cert-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(245,158,11,.4);}
+    .cert-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+    /* ── Footer ── */
+    .dash-foot{text-align:center;padding:2rem 0 1rem;border-top:1px solid var(--card-border);color:var(--muted);font-size:.8rem;}
+    .dash-foot strong{color:var(--accent);}
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .sidebar{width:100%;position:relative;height:auto;border-right:none;border-bottom:1px solid var(--card-border);padding:1rem;}
+      .main{margin-left:0;padding:1.5rem;}
+      .sidebar-user{padding:1rem 0;}
+      .task-grid{grid-template-columns:1fr;}
+    }
+    /* ── Tabs inside main ── */
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+  </style>
+</head>
+<body>
+<div class="int-dash">
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../images/logo.png" alt="MarcHub" onerror="this.style.display='none'"/>
+      <span>Marchub</span>
+    </div>
+    <div class="sidebar-user">
+      <div class="av" id="sideAv">U</div>
+      <div class="nm" id="sideName">Pallolla Upendra</div>
+      <div class="em" id="sideEmail">user@email.com</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="active" data-tab="dashboard"><span class="ico">🏠</span> Home</a>
+      <a href="#" data-tab="dashboard"><span class="ico">📊</span> Dashboard</a>
+      <a href="#" data-tab="manager"><span class="ico">👤</span> Admin Manager</a>
+      <a href="#" data-tab="tasks"><span class="ico">📋</span> Manage Task</a>
+      <a href="#" data-tab="feedback"><span class="ico">💬</span> Feedback</a>
+      <a href="#" data-tab="courses"><span class="ico">📚</span> Interest Course</a>
+      <a href="#" data-tab="help"><span class="ico">❓</span> Help &amp; Support</a>
+    </nav>
+    <div class="sidebar-foot">
+      <a href="dashboard.html" id="backToDash">← Back to Dashboard</a>
+      <a href="#" id="logoutBtnSide" style="color:#ef4444;">🚪 Logout</a>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ── -->
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <div class="bread">📌 Intern Dashboard <span>/ Home</span></div>
+        <h1>Welcome to marchub</h1>
+      </div>
+    </div>
+
+    <!-- Tab: Dashboard (Home) -->
+    <div class="tab-content active" id="tab-dashboard">
+      <!-- Important Notices -->
+      <div class="notices">
+        <h3>📢 Important Notices <span class="badge">NEW</span></h3>
+        <div class="notice-item">
+          <h4>Web Development (HTML, CSS & JAVASCRIPT) Internship:</h4>
+          <p>Start Date: Each month date 1, 11, 21</p>
+          <p class="date">📅 Ongoing</p>
+        </div>
+        <div class="notice-item">
+          <h4>Web Development (PHP & MySQL) Internship:</h4>
+          <p>Start Date: Each month date 1, 11, 21</p>
+          <p class="date">📅 Ongoing</p>
+        </div>
+        <div class="notice-item">
+          <h4>App Development Internship:</h4>
+          <p>Start Date: Each month date 1, 11, 21</p>
+          <p class="date">📅 Ongoing</p>
+        </div>
+        <div class="notice-item" style="background:rgba(234,179,8,.05);border-radius:8px;padding:.85rem;margin-top:.5rem;border:none;">
+          <p style="color:var(--text);font-size:.85rem;">📌 <strong>Note:</strong> Please ensure all tasks are submitted properly through the given task form.</p>
+        </div>
+      </div>
+
+      <!-- Daily Tip -->
+      <div class="tip-card">
+        <div class="bulb">💡</div>
+        <p><span>Daily Tip:</span> Add this internship to your LinkedIn under experience section with certificate.</p>
+      </div>
+
+      <!-- Internship Progress Card -->
+      <div class="int-progress-card">
+        <div class="title-section">
+          <span class="ico">🎓</span>
+          <div><h3>Web Development with HTML, CSS, and JavaScript Internship</h3></div>
+        </div>
+        <div class="prog-section">
+          <div class="prog-bar"><div class="prog-fill" style="width:100%;"></div></div>
+          <div class="prog-label"><span>Progress</span><span class="pct">100% Complete</span></div>
+        </div>
+        <div class="task-grid" id="intTaskGrid">
+          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 1</h5><p>Submitted</p></div></div>
+          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 2</h5><p>Submitted</p></div></div>
+          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 3</h5><p>Submitted</p></div></div>
+          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 4</h5><p>Submitted</p></div></div>
+          <div class="task-item"><div class="check done">✓</div><div class="ti"><h5>Task 5</h5><p>Submitted</p></div></div>
+        </div>
+        <div class="cert-section">
+          <div class="trophy">🏆</div>
+          <h4>Certificate of Completion</h4>
+          <p>You've completed all tasks! Claim your certificate.</p>
+          <button class="cert-btn" id="claimCertBtn">🎓 View Certificate</button>
+        </div>
+      </div>
+
+      <div class="dash-foot">Powered By : <strong>Marchub Software PVT. LTD.</strong></div>
+    </div>
+
+    <!-- Placeholder tabs -->
+    <div class="tab-content" id="tab-manager"><p style="color:var(--muted);padding:2rem;">Admin Manager section coming soon.</p></div>
+    <div class="tab-content" id="tab-tasks"><p style="color:var(--muted);padding:2rem;">Manage Task section coming soon.</p></div>
+    <div class="tab-content" id="tab-feedback"><p style="color:var(--muted);padding:2rem;">Feedback section coming soon.</p></div>
+    <div class="tab-content" id="tab-courses"><p style="color:var(--muted);padding:2rem;">Interest Course section coming soon.</p></div>
+    <div class="tab-content" id="tab-help"><p style="color:var(--muted);padding:2rem;">Help & Support section coming soon.</p></div>
+  </main>
+</div>
+
+<!-- ── Certificate Modal ── -->
+<div class="cert-overlay" id="certModal">
+  <div class="cert-paper">
+    <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">✕</button>
+    <div class="seal">🏆</div>
+    <div style="font-size:.9rem;color:#888;text-transform:uppercase;letter-spacing:.15em;">Certificate of Completion</div>
+    <h1>MarcHub</h1>
+    <div class="sub">This certifies that</div>
+    <div class="name" id="cert-name"></div>
+    <div class="sub">has successfully completed</div>
+    <div class="course-nm" id="cert-course">Web Development with HTML, CSS, and JavaScript Internship – MarcHub</div>
+    <div class="date" id="cert-date"></div>
+    <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee;">
+      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div></div>
+      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">MarcHub Director</div></div>
+    </div>
+    <button class="btn-print" onclick="window.print()">🖨 Print Certificate</button>
+  </div>
+</div>
+
+<style>
+  .cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
+  .cert-overlay.show{display:flex;}
+  .cert-paper{background:#fff;border-radius:12px;padding:3rem;max-width:600px;width:90%;text-align:center;position:relative;}
+  .cert-paper h1{font-size:2rem;color:#1a1a1a;font-weight:800;margin:.5rem 0;}
+  .cert-paper .sub{color:#666;margin-bottom:1.5rem;}
+  .cert-paper .name{font-size:1.8rem;color:#7c3aed;font-weight:800;border-bottom:2px solid #7c3aed;display:inline-block;padding-bottom:.3rem;margin:1rem 0;}
+  .cert-paper .course-nm{font-size:1.2rem;color:#1a1a1a;font-weight:600;margin-top:.5rem;}
+  .cert-paper .date{color:#666;font-size:.85rem;margin-top:1rem;}
+  .cert-paper .seal{font-size:3rem;margin:1rem 0;}
+  .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;}
+  .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:#7c3aed;color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;}
+</style>
+
+<script src="../js/main.js?v=3"></script>
+<script>
+  const session=AuthDB.getSession();
+  if(!session){window.location.href='login.html';}
+
+  let user=session;
+
+  // ── Load user ──
+  (async()=>{
+    try{const u=await AuthDB.getUser(session.email);if(u)user=u;}catch(e){}
+    const av=document.getElementById('sideAv');
+    if(user.avatar){av.innerHTML=`<img src="${user.avatar}" alt="avatar"/>`;}
+    else{av.textContent=(user.name||'U')[0].toUpperCase();}
+    document.getElementById('sideName').textContent=user.name||'User';
+    document.getElementById('sideEmail').textContent=user.email||'';
+  })();
+
+  // ── Sidebar tab switching ──
+  document.querySelectorAll('.sidebar-nav a[data-tab]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      document.querySelectorAll('.sidebar-nav a').forEach(x=>x.classList.remove('active'));
+      a.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+      document.getElementById('tab-'+a.dataset.tab).classList.add('active');
+      const bread=document.querySelector('.bread');
+      if(bread)bread.innerHTML='📌 Intern Dashboard <span>/ '+a.textContent.trim()+'</span>';
+    });
+  });
+
+  // ── Certificate ──
+  document.getElementById('claimCertBtn').addEventListener('click',()=>{
+    document.getElementById('cert-name').textContent=user.name||session.name;
+    document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('certModal').classList.add('show');
+  });
+
+  // ── Logout ──
+  document.getElementById('logoutBtnSide').addEventListener('click',e=>{
+    e.preventDefault();
+    AuthDB.logout();
+    window.location.href='login.html';
+  });
+</script>
+</body>
+</html>
