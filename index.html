@@ -227,9 +227,10 @@
     const right=document.getElementById('navRight');
     if(sess){
       const initial=sess.name?sess.name.charAt(0).toUpperCase():(sess.email||'U').charAt(0).toUpperCase();
+      const avHtml=sess.avatar?`<img src="${sess.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`:initial;
       right.innerHTML=`
         <div class="profile-trigger" id="profileTrigger">
-          <div class="av">${initial}</div>
+          <div class="av">${avHtml}</div>
           <span class="nm">${sess.name||sess.email}</span>
           <span style="font-size:.6rem;color:var(--muted);">▾</span>
           <div class="profile-dropdown" id="profileDropdown">

@@ -353,6 +353,7 @@ if(session&&!session.isAdmin){(async()=>{
     reader.onload=async e=>{
       const avatar=e.target.result;
       await AuthDB.updateProfile(session.email,{avatar});
+      session.avatar=avatar; localStorage.setItem('lv_session',JSON.stringify(session));
       renderAvatar(document.getElementById('avatarEl'),user.name,avatar);
       renderAvatar(document.getElementById('settingsAvatar'),user.name,avatar);
       showToast('Photo updated!','success');
@@ -378,6 +379,7 @@ if(session&&!session.isAdmin){(async()=>{
     document.getElementById('set-curpass').value='';
     if(r.ok){
       const updatedUser=await AuthDB.getUser(session.email)||session;
+      session.name=updatedUser.name; session.avatar=updatedUser.avatar; localStorage.setItem('lv_session',JSON.stringify(session));
       renderAvatar(document.getElementById('avatarEl'),updatedUser.name,updatedUser.avatar);
       renderAvatar(document.getElementById('settingsAvatar'),updatedUser.name,updatedUser.avatar);
       showToast('Profile updated! ✓','success');
