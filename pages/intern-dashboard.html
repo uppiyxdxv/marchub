@@ -583,11 +583,12 @@
     const paid=isPaid(v.regId);
     const submittedCount=types.filter(t=>sub&&sub[t]).length;
     const verifiedCount=types.filter(t=>sub&&sub[t]&&sub[t].verified).length;
+    const backendCompleted=reg&&reg.status==='COMPLETED';
 
     let certHtml;
-    if(paid) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;">🎓 Download<span class="cong">Congratulations!<br/>Internship done.</span></a>`;
-    else if(allVerified) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;">💳 Pay ₹49<span class="cong" style="color:#ef4444;">Pay & Download<br/>Certificate</span></a>`;
-    else certHtml=`<a href="#" class="cert-dl" style="opacity:.4;cursor:not-allowed;border-color:var(--card-border);background:transparent;color:var(--muted);pointer-events:none;">🔒 Locked<span class="cong" style="color:var(--muted);">All tasks must be<br/>verified first</span></a>`;
+    if(backendCompleted&&paid) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;">🎓 Download<span class="cong">Congratulations!<br/>Internship done.</span></a>`;
+    else if(backendCompleted&&allVerified) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;">💳 Pay ₹49<span class="cong" style="color:#ef4444;">Pay & Download<br/>Certificate</span></a>`;
+    else certHtml=`<a href="#" class="cert-dl" style="opacity:.4;cursor:not-allowed;border-color:var(--card-border);background:transparent;color:var(--muted);pointer-events:none;">🔒 Locked<span class="cong" style="color:var(--muted);">All tasks must be<br/>verified by admin first</span></a>`;
 
     const taskCells=types.map(t=>{
       const task=sub&&sub[t];
