@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
   <title>Dashboard – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
@@ -196,7 +199,7 @@ const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef
 const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
 
 const session=AuthDB.getSession();
-if(!session){window.location.href='login.html';}else if(session.isAdmin){window.location.href='admin.html';}
+if(!session){window.location.replace('login.html');}else if(session.isAdmin){window.location.replace('admin.html');}
 
 let user=session;
 let enrollments=[];
@@ -315,7 +318,7 @@ function renderCourses(){
 
 
 // --- Logout button (always works immediately) ---
-document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.href='login.html';});
+document.getElementById('logoutBtn').addEventListener('click',()=>{AuthDB.logout();window.location.replace('login.html');});
 
 // --- Init: fetch user profile & enrollment data (async) ---
 if(session&&!session.isAdmin){(async()=>{

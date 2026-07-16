@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
   <title>Intern Dashboard – MarcHub</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
@@ -415,8 +418,8 @@
 <script src="../js/main.js?v=3"></script>
 <script>
   const session=AuthDB.getSession();
-  if(!session){window.location.href='login.html';}
-  if(session.isAdmin){window.location.href='admin.html';}
+  if(!session){window.location.replace('login.html');}
+  if(session.isAdmin){window.location.replace('admin.html');}
 
   let user=session;
 
@@ -858,7 +861,7 @@
   document.getElementById('logoutBtnSide').addEventListener('click',e=>{
     e.preventDefault();
     AuthDB.logout();
-    window.location.href='login.html';
+    window.location.replace('login.html');
   });
 </script>
 </body>
