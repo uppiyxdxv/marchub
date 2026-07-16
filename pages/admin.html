@@ -561,6 +561,11 @@
   // ── Internships ──
   async function renderInternships() {
     cache.interns = await AuthDB.getAllInternships();
+    // Fallback: if no internships from /internships, try /internships/active (home page endpoint)
+    if(!cache.interns||!cache.interns.length){
+      try{cache.interns=await AuthDB.getActiveInternships();}catch(e){}
+    }
+    cache.interns=cache.interns||[];
     const sel=document.getElementById('int-select');
     sel.innerHTML='<option value="">-- Select Internship --</option>'+cache.interns.map(i=>`<option value="${i.id}">${i.title}</option>`).join('');
     const el=document.getElementById('internRegList');
