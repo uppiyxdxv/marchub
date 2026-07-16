@@ -410,6 +410,8 @@
   .pay-panel .pay-done p{color:#10b981;font-weight:700;font-size:1rem;}
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
 <script src="../js/main.js?v=3"></script>
 <script>
   const session=AuthDB.getSession();
@@ -546,7 +548,11 @@
   }
   async function loadMyData(){
     try{
-      _myRegs=await AuthDB.getUserRegistrations(session.email)||[];
+      if(session.isAdmin){
+        _myRegs=await AuthDB.getAllRegistrations()||[];
+      } else {
+        _myRegs=await AuthDB.getUserRegistrations(session.email)||[];
+      }
       _myInts=await AuthDB.getAllInternships()||[];
     }catch(e){_myRegs=[];_myInts=[];}
   }
@@ -719,27 +725,73 @@
   // ── Admin Manager tab ──
   function renderManager(){
     const el=document.getElementById('managerRegList');
-    if(!_myRegs.length){el.innerHTML='<p style="color:var(--muted);">No registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply for an Internship →</a></p>';return;}
-    el.innerHTML=_myRegs.map(r=>{
-      const int=_myInts.find(i=>i.id==r.internshipId);
-      const t=int?int.title:'Internship #'+r.internshipId;
-      const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId);
-      const color=r.status==='APPROVED'?'#10b981':r.status==='REJECTED'?'#ef4444':r.status==='COMPLETED'?'#7c3aed':'#eab308';
-      return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;">
-        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem;">
-          <div><h4 style="font-weight:700;font-size:.95rem;">${t}</h4><p style="font-size:.78rem;color:var(--muted);font-family:var(--font-mono);">${r.email}</p></div>
-          <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span>
-        </div>
-        ${r.status==='PENDING'?`<div style="margin-top:.75rem;padding:.75rem;background:rgba(234,179,8,.05);border-radius:8px;"><p style="font-size:.82rem;color:var(--muted);">⏳ Your application is under review by the admin. You will receive your Offer Letter ID via email once approved.</p></div>`:''}
-        ${r.status==='APPROVED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">✅ Approved! Your Offer Letter ID:</p><div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;"><code style="font-size:1.2rem;font-weight:800;color:var(--accent);background:rgba(0,201,167,.08);padding:.35rem .75rem;border-radius:6px;border:1px solid rgba(0,201,167,.2);">APSPL${r.id}</code><button onclick="copyApspl('APSPL${r.id}')" style="background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;padding:.35rem .65rem;cursor:pointer;font-size:.78rem;font-weight:600;">📋 Copy</button></div><p style="font-size:.82rem;color:var(--muted);margin-top:.5rem;">Use this ID in <strong>Manage Task</strong> → <strong>Add Internship</strong> to access your tasks.</p></div>`:''}
-        ${r.status==='COMPLETED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">🎉 Internship completed! ${isPaid(r.id)?'You can download your certificate from Home.':'Pay ₹49 in Manage Task to download your certificate.'}</p></div>`:''}
-        ${r.status==='REJECTED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">❌ Your application was not accepted. Contact support for more information.</p></div>`:''}
-      </div>`;
-    }).join('');
+    const isAdmin=session.isAdmin;
+    if(!_myRegs.length){
+      el.innerHTML=isAdmin?'<p style="color:var(--muted);">No internship registrations found in the system yet.</p>':'<p style="color:var(--muted);">No registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply for an Internship →</a></p>';
+      return;
+    }
+    if(isAdmin){
+      el.innerHTML=_myRegs.map(r=>{
+        const int=_myInts.find(i=>i.id==r.internshipId);
+        const t=int?int.title:'Internship #'+r.internshipId;
+        const color=r.status==='APPROVED'?'#10b981':r.status==='REJECTED'?'#ef4444':r.status==='COMPLETED'?'#7c3aed':'#eab308';
+        return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem;">
+            <div><h4 style="font-weight:700;font-size:.95rem;">${t}</h4><p style="font-size:.78rem;color:var(--muted);font-family:var(--font-mono);">${r.name} · ${r.email}</p></div>
+            <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span>
+          </div>
+          ${r.status==='PENDING'?`<div style="margin-top:.75rem;display:flex;gap:.5rem;"><button class="act-btn green" onclick="adminApproveReg(${r.id})" style="flex:1;">✅ Approve</button><button class="del-btn" onclick="adminRejectReg(${r.id})" style="flex:1;">❌ Reject</button></div>`:''}
+        </div>`;
+      }).join('');
+    } else {
+      el.innerHTML=_myRegs.map(r=>{
+        const int=_myInts.find(i=>i.id==r.internshipId);
+        const t=int?int.title:'Internship #'+r.internshipId;
+        const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId);
+        const color=r.status==='APPROVED'?'#10b981':r.status==='REJECTED'?'#ef4444':r.status==='COMPLETED'?'#7c3aed':'#eab308';
+        return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;">
+          <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem;">
+            <div><h4 style="font-weight:700;font-size:.95rem;">${t}</h4><p style="font-size:.78rem;color:var(--muted);font-family:var(--font-mono);">${r.email}</p></div>
+            <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span>
+          </div>
+          ${r.status==='PENDING'?`<div style="margin-top:.75rem;padding:.75rem;background:rgba(234,179,8,.05);border-radius:8px;"><p style="font-size:.82rem;color:var(--muted);">⏳ Your application is under review by the admin. You will receive your Offer Letter ID via email once approved.</p></div>`:''}
+          ${r.status==='APPROVED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">✅ Approved! Your Offer Letter ID:</p><div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;"><code style="font-size:1.2rem;font-weight:800;color:var(--accent);background:rgba(0,201,167,.08);padding:.35rem .75rem;border-radius:6px;border:1px solid rgba(0,201,167,.2);">APSPL${r.id}</code><button onclick="copyApspl('APSPL${r.id}')" style="background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;padding:.35rem .65rem;cursor:pointer;font-size:.78rem;font-weight:600;">📋 Copy</button></div><p style="font-size:.82rem;color:var(--muted);margin-top:.5rem;">Use this ID in <strong>Manage Task</strong> → <strong>Add Internship</strong> to access your tasks.</p></div>`:''}
+          ${r.status==='COMPLETED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">🎉 Internship completed! ${isPaid(r.id)?'You can download your certificate from Home.':'Pay ₹49 in Manage Task to download your certificate.'}</p></div>`:''}
+          ${r.status==='REJECTED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">❌ Your application was not accepted. Contact support for more information.</p></div>`:''}
+        </div>`;
+      }).join('');
+    }
   }
 
   function copyApspl(id){
     navigator.clipboard.writeText(id).then(()=>{showToast('Copied: '+id);});
+  }
+  async function adminApproveReg(id){
+    const reg=_myRegs.find(r=>r.id===id);
+    if(!reg) return;
+    await AuthDB.updateInternshipStatus({id, action:'approve'});
+    const int=_myInts.find(i=>i.id==reg.internshipId);
+    const title=int?int.title:'Internship';
+    const dateStr=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    const aplId=`APSPL${reg.id}`;
+    try{
+      await emailjs.send('service_63ztzjj','template_0gbkr7y',{
+        to_name:reg.name, to_email:reg.email,
+        course:`${title} – Offer Letter (ID: ${aplId})`,
+        enrolled_at:dateStr, whatsapp_link:'#',
+        offer_letter_id:aplId,
+        message:`Congratulations ${reg.name}! Your internship has been approved. Your Offer Letter ID is ${aplId}. Use it in Manage Task to access your tasks.`
+      });
+    }catch(e){console.warn('Offer letter email failed',e);}
+    await loadMyData();
+    renderManager();
+    showToast(`✅ Approved & emailed ${reg.email}!`,'success');
+  }
+  async function adminRejectReg(id){
+    await AuthDB.updateInternshipStatus({id, action:'reject'});
+    await loadMyData();
+    renderManager();
+    showToast('Registration rejected.','success');
   }
   // ── Feedback tab ──
   let _fbRating=0;
