@@ -238,6 +238,7 @@
             <div class="pd-role">${sess.isAdmin?'⚡ Admin':'👤 Student'}</div>
             <a href="${sess.isAdmin?'pages/admin.html':'pages/dashboard.html'}" class="pd-link">📊 Dashboard</a>
             <a href="pages/intern-dashboard.html" class="pd-link">🎓 Intern Dashboard</a>
+            <a href="${sess.isAdmin?'pages/admin.html':'pages/dashboard.html'}" class="pd-link">⚙️ Settings</a>
             <div class="pd-link pd-logout" id="profileLogout">🚪 Logout</div>
           </div>
         </div>`;
