@@ -618,11 +618,13 @@
         const bothVerified=gh&&gh.verified&&li&&li.verified;
         const aplId=`APSPL${r.id}`;
         const intId=r.internshipId;
+        const locResumes=JSON.parse(localStorage.getItem('lv_int_resumes')||'{}');
+        const resumeUrl=r.resume||locResumes[intId+'_'+r.email];
         return `<tr>
         <td style="font-weight:600;">${r.name}</td>
         <td style="font-size:.78rem;font-family:var(--font-mono);">${r.email}</td>
         <td style="font-size:.78rem;font-family:var(--font-mono);color:var(--accent);font-weight:700;">${aplId}</td>
-        <td style="font-size:.78rem;">${r.resume?`<a href="${r.resume}" target="_blank" style="color:var(--accent);">📄 Resume</a>`:'<span style="color:var(--muted);">—</span>'}</td>
+        <td style="font-size:.78rem;">${resumeUrl?`<a href="${resumeUrl}" target="_blank" style="color:var(--accent);">📄 Resume</a>`:'<span style="color:var(--muted);">—</span>'}</td>
         <td style="font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
           ${gh?`<a href="${gh.url}" target="_blank" style="color:var(--accent);">🔗 Link</a> ${gh.verified?'<span style="color:#10b981;">✓</span>':`<button class="grade-btn" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#10b981;" onclick="verifyIntTask('${r.email}',${intId},'github')">OK ✓</button>`}`:'<span style="color:var(--muted);">—</span>'}
         </td>
