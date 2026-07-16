@@ -587,15 +587,17 @@
     const regs=cache.regs.filter(r=>r.internshipId==id);
     if(!regs.length){el.innerHTML='<p class="empty-info">No registrations yet.</p>';return;}
     el.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr><th>Name</th><th>Email</th><th>GitHub URL</th><th>LinkedIn Post</th><th>Status</th><th>Action</th></tr></thead>
+      <thead><tr><th>Name</th><th>Email</th><th>APSPL ID</th><th>GitHub URL</th><th>LinkedIn Post</th><th>Status</th><th>Action</th></tr></thead>
       <tbody>${regs.map(r=>{
         const sub=AuthDB.getInternshipSubmissions(r.email,parseInt(id))||(r.taskData?JSON.parse(r.taskData):null);
         const gh=sub&&sub.github;
         const li=sub&&sub.linkedin;
         const bothVerified=gh&&gh.verified&&li&&li.verified;
+        const aplId=`APSPL${r.id}`;
         return `<tr>
         <td style="font-weight:600;">${r.name}</td>
         <td style="font-size:.78rem;font-family:var(--font-mono);">${r.email}</td>
+        <td style="font-size:.78rem;font-family:var(--font-mono);color:var(--accent);font-weight:700;">${aplId}</td>
         <td style="font-size:.78rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
           ${gh?`<a href="${gh.url}" target="_blank" style="color:var(--accent);">🔗 Link</a> ${gh.verified?'<span style="color:#10b981;">✓</span>':`<button class="grade-btn" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#10b981;" onclick="verifyIntTask('${r.email}',${id},'github')">OK ✓</button>`}`:'<span style="color:var(--muted);">—</span>'}
         </td>
@@ -614,6 +616,24 @@
 
   async function updateRegStatus(id, action) {
     await AuthDB.updateInternshipStatus({id, action});
+    // Send offer letter email on approval with APSPL ID
+    if(action==='approve'){
+      const reg=cache.regs.find(r=>r.id===id);
+      if(reg){
+        const aplId=`APSPL${reg.id}`;
+        const internship=cache.interns.find(i=>i.id==reg.internshipId);
+        const title=internship?internship.title:'Internship';
+        try{
+          await emailjs.send('service_63ztzjj','template_0gbkr7y',{
+            to_name:reg.name, to_email:reg.email, course:title,
+            enrolled_at:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}),
+            whatsapp_link:'#',
+            offer_letter_id:aplId,
+            message:`Congratulations ${reg.name}! Your internship application has been approved. Your Offer Letter ID is ${aplId}. Use this ID in the Intern Dashboard to access your tasks.`
+          });
+        }catch(e){console.warn('Offer letter email failed',e);}
+      }
+    }
     await loadCache();
     renderInternRegs();
     showToast(`Registration ${action}d!`,'success');

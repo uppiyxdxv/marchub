@@ -139,7 +139,7 @@
     </div>
     <nav class="sidebar-nav">
       <a href="#" class="active" data-tab="dashboard"><span class="ico">🏠</span> Home</a>
-      <a href="#" data-tab="dashboard"><span class="ico">📊</span> Dashboard</a>
+      <a href="#" data-tab="stats"><span class="ico">📊</span> Dashboard</a>
       <a href="#" data-tab="manager"><span class="ico">👤</span> Admin Manager</a>
       <a href="#" data-tab="tasks"><span class="ico">📋</span> Manage Task</a>
       <a href="#" data-tab="feedback"><span class="ico">💬</span> Feedback</a>
@@ -159,6 +159,7 @@
         <div class="bread">📌 Intern Dashboard <span>/ Home</span></div>
         <h1>Welcome to marchub</h1>
       </div>
+      <button class="add-int-btn" onclick="refreshAll()" style="font-size:.78rem;padding:.5rem 1rem;margin:0;">🔄 Refresh Data</button>
     </div>
 
     <!-- Tab: Dashboard (Home) -->
@@ -206,8 +207,20 @@
       <div class="dash-foot">Powered By : <strong>Marchub Software PVT. LTD.</strong></div>
     </div>
 
-    <!-- Placeholder tabs -->
-    <div class="tab-content" id="tab-manager"><p style="color:var(--muted);padding:2rem;">Admin Manager section coming soon.</p></div>
+    <!-- Tab: Dashboard (Stats) -->
+    <div class="tab-content" id="tab-stats">
+      <div id="statsContent"><p style="color:var(--muted);">Loading...</p></div>
+    </div>
+
+    <!-- Tab: Admin Manager -->
+    <div class="tab-content" id="tab-manager">
+      <div style="margin-bottom:1rem;">
+        <h3 style="font-size:1.1rem;font-weight:800;">👤 My Registrations</h3>
+        <p style="color:var(--muted);font-size:.85rem;">All your internship applications and their current status.</p>
+      </div>
+      <div id="managerRegList"><p style="color:var(--muted);">Loading...</p></div>
+    </div>
+
     <!-- Tab: Manage Task -->
     <div class="tab-content" id="tab-tasks">
       <div id="manageTaskRoot">
@@ -251,9 +264,60 @@
         </div>
       </div>
     </div>
-    <div class="tab-content" id="tab-feedback"><p style="color:var(--muted);padding:2rem;">Feedback section coming soon.</p></div>
-    <div class="tab-content" id="tab-courses"><p style="color:var(--muted);padding:2rem;">Interest Course section coming soon.</p></div>
-    <div class="tab-content" id="tab-help"><p style="color:var(--muted);padding:2rem;">Help & Support section coming soon.</p></div>
+
+    <!-- Tab: Feedback -->
+    <div class="tab-content" id="tab-feedback">
+      <div class="verify-form" style="max-width:500px;">
+        <h3>💬 Submit Feedback</h3>
+        <p class="sub">Help us improve the internship experience.</p>
+        <div class="form-group">
+          <label>Subject *</label>
+          <input type="text" id="fb-subject" placeholder="Feedback subject" style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;"/>
+        </div>
+        <div class="form-group">
+          <label>Message *</label>
+          <textarea id="fb-message" rows="4" placeholder="Write your feedback here..." style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;resize:vertical;"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <div style="display:flex;gap:.5rem;" id="fb-rating">
+            <span onclick="setRating(1)" style="cursor:pointer;font-size:1.5rem;" id="star1">☆</span>
+            <span onclick="setRating(2)" style="cursor:pointer;font-size:1.5rem;" id="star2">☆</span>
+            <span onclick="setRating(3)" style="cursor:pointer;font-size:1.5rem;" id="star3">☆</span>
+            <span onclick="setRating(4)" style="cursor:pointer;font-size:1.5rem;" id="star4">☆</span>
+            <span onclick="setRating(5)" style="cursor:pointer;font-size:1.5rem;" id="star5">☆</span>
+          </div>
+        </div>
+        <button class="btn-full" onclick="submitFeedback()" style="margin-top:.5rem;">Send Feedback →</button>
+        <p id="fb-success" style="display:none;color:#10b981;font-weight:700;margin-top:1rem;">✅ Feedback submitted! Thank you.</p>
+      </div>
+    </div>
+
+    <!-- Tab: Interest Course -->
+    <div class="tab-content" id="tab-courses">
+      <div style="margin-bottom:1rem;">
+        <h3 style="font-size:1.1rem;font-weight:800;">📚 Available Internships</h3>
+        <p style="color:var(--muted);font-size:.85rem;">Explore and apply for internships.</p>
+      </div>
+      <div id="coursesList"><p style="color:var(--muted);">Loading...</p></div>
+    </div>
+
+    <!-- Tab: Help & Support -->
+    <div class="tab-content" id="tab-help">
+      <div style="max-width:600px;">
+        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:1rem;">❓ Help & Support</h3>
+        <div class="notices" style="margin-bottom:1rem;">
+          <div class="notice-item"><h4>How do I get my Offer Letter ID?</h4><p style="font-size:.82rem;color:var(--muted);">After admin approves your application, you will receive an email with your Offer Letter ID (APSPLXXXXXXX). Use this ID to access your tasks in the Manage Task tab.</p></div>
+          <div class="notice-item"><h4>How do I submit tasks?</h4><p style="font-size:.82rem;color:var(--muted);">Go to Manage Task, add your internship using the Offer Letter ID, then submit your GitHub repository URL and LinkedIn post URL for verification.</p></div>
+          <div class="notice-item"><h4>How to get the certificate?</h4><p style="font-size:.82rem;color:var(--muted);">Complete all tasks → get them verified by admin → pay ₹49 (UTR) → download your certificate from the Home or Manage Task tab.</p></div>
+          <div class="notice-item"><h4>Need help?</h4><p style="font-size:.82rem;color:var(--muted);">Contact us at <strong style="color:var(--accent);">marchub@gmail.com</strong> or reach out via WhatsApp.</p></div>
+        </div>
+        <div class="tip-card" style="margin-bottom:0;">
+          <div class="bulb">📱</div>
+          <p><span>WhatsApp:</span> Join our support group for quick assistance. <a href="#" style="color:var(--accent);font-weight:700;">Click here →</a></p>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -363,19 +427,6 @@
     document.getElementById('sideEmail').textContent=user.email||'';
   })();
 
-  // ── Sidebar tab switching ──
-  document.querySelectorAll('.sidebar-nav a[data-tab]').forEach(a=>{
-    a.addEventListener('click',e=>{
-      e.preventDefault();
-      document.querySelectorAll('.sidebar-nav a').forEach(x=>x.classList.remove('active'));
-      a.classList.add('active');
-      document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-      document.getElementById('tab-'+a.dataset.tab).classList.add('active');
-      const bread=document.querySelector('.bread');
-      if(bread)bread.innerHTML='📌 Intern Dashboard <span>/ '+a.textContent.trim()+'</span>';
-    });
-  });
-
   // ── State ──
   let _myRegs=[];
   let _myInts=[];
@@ -475,6 +526,16 @@
     }
     document.getElementById('verifyForm').style.display='none';
     renderAll();
+  }
+
+  // ── Refresh from backend ──
+  async function refreshAll(){
+    await loadMyData();
+    renderHomeSummary();
+    renderInternshipList();
+    renderStats();
+    renderManager();
+    renderCourses();
   }
 
   // ── Render all ──
@@ -611,6 +672,123 @@
           :`<button class="cert-btn" disabled style="opacity:.4;cursor:not-allowed;">🔒 Locked</button>`}
       </div>`;
   }
+
+  // ── Dashboard (Stats) tab ──
+  function renderStats(){
+    const el=document.getElementById('statsContent');
+    if(!_myRegs.length){el.innerHTML='<p style="color:var(--muted);">No internship registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply here →</a></p>';return;}
+    const total=_myRegs.length;
+    const approved=_myRegs.filter(r=>r.status==='APPROVED').length;
+    const completed=_myRegs.filter(r=>r.status==='COMPLETED').length;
+    const pending=_myRegs.filter(r=>r.status==='PENDING').length;
+    let totalSubmitted=0,totalVerified=0;
+    _myRegs.forEach(r=>{
+      const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId);
+      if(sub){
+        if(sub.github)totalSubmitted++;
+        if(sub.linkedin)totalSubmitted++;
+        if(sub.github&&sub.github.verified)totalVerified++;
+        if(sub.linkedin&&sub.linkedin.verified)totalVerified++;
+      }
+    });
+    const regsHtml=_myRegs.map(r=>{
+      const int=_myInts.find(i=>i.id==r.internshipId);
+      const t=int?int.title:'Internship #'+r.internshipId;
+      const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId);
+      const sv=sub?['github','linkedin'].filter(t=>sub[t]&&sub[t].verified).length:0;
+      const st=sub?['github','linkedin'].filter(t=>sub[t]).length:0;
+      const color=r.status==='APPROVED'?'#10b981':r.status==='COMPLETED'?'#7c3aed':'#eab308';
+      return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;">
+        <div><strong>${t}</strong><br/><span style="font-size:.78rem;color:var(--muted);font-family:var(--font-mono);">${r.email}</span></div>
+        <div style="text-align:right;"><span style="display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:99px;font-size:.75rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span><br/><span style="font-size:.72rem;color:var(--muted);">${st}/2 submitted, ${sv}/2 verified</span></div>
+      </div>`;
+    }).join('');
+    el.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;">
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--accent);">${total}</div><div style="font-size:.78rem;color:var(--muted);">Total Applications</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:#eab308;">${pending}</div><div style="font-size:.78rem;color:var(--muted);">Pending Review</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:#10b981;">${approved}</div><div style="font-size:.78rem;color:var(--muted);">Approved</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:#7c3aed;">${completed}</div><div style="font-size:.78rem;color:var(--muted);">Completed</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:var(--accent);">${totalSubmitted}</div><div style="font-size:.78rem;color:var(--muted);">Tasks Submitted</div></div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;text-align:center;"><div style="font-size:2rem;font-weight:800;color:#10b981;">${totalVerified}</div><div style="font-size:.78rem;color:var(--muted);">Tasks Verified</div></div>
+      </div>
+      <h4 style="font-size:1rem;font-weight:700;margin-bottom:.75rem;">Your Applications</h4>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">${regsHtml}</div>`;
+  }
+
+  // ── Admin Manager tab ──
+  function renderManager(){
+    const el=document.getElementById('managerRegList');
+    if(!_myRegs.length){el.innerHTML='<p style="color:var(--muted);">No registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply for an Internship →</a></p>';return;}
+    el.innerHTML=_myRegs.map(r=>{
+      const int=_myInts.find(i=>i.id==r.internshipId);
+      const t=int?int.title:'Internship #'+r.internshipId;
+      const sub=AuthDB.getInternshipSubmissions(session.email,r.internshipId);
+      const color=r.status==='APPROVED'?'#10b981':r.status==='REJECTED'?'#ef4444':r.status==='COMPLETED'?'#7c3aed':'#eab308';
+      return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;">
+        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:.5rem;">
+          <div><h4 style="font-weight:700;font-size:.95rem;">${t}</h4><p style="font-size:.78rem;color:var(--muted);font-family:var(--font-mono);">${r.email}</p></div>
+          <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span>
+        </div>
+        ${r.status==='PENDING'?`<div style="margin-top:.75rem;padding:.75rem;background:rgba(234,179,8,.05);border-radius:8px;"><p style="font-size:.82rem;color:var(--muted);">⏳ Your application is under review by the admin. You will receive your Offer Letter ID via email once approved.</p></div>`:''}
+        ${r.status==='APPROVED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">✅ Your application has been approved! Your Offer Letter ID is <strong style="color:var(--accent);font-family:var(--font-mono);">APSPL${r.id}</strong>. Use this in <strong>Manage Task</strong> to view and submit tasks.</p></div>`:''}
+        ${r.status==='COMPLETED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">🎉 Internship completed! ${isPaid(r.id)?'You can download your certificate from Home.':'Pay ₹49 in Manage Task to download your certificate.'}</p></div>`:''}
+        ${r.status==='REJECTED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">❌ Your application was not accepted. Contact support for more information.</p></div>`:''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Feedback tab ──
+  let _fbRating=0;
+  function setRating(n){
+    _fbRating=n;
+    for(let i=1;i<=5;i++)document.getElementById('star'+i).textContent=i<=n?'★':'☆';
+  }
+  function submitFeedback(){
+    const sub=document.getElementById('fb-subject').value.trim();
+    const msg=document.getElementById('fb-message').value.trim();
+    if(!sub||!msg){alert('Please fill in subject and message.');return;}
+    const fb=JSON.parse(localStorage.getItem('lv_feedback')||'[]');
+    fb.push({subject:sub,message:msg,rating:_fbRating,email:session.email,name:user.name||session.name,submittedAt:new Date().toISOString()});
+    localStorage.setItem('lv_feedback',JSON.stringify(fb));
+    document.getElementById('fb-subject').value='';
+    document.getElementById('fb-message').value='';
+    _fbRating=0;
+    for(let i=1;i<=5;i++)document.getElementById('star'+i).textContent='☆';
+    document.getElementById('fb-success').style.display='block';
+    setTimeout(()=>document.getElementById('fb-success').style.display='none',3000);
+  }
+
+  // ── Interest Courses tab ──
+  function renderCourses(){
+    const el=document.getElementById('coursesList');
+    if(!_myInts.length){el.innerHTML='<p style="color:var(--muted);">No internships available right now.</p>';return;}
+    el.innerHTML=_myInts.map(i=>{
+      const applied=_myRegs.some(r=>r.internshipId==i.id);
+      return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;">
+        <div><h4 style="font-weight:700;font-size:.95rem;">${i.title}</h4><p style="font-size:.82rem;color:var(--muted);">${(i.description||'').slice(0,120)}</p></div>
+        ${applied?`<span style="font-size:.78rem;color:#10b981;font-weight:600;">✓ Applied</span>`:`<a href="intern-apply.html?id=${i.id}" class="add-int-btn" style="font-size:.78rem;padding:.4rem .8rem;margin:0;">Apply →</a>`}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Tab render on switch ──
+  document.querySelectorAll('.sidebar-nav a[data-tab]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      document.querySelectorAll('.sidebar-nav a').forEach(x=>x.classList.remove('active'));
+      a.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+      const tabId='tab-'+a.dataset.tab;
+      document.getElementById(tabId).classList.add('active');
+      const bread=document.querySelector('.bread');
+      if(bread)bread.innerHTML='📌 Intern Dashboard <span>/ '+a.textContent.trim()+'</span>';
+      // Lazy render for data tabs
+      if(a.dataset.tab==='stats')renderStats();
+      if(a.dataset.tab==='manager')renderManager();
+      if(a.dataset.tab==='courses')renderCourses();
+    });
+  });
 
   // ── Init ──
   (async function init(){
