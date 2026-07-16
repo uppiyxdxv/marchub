@@ -221,17 +221,6 @@
         <p><span>Daily Tip:</span> Add this internship to your LinkedIn under experience section with certificate.</p>
       </div>
 
-      <!-- Summary Card -->
-      <div class="int-progress-card" id="homeSummaryCard">
-        <div class="title-section">
-          <span class="ico">🎓</span>
-          <div><h3>Your Internship Summary</h3></div>
-        </div>
-        <div id="homeSummaryContent">
-          <p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add your internship.</p>
-        </div>
-      </div>
-
       <div class="dash-foot">Powered By : <strong>Marchub Software PVT. LTD.</strong></div>
     </div>
 
@@ -325,7 +314,7 @@
     <div class="tab-content" id="tab-courses">
       <div style="margin-bottom:1rem;">
         <h3 style="font-size:1.1rem;font-weight:800;">📚 Available Internships</h3>
-        <p style="color:var(--muted);font-size:.85rem;">Explore and apply for internships.</p>
+        <p style="color:var(--muted);font-size:.85rem;">Available internships.</p>
       </div>
       <div id="coursesList"><p style="color:var(--muted);">Loading...</p></div>
     </div>
@@ -563,7 +552,6 @@
   // ── Refresh from backend ──
   async function refreshAll(){
     await loadMyData();
-    renderHomeSummary();
     renderInternshipList();
     renderStats();
     renderManager();
@@ -574,7 +562,6 @@
   async function renderAll(){
     await loadMyData();
     renderInternshipList();
-    renderHomeSummary();
   }
   async function loadMyData(){
     try{
@@ -656,64 +643,10 @@
     </table></div>`;
   }
 
-  // ── Home Summary ──
-  function renderHomeSummary(){
-    const container=document.getElementById('homeSummaryContent');
-    const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
-    if(!_myRegs.length&&!verified.length){
-      container.innerHTML='<p style="color:var(--muted);">No internship registration found. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply here →</a></p>';
-      return;
-    }
-    const v=verified.length?_myRegs.find(r=>r.id==verified[0].regId):_myRegs[0];
-    const int=_myInts.find(i=>i.id==(v?v.internshipId:null));
-    if(!v){
-      container.innerHTML='<p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add using your Offer Letter ID.</p>';
-      return;
-    }
-    const title=int?int.title:'Internship';
-    const sub=getSub(session.email,v.internshipId);
-    const types=getTaskTypes();
-    const submittedCount=types.filter(t=>sub&&sub[t]).length;
-    const verifiedCount=types.filter(t=>sub&&sub[t]&&sub[t].verified).length;
-    const pct=types.length?Math.round(verifiedCount/types.length*100):0;
-    const allDone=verifiedCount===types.length&&types.length>0;
-    const paid=isPaid(v.id);
-
-    container.innerHTML=`
-      <div style="margin-bottom:1rem;"><h4 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;">${title}</h4>
-        <p style="color:var(--muted);font-size:.85rem;">Status: <span style="color:${v.status==='APPROVED'?'#10b981':v.status==='COMPLETED'?'#7c3aed':'#eab308'};font-weight:700;">${v.status}</span></p>
-      </div>
-      <div style="margin-bottom:1rem;">
-        <div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);font-family:var(--font-mono);margin-bottom:.5rem;">
-          <span>Progress</span>
-          <span style="color:#10b981;font-weight:700;">${pct}% (${verifiedCount}/${types.length} verified)</span>
-        </div>
-        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;"></div></div>
-      </div>
-      <div class="task-grid" style="grid-template-columns:repeat(${Math.max(types.length,2)},1fr);">
-        ${types.map(t=>{
-          const task=sub&&sub[t];
-          if(task&&task.verified) return `<div class="task-item" style="border-color:rgba(16,185,129,.3);"><div class="check done">✓</div><div class="ti"><h5>${t}</h5><p>Verified</p></div></div>`;
-          if(task) return `<div class="task-item" style="border-color:rgba(234,179,8,.2);"><div class="check pending">⏳</div><div class="ti"><h5>${t}</h5><p>Submitted</p></div></div>`;
-          return `<div class="task-item"><div class="check pending" style="background:rgba(100,100,100,.1);color:var(--muted);">—</div><div class="ti"><h5>${t}</h5><p style="color:var(--muted);">Not submitted</p></div></div>`;
-        }).join('')}
-      </div>
-      <div class="cert-section" style="margin-top:1rem;">
-        <div class="trophy">🏆</div>
-        <h4>Certificate of Completion</h4>
-        ${allDone?`<p>${paid?'You can now download your certificate.':'All tasks verified! Pay ₹49 to download.'}</p>`
-          :submittedCount>0?`<p>${submittedCount}/${types.length} tasks submitted. Awaiting admin verification.</p>`
-          :`<p>Submit all tasks to unlock the certificate.</p>`}
-        ${paid?`<button class="cert-btn" onclick="showCertModal()">🎓 View Certificate</button>`
-          :allDone?`<button class="cert-btn" onclick="showPayModal('${v.id}')">💳 Pay ₹49 & Download</button><p style="font-size:.75rem;color:#ef4444;margin-top:.5rem;">Pay ₹49 to unlock certificate download</p>`
-          :`<button class="cert-btn" disabled style="opacity:.4;cursor:not-allowed;">🔒 Locked</button>`}
-      </div>`;
-  }
-
   // ── Dashboard (Stats) tab ──
   function renderStats(){
     const el=document.getElementById('statsContent');
-    if(!_myRegs.length){el.innerHTML='<p style="color:var(--muted);">No internship registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply here →</a></p>';return;}
+    if(!_myRegs.length){el.innerHTML='<p style="color:var(--muted);">No internship registrations yet.</p>';return;}
     const total=_myRegs.length;
     const approved=_myRegs.filter(r=>r.status==='APPROVED').length;
     const completed=_myRegs.filter(r=>r.status==='COMPLETED').length;
@@ -758,7 +691,7 @@
     const el=document.getElementById('managerRegList');
     const isAdmin=session.isAdmin;
     if(!_myRegs.length){
-      el.innerHTML=isAdmin?'<p style="color:var(--muted);">No internship registrations found in the system yet.</p>':'<p style="color:var(--muted);">No registrations yet. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply for an Internship →</a></p>';
+      el.innerHTML=isAdmin?'<p style="color:var(--muted);">No internship registrations found in the system yet.</p>':'<p style="color:var(--muted);">No registrations yet.</p>';
       return;
     }
     if(isAdmin){
@@ -853,7 +786,7 @@
       const applied=_myRegs.some(r=>r.internshipId==i.id);
       return `<div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;">
         <div><h4 style="font-weight:700;font-size:.95rem;">${i.title}</h4><p style="font-size:.82rem;color:var(--muted);">${(i.description||'').slice(0,120)}</p></div>
-        ${applied?`<span style="font-size:.78rem;color:#10b981;font-weight:600;">✓ Applied</span>`:`<a href="intern-apply.html?id=${i.id}" class="add-int-btn" style="font-size:.78rem;padding:.4rem .8rem;margin:0;">Apply →</a>`}
+        ${applied?`<span style="font-size:.78rem;color:#10b981;font-weight:600;">✓ Applied</span>`:''}
       </div>`;
     }).join('');
   }
@@ -881,7 +814,6 @@
     await loadMyData();
     const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
     if(verified.length) renderInternshipList();
-    renderHomeSummary();
   })();
 
   // ── Logout ──
