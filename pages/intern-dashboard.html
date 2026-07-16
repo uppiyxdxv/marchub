@@ -376,93 +376,76 @@
     });
   });
 
-  // ── Task Helpers ──
-  function getTasks(offerId){
-    const all=JSON.parse(localStorage.getItem('lv_int_tasks_all')||'{}');
-    return all[offerId]||null;
-  }
-  function saveTasks(offerId,tasks){
-    const all=JSON.parse(localStorage.getItem('lv_int_tasks_all')||'{}');
-    all[offerId]=tasks;
-    localStorage.setItem('lv_int_tasks_all',JSON.stringify(all));
-  }
-  function initTasks(offerId){
-    let tasks=getTasks(offerId);
-    if(!tasks){
-      tasks=[];
-      for(let i=1;i<=5;i++)tasks.push({taskNo:i,status:'pending',verifiedAt:null});
-      saveTasks(offerId,tasks);
-    }
-    return tasks;
-  }
+  // ── State ──
+  let _myRegs=[];
+  let _myInts=[];
 
-  // ── Certificate (guarded by payment + all tasks verified) ──
-  function canDownloadCert(offerId){
-    const tasks=getTasks(offerId);
-    if(!tasks||tasks.length<5)return false;
-    if(!tasks.every(t=>t.status==='verified'))return false;
-    const payments=JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
-    return !!payments[offerId];
+  // ── Payment helpers ──
+  function getPayStatus(rid){
+    return JSON.parse(localStorage.getItem('lv_int_payments')||'{}')[rid]||null;
   }
-  function allTasksVerified(offerId){
-    const tasks=getTasks(offerId);
-    if(!tasks||tasks.length<5)return false;
-    return tasks.every(t=>t.status==='verified');
-  }
+  function isPaid(rid){return !!getPayStatus(rid);}
+
+  // ── Certificate ──
   function showCertModal(){
     document.getElementById('cert-name').textContent=user.name||session.name;
     document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
     document.getElementById('certModal').classList.add('show');
   }
-  function openCertTable(offerId){
-    if(canDownloadCert(offerId)){showCertModal();return;}
-    if(!allTasksVerified(offerId)){alert('All 5 tasks must be verified by admin first.');return;}
-    showPayModal(offerId);
+  function openCert(regId){
+    if(isPaid(regId)){showCertModal();return;}
+    showPayModal(regId);
   }
 
-  // ── Payment ──
-  function showPayModal(offerId){
+  // ── Payment Modal ──
+  function showPayModal(regId){
     document.getElementById('payUtrInput').value='';
     document.getElementById('payFormArea').style.display='block';
     document.getElementById('payDoneArea').style.display='none';
     document.getElementById('payUtrErr').style.display='none';
-    document.getElementById('payModal').dataset.offer=offerId;
+    document.getElementById('payModal').dataset.regid=regId;
     document.getElementById('payModal').classList.add('show');
   }
   function closePayModal(){
     document.getElementById('payModal').classList.remove('show');
   }
   function submitPayment(){
-    const offer=document.getElementById('payModal').dataset.offer;
+    const regId=document.getElementById('payModal').dataset.regid;
     const utr=document.getElementById('payUtrInput').value.trim();
     document.getElementById('payUtrErr').style.display='none';
     if(!utr||utr.length<4){document.getElementById('payUtrErr').style.display='block';return;}
     const payments=JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
-    payments[offer]={utr,paidAt:new Date().toISOString(),status:'verified'};
+    payments[regId]={utr,paidAt:new Date().toISOString()};
     localStorage.setItem('lv_int_payments',JSON.stringify(payments));
     document.getElementById('payFormArea').style.display='none';
     document.getElementById('payDoneArea').style.display='block';
-    renderInternshipList();
-    renderHomeSummary();
+    renderAll();
   }
   function openCertFromPay(){
     closePayModal();
     showCertModal();
   }
 
-  // ── Admin verify task (inline in table) ──
-  function verifyTaskByAdmin(offerId,taskNo){
-    const tasks=getTasks(offerId);
-    const task=tasks.find(t=>t.taskNo===taskNo);
-    if(!task||task.status==='verified')return;
-    task.status='verified';
-    task.verifiedAt=new Date().toLocaleString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    saveTasks(offerId,tasks);
-    renderInternshipList();
-    renderHomeSummary();
+  // ── Task helpers (real system) ──
+  function getSub(email,intId){
+    return AuthDB.getInternshipSubmissions(email,intId)||null;
+  }
+  function getTaskTypes(){ return ['github','linkedin']; }
+
+  // ── Submit task from intern dashboard ──
+  function submitIntTaskDash(intId,type){
+    const inp=document.getElementById(`its-${intId}-${type}`);
+    const err=document.getElementById(`ite-${intId}-${type}`);
+    const url=inp.value.trim();
+    if(err)err.style.display='none';
+    const pat=type==='github'?/^https?:\/\/github\.com\/[^\s]+$/:type==='linkedin'?/^https?:\/\/(www\.)?linkedin\.com\/[^\s]+$/:/^https?:\/\/.+/;
+    if(!url||!pat.test(url)){if(err){err.textContent=`Enter a valid ${type==='github'?'GitHub':'LinkedIn'} URL.`;err.style.display='block';}return;}
+    const r=AuthDB.submitInternshipTask(session.email,intId,type,url);
+    if(r.ok){renderAll();alert(`${type} task submitted! Admin will verify it.`);}
+    else alert(r.msg||'Already submitted.');
   }
 
-  // ── Manage Task ──
+  // ── Manage Task: verification ──
   function showVerifyForm(){
     document.getElementById('taskEmptyState').style.display='none';
     document.getElementById('verifyForm').style.display='block';
@@ -482,45 +465,69 @@
     if(!offer||!/^APSPL\d+$/i.test(offer)){document.getElementById('vl-offer-err').style.display='block';ok=false;}
     if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)){document.getElementById('vl-email-err').style.display='block';ok=false;}
     if(!ok)return;
-    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
-    if(!list.find(v=>v.offer===offer&&v.email===email)){
-      list.push({offer,email,verifiedAt:new Date().toISOString()});
-      localStorage.setItem('lv_int_verified',JSON.stringify(list));
+    const regId=offer.replace(/^APSPL/i,'');
+    const reg=_myRegs.find(r=>r.id==regId&&r.email===email);
+    if(!reg){alert('No matching registration found. Check your Offer Letter ID and email.');return;}
+    const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    if(!verified.find(v=>v.regId==regId)){
+      verified.push({regId:reg.id,email,intId:reg.internshipId,name:reg.name,offer,verifiedAt:new Date().toISOString()});
+      localStorage.setItem('lv_int_verified',JSON.stringify(verified));
     }
-    initTasks(offer);
     document.getElementById('verifyForm').style.display='none';
+    renderAll();
+  }
+
+  // ── Render all ──
+  async function renderAll(){
+    await loadMyData();
     renderInternshipList();
     renderHomeSummary();
   }
+  async function loadMyData(){
+    try{
+      _myRegs=await AuthDB.getUserRegistrations(session.email)||[];
+      _myInts=await AuthDB.getAllInternships()||[];
+    }catch(e){_myRegs=[];_myInts=[];}
+  }
+
   function renderInternshipList(){
-    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
     const container=document.getElementById('intListTableContainer');
     const root=document.getElementById('internshipList');
-    if(!list.length){root.style.display='none';document.getElementById('taskEmptyState').style.display='block';return;}
+    if(!verified.length){root.style.display='none';document.getElementById('taskEmptyState').style.display='block';return;}
     root.style.display='block';
     document.getElementById('taskEmptyState').style.display='none';
     document.getElementById('verifyForm').style.display='none';
-    const names=['Pallolla upendra','Ravi Kumar','Sita Sharma','Akash Verma','Neha Singh'];
-    container.innerHTML=list.map((v,i)=>renderIntRow(i+1,v,names[i%names.length])).join('');
+    container.innerHTML=verified.map((v,i)=>renderIntRow(i+1,v)).join('');
   }
-  function renderIntRow(sr,data,name){
-    const tasks=initTasks(data.offer);
-    const allVerified=allTasksVerified(data.offer);
-    const paid=!!(JSON.parse(localStorage.getItem('lv_int_payments')||'{}')[data.offer]);
+
+  function renderIntRow(sr,v){
+    const reg=_myRegs.find(r=>r.id==v.regId);
+    const int=_myInts.find(i=>i.id==(reg?reg.internshipId:v.intId));
+    const title=int?int.title:'Internship';
+    const status=reg?reg.status:'N/A';
+    const sub=getSub(session.email,reg?reg.internshipId:v.intId);
+    const types=getTaskTypes();
+    const allVerified=sub&&types.every(t=>sub[t]&&sub[t].verified);
+    const paid=isPaid(v.regId);
+    const submittedCount=types.filter(t=>sub&&sub[t]).length;
+    const verifiedCount=types.filter(t=>sub&&sub[t]&&sub[t].verified).length;
 
     let certHtml;
-    if(paid) certHtml=`<a href="#" class="cert-dl" onclick="openCertTable('${data.offer}');return false;">🎓 Download<span class="cong">Congratulations!<br/>Internship done.</span></a>`;
-    else if(allVerified) certHtml=`<a href="#" class="cert-dl" onclick="openCertTable('${data.offer}');return false;" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;">💳 Pay ₹49<span class="cong" style="color:#ef4444;">Pay & Download<br/>Certificate</span></a>`;
-    else certHtml=`<a href="#" class="cert-dl" style="opacity:.4;cursor:not-allowed;border-color:var(--card-border);background:transparent;color:var(--muted);pointer-events:none;">🔒 Locked<span class="cong" style="color:var(--muted);">Admin must verify<br/>all 5 tasks first</span></a>`;
+    if(paid) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;">🎓 Download<span class="cong">Congratulations!<br/>Internship done.</span></a>`;
+    else if(allVerified) certHtml=`<a href="#" class="cert-dl" onclick="openCert('${v.regId}');return false;" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#ef4444;">💳 Pay ₹49<span class="cong" style="color:#ef4444;">Pay & Download<br/>Certificate</span></a>`;
+    else certHtml=`<a href="#" class="cert-dl" style="opacity:.4;cursor:not-allowed;border-color:var(--card-border);background:transparent;color:var(--muted);pointer-events:none;">🔒 Locked<span class="cong" style="color:var(--muted);">All tasks must be<br/>verified first</span></a>`;
 
-    const taskCells=tasks.map(t=>{
-      if(t.status==='verified'){
-        return `<div class="task-cell"><span class="done">✓ Completed</span><span class="ts">${t.verifiedAt}</span></div>`;
-      }
-      return `<div class="task-cell" style="display:flex;flex-direction:column;gap:.3rem;">
-        <span style="color:#eab308;font-size:.75rem;">⏳ Pending</span>
-        <span style="color:var(--muted);font-size:.68rem;">(waiting for admin)</span>
-        <button onclick="verifyTaskByAdmin('${data.offer}',${t.taskNo})" style="padding:.25rem .5rem;font-size:.68rem;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;border-radius:6px;cursor:pointer;font-family:var(--font-display);font-weight:600;">Approve ✓</button>
+    const taskCells=types.map(t=>{
+      const task=sub&&sub[t];
+      if(task&&task.verified) return `<div class="task-cell"><span class="done">✓ Completed</span><span class="ts">${new Date(task.submittedAt).toLocaleString('en-IN',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</span></div>`;
+      if(task) return `<div class="task-cell"><span style="color:#eab308;font-size:.75rem;">⏳ Submitted</span><span class="ts" style="font-size:.65rem;">Awaiting admin verification</span></div>`;
+      const iid=reg?reg.internshipId:v.intId;
+      return `<div class="task-cell" style="font-size:.75rem;">
+        <span style="color:var(--muted);">Not submitted</span>
+        <input type="url" id="its-${iid}-${t}" placeholder="https://${t==='github'?'github.com/...':'linkedin.com/posts/...'}" style="width:100%;padding:.35rem .4rem;margin-top:.25rem;font-size:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:6px;color:var(--text);outline:none;box-sizing:border-box;"/>
+        <div id="ite-${iid}-${t}" style="display:none;color:#ef4444;font-size:.65rem;margin-top:.2rem;"></div>
+        <button onclick="submitIntTaskDash(${iid},'${t}')" style="margin-top:.3rem;padding:.25rem .5rem;font-size:.68rem;background:rgba(0,245,196,.12);border:1px solid rgba(0,245,196,.3);color:var(--accent);border-radius:6px;cursor:pointer;font-family:var(--font-display);font-weight:600;">Submit →</button>
       </div>`;
     }).join('');
 
@@ -528,26 +535,24 @@
       <thead><tr>
         <th style="width:40px;">Sr. No</th>
         <th>Intern's Details</th>
-        <th>Download Task</th>
-        <th>Task-1</th><th>Task-2</th><th>Task-3</th><th>Task-4</th><th>Task-5</th>
-        <th>Enrolled At</th>
+        <th>GitHub Task</th>
+        <th>LinkedIn Task</th>
+        <th>Progress</th>
         <th>Download certificate</th>
       </tr></thead>
       <tbody><tr>
         <td class="sr">${sr}</td>
         <td>
           <div class="int-detail">
-            <div class="title">Web Development with HTML, CSS, and JavaScript</div>
-            <div class="id">${data.offer}</div>
-            <div class="name">${name}</div>
-            <div class="dates">Start: 11 May 2026</div>
-            <div class="dates">End: 24 Jun 2026</div>
-            ${allVerified?'<span class="status">Completed</span>':'<span class="status" style="background:rgba(234,179,8,.12);color:#eab308;border-color:rgba(234,179,8,.25);">In Progress</span>'}
+            <div class="title">${title}</div>
+            <div class="id">${v.offer}</div>
+            <div class="name">${reg?reg.name:v.name}</div>
+            <div class="dates">Applied: ${reg?new Date(reg.createdAt||Date.now()).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):'N/A'}</div>
+            <span class="status" style="${status==='APPROVED'?'color:#10b981;border-color:rgba(16,185,129,.25)':status==='COMPLETED'?'color:#7c3aed;border-color:rgba(124,58,237,.25)':'color:#eab308;border-color:rgba(234,179,8,.25)'}">${status}</span>
           </div>
         </td>
-        <td><a href="#" class="dl-link" onclick="alert('Task file download started.');return false;">📥 Download</a></td>
         ${taskCells}
-        <td style="font-size:.75rem;font-family:var(--font-mono);color:var(--muted);vertical-align:middle;">12 May 2026</td>
+        <td style="vertical-align:middle;font-size:.75rem;text-align:center;"><span style="font-family:var(--font-mono);font-weight:700;color:#10b981;">${verifiedCount}/${types.length}</span><br/><span style="color:var(--muted);font-size:.68rem;">verified</span></td>
         <td>${certHtml}</td>
       </tr></tbody>
     </table></div>`;
@@ -555,53 +560,63 @@
 
   // ── Home Summary ──
   function renderHomeSummary(){
-    const list=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
     const container=document.getElementById('homeSummaryContent');
-    if(!list.length){
-      container.innerHTML='<p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add your internship.</p>';
+    const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
+    if(!_myRegs.length&&!verified.length){
+      container.innerHTML='<p style="color:var(--muted);">No internship registration found. <a href="intern-apply.html?id=1" style="color:var(--accent);">Apply here →</a></p>';
       return;
     }
-    const v=list[0];
-    const tasks=initTasks(v.offer);
-    const done=tasks.filter(t=>t.status==='verified').length;
-    const pct=Math.round(done/5*100);
-    const allDone=done===5;
-    const paid=!!(JSON.parse(localStorage.getItem('lv_int_payments')||'{}')[v.offer]);
+    const v=verified.length?_myRegs.find(r=>r.id==verified[0].regId):_myRegs[0];
+    const int=_myInts.find(i=>i.id==(v?v.internshipId:null));
+    if(!v){
+      container.innerHTML='<p style="color:var(--muted);">No internship added yet. Go to <strong>Manage Task</strong> to add using your Offer Letter ID.</p>';
+      return;
+    }
+    const title=int?int.title:'Internship';
+    const sub=getSub(session.email,v.internshipId);
+    const types=getTaskTypes();
+    const submittedCount=types.filter(t=>sub&&sub[t]).length;
+    const verifiedCount=types.filter(t=>sub&&sub[t]&&sub[t].verified).length;
+    const pct=types.length?Math.round(verifiedCount/types.length*100):0;
+    const allDone=verifiedCount===types.length&&types.length>0;
+    const paid=isPaid(v.id);
 
     container.innerHTML=`
+      <div style="margin-bottom:1rem;"><h4 style="font-size:1.1rem;font-weight:800;margin-bottom:.5rem;">${title}</h4>
+        <p style="color:var(--muted);font-size:.85rem;">Status: <span style="color:${v.status==='APPROVED'?'#10b981':v.status==='COMPLETED'?'#7c3aed':'#eab308'};font-weight:700;">${v.status}</span></p>
+      </div>
       <div style="margin-bottom:1rem;">
         <div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);font-family:var(--font-mono);margin-bottom:.5rem;">
           <span>Progress</span>
-          <span style="color:#10b981;font-weight:700;">${pct}% (${done}/5 tasks)</span>
+          <span style="color:#10b981;font-weight:700;">${pct}% (${verifiedCount}/${types.length} verified)</span>
         </div>
         <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;"></div></div>
       </div>
-      <div class="task-grid" style="grid-template-columns:repeat(5,1fr);">
-        ${tasks.map(t=>{
-          const vd=t.status==='verified';
-          return `<div class="task-item" style="${vd?'border-color:rgba(16,185,129,.3);':''}">
-            <div class="check ${vd?'done':'pending'}">${vd?'✓':'⏳'}</div>
-            <div class="ti"><h5>Task ${t.taskNo}</h5><p>${vd?'Verified':'Pending'}</p></div>
-          </div>`;
+      <div class="task-grid" style="grid-template-columns:repeat(${Math.max(types.length,2)},1fr);">
+        ${types.map(t=>{
+          const task=sub&&sub[t];
+          if(task&&task.verified) return `<div class="task-item" style="border-color:rgba(16,185,129,.3);"><div class="check done">✓</div><div class="ti"><h5>${t}</h5><p>Verified</p></div></div>`;
+          if(task) return `<div class="task-item" style="border-color:rgba(234,179,8,.2);"><div class="check pending">⏳</div><div class="ti"><h5>${t}</h5><p>Submitted</p></div></div>`;
+          return `<div class="task-item"><div class="check pending" style="background:rgba(100,100,100,.1);color:var(--muted);">—</div><div class="ti"><h5>${t}</h5><p style="color:var(--muted);">Not submitted</p></div></div>`;
         }).join('')}
       </div>
       <div class="cert-section" style="margin-top:1rem;">
         <div class="trophy">🏆</div>
         <h4>Certificate of Completion</h4>
-        ${allDone ? `<p>All tasks verified! ${paid?'You can now download your certificate.':'Pay ₹49 to download your certificate.'}</p>` : `<p>Complete all 5 tasks to unlock the certificate.</p>`}
-        ${paid
-          ? `<button class="cert-btn" onclick="showCertModal()">🎓 View Certificate</button>`
-          : allDone
-            ? `<button class="cert-btn" onclick="showPayModal('${v.offer}')">💳 Pay ₹49 & Download</button><p style="font-size:.75rem;color:#ef4444;margin-top:.5rem;">Pay ₹49 to unlock certificate download</p>`
-            : `<button class="cert-btn" disabled style="opacity:.4;cursor:not-allowed;">🔒 Locked</button>`
-        }
+        ${allDone?`<p>${paid?'You can now download your certificate.':'All tasks verified! Pay ₹49 to download.'}</p>`
+          :submittedCount>0?`<p>${submittedCount}/${types.length} tasks submitted. Awaiting admin verification.</p>`
+          :`<p>Submit all tasks to unlock the certificate.</p>`}
+        ${paid?`<button class="cert-btn" onclick="showCertModal()">🎓 View Certificate</button>`
+          :allDone?`<button class="cert-btn" onclick="showPayModal('${v.id}')">💳 Pay ₹49 & Download</button><p style="font-size:.75rem;color:#ef4444;margin-top:.5rem;">Pay ₹49 to unlock certificate download</p>`
+          :`<button class="cert-btn" disabled style="opacity:.4;cursor:not-allowed;">🔒 Locked</button>`}
       </div>`;
   }
 
   // ── Init ──
-  (function initManageTask(){
+  (async function init(){
+    await loadMyData();
     const verified=JSON.parse(localStorage.getItem('lv_int_verified')||'[]');
-    if(verified.length){renderInternshipList();}
+    if(verified.length) renderInternshipList();
     renderHomeSummary();
   })();
 
