@@ -260,11 +260,16 @@
   let cache = { users: [], enrolls: [], courses: [], certs: [], interns: [], regs: [] };
 
   async function loadCache() {
-    const [users, enrolls, courses, certs, interns, regs] = await Promise.all([
-      AuthDB.getUsers(), AuthDB.getAllEnrollments(), AuthDB.getCourses(),
-      AuthDB.getAllCertificates(), AuthDB.getAllInternships(), AuthDB.getAllRegistrations()
-    ]);
-    cache = { users, enrolls, courses, certs, interns, regs };
+    try {
+      const [users, enrolls, courses, certs, interns, regs] = await Promise.all([
+        AuthDB.getUsers(), AuthDB.getAllEnrollments(), AuthDB.getCourses(),
+        AuthDB.getAllCertificates(), AuthDB.getAllInternships(), AuthDB.getAllRegistrations()
+      ]);
+      cache = { users:users||[], enrolls:enrolls||[], courses:courses||[], certs:certs||[], interns:interns||[], regs:regs||[] };
+    } catch(e){
+      console.error('loadCache error:',e);
+      showToast('Failed to load data from backend','error');
+    }
   }
 
   async function renderStats() {
@@ -590,9 +595,27 @@
     const id=document.getElementById('int-select').value;
     const el=document.getElementById('internRegList');
     if(!id){el.innerHTML='<p class="empty-info">Select an internship to view registrations.</p>';return;}
-    cache.regs = await AuthDB.getAllRegistrations();
+    let raw;
+    try{
+      raw = await AuthDB.getAllRegistrations();
+    }catch(e){
+      el.innerHTML=`<p class="empty-info" style="color:#ef4444;">Failed to fetch registrations: ${e.message}</p>`;
+      console.error('getAllRegistrations error:',e);
+      return;
+    }
+    cache.regs = raw||[];
+    if(!Array.isArray(cache.regs)){
+      el.innerHTML=`<p class="empty-info" style="color:#ef4444;">Backend returned non-array data. Check console (F12).</p>`;
+      console.error('Unexpected registrations data:',cache.regs);
+      return;
+    }
+    const allIntIds=[...new Set(cache.regs.map(r=>r.internshipId))];
     const regs=cache.regs.filter(r=>r.internshipId==id);
-    if(!regs.length){el.innerHTML='<p class="empty-info">No registrations yet.</p>';return;}
+    if(!cache.regs.length){el.innerHTML='<p class="empty-info">No registrations (empty array from backend).</p>';return;}
+    if(!regs.length){
+      el.innerHTML=`<p class="empty-info">No registrations for this internship. Found ${cache.regs.length} total registrations across ${allIntIds.length} internship(s): [${allIntIds.join(', ')}]. Selected ID: ${id}.</p>`;
+      return;
+    }
     el.innerHTML=`<div class="tbl-wrap"><table>
       <thead><tr><th>Name</th><th>Email</th><th>APSPL ID</th><th>GitHub URL</th><th>LinkedIn Post</th><th>Status</th><th>Action</th></tr></thead>
       <tbody>${regs.map(r=>{
