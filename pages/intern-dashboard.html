@@ -731,13 +731,16 @@
           <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .7rem;border-radius:99px;font-size:.78rem;background:${color}15;color:${color};border:1px solid ${color}30;font-weight:600;">${r.status}</span>
         </div>
         ${r.status==='PENDING'?`<div style="margin-top:.75rem;padding:.75rem;background:rgba(234,179,8,.05);border-radius:8px;"><p style="font-size:.82rem;color:var(--muted);">⏳ Your application is under review by the admin. You will receive your Offer Letter ID via email once approved.</p></div>`:''}
-        ${r.status==='APPROVED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">✅ Your application has been approved! Your Offer Letter ID is <strong style="color:var(--accent);font-family:var(--font-mono);">APSPL${r.id}</strong>. Use this in <strong>Manage Task</strong> to view and submit tasks.</p></div>`:''}
+        ${r.status==='APPROVED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">✅ Approved! Your Offer Letter ID:</p><div style="display:flex;align-items:center;gap:.5rem;margin-top:.25rem;"><code style="font-size:1.2rem;font-weight:800;color:var(--accent);background:rgba(0,201,167,.08);padding:.35rem .75rem;border-radius:6px;border:1px solid rgba(0,201,167,.2);">APSPL${r.id}</code><button onclick="copyApspl('APSPL${r.id}')" style="background:var(--accent);color:#0a0a0a;border:none;border-radius:6px;padding:.35rem .65rem;cursor:pointer;font-size:.78rem;font-weight:600;">📋 Copy</button></div><p style="font-size:.82rem;color:var(--muted);margin-top:.5rem;">Use this ID in <strong>Manage Task</strong> → <strong>Add Internship</strong> to access your tasks.</p></div>`:''}
         ${r.status==='COMPLETED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">🎉 Internship completed! ${isPaid(r.id)?'You can download your certificate from Home.':'Pay ₹49 in Manage Task to download your certificate.'}</p></div>`:''}
         ${r.status==='REJECTED'?`<div style="margin-top:.75rem;"><p style="font-size:.82rem;color:var(--muted);">❌ Your application was not accepted. Contact support for more information.</p></div>`:''}
       </div>`;
     }).join('');
   }
 
+  function copyApspl(id){
+    navigator.clipboard.writeText(id).then(()=>{showToast('Copied: '+id);});
+  }
   // ── Feedback tab ──
   let _fbRating=0;
   function setRating(n){
