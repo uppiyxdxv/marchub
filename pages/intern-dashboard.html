@@ -121,6 +121,31 @@
       .main{margin-left:0;padding:1.5rem;}
       .sidebar-user{padding:1rem 0;}
       .task-grid{grid-template-columns:1fr;}
+      .int-list-table table{min-width:auto;font-size:.75rem;}
+      .int-list-table th,.int-list-table td{padding:.5rem .4rem;white-space:nowrap;}
+      .verify-form{padding:1.5rem;margin-bottom:1.5rem;}
+      .cert-paper{padding:2rem 1.5rem;width:95%;}
+      .pay-panel{padding:1.5rem;width:95%;}
+      .int-progress-card{padding:1.2rem;}
+      .stat-cards{grid-template-columns:repeat(2,1fr);gap:.6rem;}
+      .sidebar-nav a{font-size:.82rem;padding:.5rem .6rem;}
+      .sidebar-logo span{font-size:1rem;}
+      .side-user .av{width:48px;height:48px;font-size:1.2rem;}
+      .form-group input,.form-group textarea{font-size:.85rem;}
+    }
+    @media(max-width:480px){
+      .main{padding:.8rem;}
+      .int-list-table table{font-size:.68rem;}
+      .int-list-table th,.int-list-table td{padding:.35rem .25rem;}
+      .stat-cards{grid-template-columns:1fr;}
+      .cert-paper{padding:1.2rem;}
+      .cert-paper h1{font-size:1.4rem;}
+      .pay-panel h2{font-size:1.1rem;}
+      .verify-form{padding:1rem;}
+      .sidebar{padding:.6rem;}
+      .sidebar-nav a{font-size:.76rem;padding:.4rem .5rem;}
+      .int-progress-card{padding:.8rem;}
+      .int-progress-card h2{font-size:1rem;}
     }
     /* ── Tabs inside main ── */
     .tab-content{display:none;}
@@ -417,6 +442,7 @@
 <script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
 <script src="../js/main.js?v=3"></script>
 <script>
+  history.replaceState(null, '', location.href);
   const session=AuthDB.getSession();
   if(!session){window.location.replace('login.html');}
   if(session.isAdmin){window.location.replace('admin.html');}

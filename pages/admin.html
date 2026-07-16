@@ -255,6 +255,8 @@
   </script>
   <script src="../js/main.js?v=3"></script>
 <script>
+  // Clear login page from history so back button can't go past this session
+  history.replaceState(null, '', location.href);
   const sess=AuthDB.getSession();
   if(!sess||!sess.isAdmin){window.location.replace('login.html');}
 

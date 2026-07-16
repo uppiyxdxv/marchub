@@ -199,6 +199,7 @@ const COURSE_COLORS={HTML:'#f97316',CSS:'#3b82f6',JavaScript:'#eab308',Java:'#ef
 const WHATSAPP={HTML:'https://chat.whatsapp.com/HF5CbesRF431Xh04YWsdZu',CSS:'https://chat.whatsapp.com/EA78uudDzdqDlkiVttEU6t',JavaScript:'https://chat.whatsapp.com/KuAMJhBewsYJxhfGpICI8E',Java:'https://chat.whatsapp.com/HXlaQbBJW2j5xAMqMsGtmy',Python:'https://chat.whatsapp.com/GWpELotCnw6A40Usb0PtRl',SQL:'https://chat.whatsapp.com/GJCDQZTqG21HloTAMrgT3o',MongoDB:'https://chat.whatsapp.com/Lnx3DYIfzL71OYf0SdMGbh'};
 
 const session=AuthDB.getSession();
+history.replaceState(null, '', location.href);
 if(!session){window.location.replace('login.html');}else if(session.isAdmin){window.location.replace('admin.html');}
 
 let user=session;

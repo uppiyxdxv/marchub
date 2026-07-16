@@ -109,7 +109,7 @@
   if(sess && sess.email) {
     // Verify session is valid before auto-redirecting
     AuthDB.getUser(sess.email).then(u => {
-      if (u) window.location.href = sess.isAdmin ? 'admin.html' : 'dashboard.html';
+      if (u) window.location.replace(sess.isAdmin ? 'admin.html' : 'dashboard.html');
     });
   }
 
@@ -129,11 +129,11 @@
     try{
       const r=await fetch(`${BACKEND}/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password:pw})});
       const d=await r.json();
-      if(d.success){localStorage.setItem('lv_session',JSON.stringify(d.user));loggedIn=true;showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.href=d.user.isAdmin?'admin.html':'dashboard.html',800);}
+      if(d.success){localStorage.setItem('lv_session',JSON.stringify(d.user));loggedIn=true;showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.replace(d.user.isAdmin?'admin.html':'dashboard.html'),800);}
     }catch(e){}
     if(!loggedIn){
       const res=await AuthDB.loginUser(email,pw);
-      if(res.ok){showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.href=res.user.isAdmin?'admin.html':'dashboard.html',800);}
+      if(res.ok){showToast('Welcome back! 🎉','success');setTimeout(()=>window.location.replace(res.user.isAdmin?'admin.html':'dashboard.html'),800);}
       else{const el=document.getElementById('login-err');el.textContent=res.msg;el.classList.add('show');}
     }
     loginBtn.innerHTML='Login →';loginBtn.disabled=false;
