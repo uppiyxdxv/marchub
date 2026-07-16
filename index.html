@@ -17,14 +17,15 @@
     <img src="images/logo.png" alt="MarcHub Logo" class="site-logo">
     <span>MarcHub</span>
  </div>
-  <ul class="nav-links">
-
+  <ul class="nav-links" id="navLinks">
     <li><a href="#courses">Courses</a></li>
     <li><a href="#internships">Internships</a></li>
     <li><a href="#about">About</a></li>
-    <li><a href="pages/login.html" class="btn-nav">Login</a></li>
-    <li><a href="pages/register.html" class="btn-nav btn-primary-nav">Register</a></li>
   </ul>
+  <div class="nav-right" id="navRight">
+    <a href="pages/login.html" class="btn-nav" id="loginBtnTop">Login</a>
+    <a href="pages/register.html" class="btn-nav btn-primary-nav" id="registerBtnTop">Register</a>
+  </div>
   <button class="hamburger" id="hamburger">☰</button>
 </nav>
 
@@ -39,6 +40,10 @@
       Here.
     </h1>
     <p class="hero-sub">Master HTML, CSS, JavaScript, Java, Python, SQL & MongoDB — from zero to job-ready with hands-on projects.</p>
+    <div class="hero-search">
+      <input type="text" id="searchInput" placeholder="Search courses, internships..." />
+      <button id="searchBtn">🔍</button>
+    </div>
     <div class="hero-cta">
       <a href="pages/enroll.html" class="btn-hero">Enroll Now →</a>
       <a href="#courses" class="btn-ghost">Explore Courses</a>
@@ -213,9 +218,69 @@
     <p>Empowering students with practical skills in Web Development, Java, Python, SQL, MongoDB, and modern technologies.</p>
     <p class="footer-copy">© 2025 MarcHub. All rights reserved.</p>
 </div>
-<script src="js/three-bg.js"></script>
 <script src="js/main.js?v=3"></script>
+<script src="js/three-bg.js"></script>
 <script>
+  // ── Profile nav ──
+  (function(){
+    const sess=window.AuthDB&&AuthDB.getSession();
+    const right=document.getElementById('navRight');
+    if(sess){
+      const initial=sess.name?sess.name.charAt(0).toUpperCase():(sess.email||'U').charAt(0).toUpperCase();
+      right.innerHTML=`
+        <div class="profile-trigger" id="profileTrigger">
+          <div class="av">${initial}</div>
+          <span class="nm">${sess.name||sess.email}</span>
+          <span style="font-size:.6rem;color:var(--muted);">▾</span>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="pd-name">${sess.name||'User'}</div>
+            <div class="pd-email">${sess.email}</div>
+            <div class="pd-role">${sess.isAdmin?'⚡ Admin':'👤 Student'}</div>
+            <a href="${sess.isAdmin?'pages/admin.html':'pages/dashboard.html'}" class="pd-link">📊 Dashboard</a>
+            <a href="pages/intern-dashboard.html" class="pd-link">🎓 Intern Dashboard</a>
+            <div class="pd-link pd-logout" id="profileLogout">🚪 Logout</div>
+          </div>
+        </div>`;
+      document.getElementById('profileTrigger').addEventListener('click',e=>{
+        e.stopPropagation();
+        document.getElementById('profileDropdown').classList.toggle('open');
+      });
+      document.addEventListener('click',()=>document.getElementById('profileDropdown').classList.remove('open'));
+      document.getElementById('profileLogout').addEventListener('click',()=>{AuthDB.logout();window.location.replace('');});
+      // hide mob hamburger if needed
+      const navL=document.getElementById('navLinks');
+      if(navL) navL.style.display='flex';
+    }
+  })();
+
+  // ── Search ──
+  function doSearch(q){
+    if(!q) return;
+    const term=q.toLowerCase().trim();
+    const courses=['HTML','CSS','JavaScript','Java','Python','SQL','MongoDB'];
+    const match=courses.find(c=>c.toLowerCase()===term||c.toLowerCase().includes(term));
+    if(match){
+      document.getElementById('searchInput').value='';
+      window.location.href='pages/enroll.html?course='+match;
+      return;
+    }
+    // internship search → scroll to internships section
+    const intSection=document.getElementById('internships');
+    if(intSection){
+      intSection.scrollIntoView({behavior:'smooth'});
+      // highlight matching internships
+      document.querySelectorAll('#internshipGrid .course-card h3').forEach(h=>{
+        if(h.textContent.toLowerCase().includes(term)){
+          h.closest('.course-card').style.borderColor='var(--accent3)';
+          h.closest('.course-card').style.boxShadow='0 0 20px rgba(249,115,22,.3)';
+        }
+      });
+    }
+  }
+  document.getElementById('searchBtn').addEventListener('click',()=>doSearch(document.getElementById('searchInput').value));
+  document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch(e.target.value);});
+
+  // ── Internships ──
   fetch(`${BACKEND}/internships/active`).then(r=>r.json()).then(data=>{
     const grid=document.getElementById('internshipGrid');
     if(!data.length){grid.innerHTML='<p style="color:var(--muted);text-align:center;grid-column:1/-1;">No open internships right now. Check back soon!</p>';return;}
