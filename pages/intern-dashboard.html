@@ -416,6 +416,7 @@
 <script>
   const session=AuthDB.getSession();
   if(!session){window.location.href='login.html';}
+  if(session.isAdmin){window.location.href='admin.html';}
 
   let user=session;
 
