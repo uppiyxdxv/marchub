@@ -246,7 +246,11 @@
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
+  <script>
+    emailjs.init('rwHZkgqFwOWu7Cs9o');
+    // ── EmailJS Template IDs ──
+    const EJS_OFFER_LETTER_TPL = 'template_0gbkr7y'; // 🔁 Replace with your new offer-letter template ID after creating it
+  </script>
   <script src="../js/main.js?v=3"></script>
 <script>
   const sess=AuthDB.getSession();
@@ -623,15 +627,21 @@
         const aplId=`APSPL${reg.id}`;
         const internship=cache.interns.find(i=>i.id==reg.internshipId);
         const title=internship?internship.title:'Internship';
+        const dateStr=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+        // Try new offer-letter template first, fallback to old template
         try{
-          await emailjs.send('service_63ztzjj','template_0gbkr7y',{
-            to_name:reg.name, to_email:reg.email, course:title,
-            enrolled_at:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}),
+          await emailjs.send('service_63ztzjj',EJS_OFFER_LETTER_TPL,{
+            to_name:reg.name, to_email:reg.email,
+            course:`${title} – Offer Letter (ID: ${aplId})`,
+            enrolled_at:dateStr,
             whatsapp_link:'#',
             offer_letter_id:aplId,
-            message:`Congratulations ${reg.name}! Your internship application has been approved. Your Offer Letter ID is ${aplId}. Use this ID in the Intern Dashboard to access your tasks.`
+            message:`Congratulations ${reg.name}! Your internship application has been approved. Your Offer Letter ID is ${aplId}. Use this ID in the Intern Dashboard → Manage Task to access your tasks and submit your work.`
           });
-        }catch(e){console.warn('Offer letter email failed',e);}
+        }catch(e){
+          console.warn('Offer letter email failed — check EmailJS quota or template',e);
+          showToast(`Offer letter email FAILED for ${reg.email}. Check console.`,'error');
+        }
       }
     }
     await loadCache();
