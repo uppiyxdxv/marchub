@@ -271,11 +271,13 @@
     await loadCache();
     const courses = [...new Set(cache.enrolls.map(e=>e.course))];
     const newUsers = cache.users.filter(u=>{const d=new Date(u.createdAt);return (Date.now()-d)<7*24*60*60*1000;});
+    const pendingInt = cache.regs.filter(r=>r.status==='PENDING').length;
     document.getElementById('statGrid').innerHTML=`
       <div class="stat-card"><div class="n" style="color:var(--accent)">${cache.users.length}</div><div class="l">Total Users</div></div>
       <div class="stat-card"><div class="n" style="color:#3b82f6">${cache.enrolls.length}</div><div class="l">Enrollments</div></div>
       <div class="stat-card"><div class="n" style="color:#8b5cf6">${courses.length}</div><div class="l">Active Courses</div></div>
-      <div class="stat-card"><div class="n" style="color:#f59e0b">${newUsers.length}</div><div class="l">New This Week</div></div>`;
+      <div class="stat-card"><div class="n" style="color:#f59e0b">${newUsers.length}</div><div class="l">New This Week</div></div>
+      <div class="stat-card" style="cursor:pointer;" onclick="switchTab('internships')"><div class="n" style="color:${pendingInt?'#ef4444':'var(--muted)'}">${pendingInt}</div><div class="l">Pending Internships</div></div>`;
   }
 
   function switchTab(t){
@@ -553,10 +555,11 @@
     sel.innerHTML='<option value="">-- Select Internship --</option>'+cache.interns.map(i=>`<option value="${i.id}">${i.title}</option>`).join('');
     const list=document.getElementById('internRegList');
     if(!cache.interns.length){list.innerHTML='<p class="empty-info">No internships yet.</p>';return;}
-    list.innerHTML=cache.interns.map(i=>`<div class="admin-task-item">
-      <div class="ti"><h5>${i.title}</h5><p>${(i.description||'').slice(0,100)}</p></div>
-      <button class="del-btn" onclick="deleteInternship(${i.id})">🗑</button>
-    </div>`).join('');
+    // Auto-select first internship and show its registrations
+    if(cache.interns.length){
+      sel.value=cache.interns[0].id;
+      renderInternRegs();
+    }
   }
 
   document.getElementById('saveInternshipBtn').addEventListener('click', async () => {
