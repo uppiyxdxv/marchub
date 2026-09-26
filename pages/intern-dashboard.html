@@ -499,13 +499,29 @@
     btnText.style.display = 'none';
     btnLoading.style.display = 'inline';
     
-    // 🔧 OPTION 1: If you have a backend endpoint to create orders
-    // createRazorpayOrder(regId).then(orderId => openRazorpayCheckout(orderId, regId));
-    
-    // 🔧 OPTION 2: Demo mode - create order client-side (NOT secure for production)
-    // For production, ALWAYS create orders on your backend!
-    const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    openRazorpayCheckout(orderId, regId);
+    // Create order on backend
+    fetch(`${BACKEND}/api/payments/create-order`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        amount: RAZORPAY_AMOUNT,
+        registrationId: parseInt(regId),
+        userEmail: session.email
+      })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success){
+        openRazorpayCheckout(data.order_id, regId);
+      } else {
+        showToast('Failed to create order: ' + data.error, 'error');
+        resetPaymentButton();
+      }
+    })
+    .catch(err => {
+      showToast('Order creation failed: ' + err.message, 'error');
+      resetPaymentButton();
+    });
   }
   
   function openRazorpayCheckout(orderId, regId){
@@ -554,34 +570,28 @@
   }
   
   async function verifyRazorpayPayment(response, regId){
-    // 🔧 BACKEND VERIFICATION REQUIRED
-    // Send response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature
-    // to your backend to verify signature
-    
     try {
-      // For demo: simulate verification success
-      // REPLACE WITH ACTUAL BACKEND CALL:
-      // const verified = await fetch(`${BACKEND}/verify-razorpay`, {method:'POST', body: JSON.stringify({...})})
-      
-      // Demo: store payment locally (INSECURE - use backend in production)
-      const payments = JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
-      payments[regId] = {
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_order_id: response.razorpay_order_id,
-        razorpay_signature: response.razorpay_signature,
-        amount: RAZORPAY_AMOUNT / 100,
-        paidAt: new Date().toISOString(),
-        method: 'razorpay'
-      };
-      localStorage.setItem('lv_int_payments', JSON.stringify(payments));
-      
-      document.getElementById('payFormArea').style.display = 'none';
-      document.getElementById('payDoneArea').style.display = 'block';
-      renderAll();
-      showToast('Payment successful! ✓', 'success');
-      
+      const res = await fetch(`${BACKEND}/api/payments/verify`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature
+        })
+      });
+      const data = await res.json();
+      if(data.success){
+        document.getElementById('payFormArea').style.display = 'none';
+        document.getElementById('payDoneArea').style.display = 'block';
+        renderAll();
+        showToast('Payment successful! ✓', 'success');
+      } else {
+        showToast('Verification failed: ' + data.error, 'error');
+        resetPaymentButton();
+      }
     } catch (err) {
-      showToast('Verification failed. Contact support.', 'error');
+      showToast('Verification failed: ' + err.message, 'error');
       resetPaymentButton();
     }
   }
