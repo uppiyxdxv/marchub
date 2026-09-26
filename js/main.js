@@ -449,4 +449,4 @@ document.querySelectorAll('input[type="password"]').forEach(input => {
   wrapper.appendChild(toggle);
 });
 
-console.log('%cMarcHub ??','color:#00f5c4;font-size:1.5rem;font-weight:bold;');
+console.log('%cMarcHub','color:#1e3a5f;font-size:1.5rem;font-weight:bold;');

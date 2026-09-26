@@ -11,22 +11,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
   <style>
-    .auth-page{background:radial-gradient(ellipse at 60% 40%,rgba(124,58,237,.12),transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(0,245,196,.08),transparent 50%),var(--bg);}
+    .auth-page{background:var(--bg2);}
     .back-link{position:fixed;top:1.5rem;left:2rem;color:var(--muted);font-size:.9rem;z-index:10;}
     .back-link:hover{color:var(--accent);}
     .forgot-link{display:block;text-align:right;font-size:.82rem;color:var(--muted);margin-top:.4rem;cursor:pointer;font-family:var(--font-mono);}
     .forgot-link:hover{color:var(--accent);}
-    .fp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;}
+    .fp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;}
     .fp-overlay.show{display:flex;}
-    .fp-box{background:var(--bg2);border:1px solid var(--card-border);border-radius:var(--radius);padding:2.5rem;max-width:420px;width:90%;}
-    .fp-box h3{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
+    .fp-box{background:var(--bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:2.5rem;max-width:420px;width:90%;box-shadow:var(--shadow);}
+    .fp-box h3{font-size:1.4rem;font-weight:800;margin-bottom:.5rem;color:var(--text);}
     .fp-box p{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;}
     .fp-close{margin-top:1rem;text-align:center;color:var(--muted);font-size:.85rem;cursor:pointer;}
-    .fp-close:hover{color:var(--text);}
+    .fp-close:hover{color:var(--accent);}
     .step-bar{display:flex;gap:.5rem;margin-bottom:1.5rem;}
     .step-bar div{flex:1;height:3px;border-radius:99px;background:var(--card-border);transition:background .3s;}
     .step-bar div.on{background:var(--accent);}
-    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(5,10,20,.3);border-top-color:var(--bg);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--card-border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>

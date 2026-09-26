@@ -9,10 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css"/>
   <style>
-    body{background:var(--bg);}
+    body{background:var(--bg2);}
     .admin{padding:7rem 5% 4rem;min-height:100vh;}
     .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
-    .admin-header h1{font-size:1.8rem;font-weight:800;}
+    .admin-header h1{font-size:1.8rem;font-weight:800;color:var(--text);}
     .admin-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:99px;background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);font-size:.78rem;font-family:var(--font-mono);margin-left:.75rem;}
     /* Stats */
     .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
@@ -27,32 +27,32 @@
     /* Table */
     .tbl-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--card-border);}
     table{width:100%;border-collapse:collapse;font-size:.85rem;}
-    thead{background:rgba(255,255,255,.04);}
+    thead{background:var(--bg2);}
     th{padding:.85rem 1rem;text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;white-space:nowrap;}
     td{padding:.8rem 1rem;border-top:1px solid var(--card-border);vertical-align:middle;}
-    tr:hover td{background:rgba(255,255,255,.02);}
+    tr:hover td{background:var(--bg2);}
     .del-btn{padding:.3rem .7rem;border-radius:6px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:.78rem;cursor:pointer;font-family:var(--font-display);}
     .del-btn:hover{background:rgba(239,68,68,.3);}
     /* Search */
     .search-row{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
-    .search-row input,.search-row select{flex:1;min-width:180px;padding:.7rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;}
+    .search-row input,.search-row select{flex:1;min-width:180px;padding:.7rem 1rem;background:var(--bg);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-family:var(--font-display);font-size:.9rem;outline:none;}
     .search-row input:focus,.search-row select:focus{border-color:var(--accent);}
     .search-row select option{background:var(--bg2);}
     /* Task management */
     .task-mgmt{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
     @media(max-width:640px){.task-mgmt{grid-template-columns:1fr;}}
     .task-form-card,.task-list-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:1.5rem;}
-    .task-form-card h3,.task-list-card h3{font-size:1.1rem;font-weight:800;margin-bottom:1rem;}
-    .admin-task-item{background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+    .task-form-card h3,.task-list-card h3{font-size:1.1rem;font-weight:800;margin-bottom:1rem;color:var(--text);}
+    .admin-task-item{background:var(--bg2);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
     .admin-task-item .ti{flex:1;}
-    .admin-task-item h5{font-size:.9rem;font-weight:700;margin-bottom:.2rem;}
+    .admin-task-item h5{font-size:.9rem;font-weight:700;margin-bottom:.2rem;color:var(--text);}
     .admin-task-item p{font-size:.78rem;color:var(--muted);}
-    .admin-task-item .due{font-size:.72rem;color:var(--accent3);font-family:var(--font-mono);margin-top:.2rem;}
+    .admin-task-item .due{font-size:.72rem;color:var(--accent);font-family:var(--font-mono);margin-top:.2rem;}
     /* Recent regs */
     .reg-item{display:flex;align-items:center;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--card-border);}
     .reg-item:last-child{border-bottom:none;}
     .reg-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:var(--bg);flex-shrink:0;}
-    .reg-info h5{font-size:.9rem;font-weight:600;margin-bottom:.1rem;}
+    .reg-info h5{font-size:.9rem;font-weight:600;margin-bottom:.1rem;color:var(--text);}
     .reg-info p{font-size:.78rem;color:var(--muted);}
     .reg-date{margin-left:auto;font-size:.75rem;font-family:var(--font-mono);color:var(--muted);}
     /* Action buttons */
@@ -62,9 +62,9 @@
     .act-btn.green{border-color:#10b981;color:#10b981;}
     .act-btn.green:hover{background:rgba(16,185,129,.1);}
     /* Grading */
-    .grade-input{width:60px;padding:.3rem .5rem;background:rgba(255,255,255,.07);border:1px solid var(--card-border);border-radius:6px;color:var(--text);font-family:var(--font-mono);text-align:center;outline:none;}
-    .grade-btn{padding:.3rem .6rem;border-radius:6px;background:rgba(0,245,196,.15);border:1px solid rgba(0,245,196,.3);color:var(--accent);font-size:.75rem;cursor:pointer;font-family:var(--font-display);}
-    .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:none;transition:all .2s;}
+    .grade-input{width:60px;padding:.3rem .5rem;background:var(--bg);border:1px solid var(--card-border);border-radius:6px;color:var(--text);font-family:var(--font-mono);text-align:center;outline:none;}
+    .grade-btn{padding:.3rem .6rem;border-radius:6px;background:rgba(30,58,95,.15);border:1px solid rgba(30,58,95,.3);color:var(--accent);font-size:.75rem;cursor:pointer;font-family:var(--font-display);}
+    .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:var(--bg);transition:all .2s;}
     .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
     .empty-info{color:var(--muted);font-size:.9rem;padding:2rem;text-align:center;}
   </style>
@@ -373,17 +373,17 @@
         const subs=AuthDB.getSubmissions(u.email,course);
         const sub=subs.find(s=>s.taskId===t.id);
         if(sub){subsTotal++;if(sub.verified)verifiedTotal++;}
-        return sub?`<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem .5rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:.8rem;">
+        return sub?`<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem .5rem;border-bottom:1px solid var(--card-border);font-size:.8rem;">
           <span style="font-weight:600;">${u.name}</span>
           <span style="font-size:.72rem;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${sub.answer}</span>
           <span style="color:var(--muted);font-family:var(--font-mono);font-size:.72rem;">${new Date(sub.submittedAt).toLocaleDateString('en-IN')}</span>
-          <span>${sub.verified?'<span style="color:#10b981;">✓ Verified</span>':`<button class="grade-btn" style="background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);color:#10b981;" onclick="verifyTask('${u.email}','${course}',${t.id})">OK ✓</button>`}</span>
+          <span>${sub.verified?'<span style="color:#10b981;">✓ Verified</span>':`<button class="grade-btn" onclick="verifyTask('${u.email}','${course}',${t.id})">OK ✓</button>`}</span>
         </div>`:'';
       }).filter(r=>r).join('');
-      return `<div style="background:rgba(255,255,255,.03);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;">
+      return `<div style="background:var(--bg2);border:1px solid var(--card-border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;">
           <div style="flex:1;">
-            <h5 style="font-size:.9rem;font-weight:700;margin-bottom:.2rem;">${t.title}</h5>
+            <h5 style="font-size:.9rem;font-weight:700;margin-bottom:.2rem;color:var(--text);">${t.title}</h5>
             <p style="font-size:.78rem;color:var(--muted);">${t.desc||''}</p>
             <div class="due">📅 ${t.due||'No deadline'}</div>
             <div style="font-size:.75rem;font-family:var(--font-mono);margin-top:.3rem;">
