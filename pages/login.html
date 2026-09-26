@@ -55,36 +55,29 @@
   </div>
 </div>
 
-<!-- Forgot Password Modal – 3 steps -->
+<!-- Forgot Password Modal – Email-based reset -->
 <div class="fp-overlay" id="fpModal">
   <div class="fp-box">
     <h3 id="fp-title">Reset Password</h3>
-    <p id="fp-desc">Enter your registered email address.</p>
+    <p id="fp-desc">Enter your registered email address. We'll send you a reset link.</p>
     <div class="step-bar">
-      <div class="on" id="s1"></div><div id="s2"></div><div id="s3"></div>
+      <div class="on" id="s1"></div><div id="s2"></div>
     </div>
     <div id="fp1">
       <div class="form-group"><label>Registered Email</label>
         <input type="email" id="fp-email" placeholder="you@example.com"/>
         <div class="form-error" id="fp-email-err">No account with that email.</div>
       </div>
-      <button class="btn-full" id="fp-btn1">Send Code →</button>
+      <button class="btn-full" id="fp-btn1">Send Reset Link →</button>
     </div>
     <div id="fp2" style="display:none">
-      <div id="otpDisplay" style="display:none;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.8rem;text-align:center;margin-bottom:1rem;font-size:.9rem;color:var(--accent);font-weight:700;"></div>
-      <div class="form-group"><label>6-Digit Code</label>
-        <input type="text" id="fp-code" placeholder="------" maxlength="6" style="letter-spacing:.3em;text-align:center;font-size:1.3rem;font-family:var(--font-mono)"/>
-        <div class="form-error" id="fp-code-err">Incorrect code.</div>
-      </div>
-      <button class="btn-full" id="fp-btn2">Verify →</button>
-    </div>
-    <div id="fp3" style="display:none">
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;">Check your email for the reset link. The link expires in 1 hour.</p>
       <div class="form-group"><label>New Password</label>
         <input type="password" id="fp-np" placeholder="Min. 6 characters" view-password="true"/>
         <div class="form-error" id="fp-np-err">Min. 6 characters.</div>
       </div>
       <div class="form-group"><label>Confirm Password</label>
-        <input type="password" id="fp-cp" placeholder="Repeat password" view-password="true "/>
+        <input type="password" id="fp-cp" placeholder="Repeat password" view-password="true"/>
         <div class="form-error" id="fp-cp-err">Passwords don't match.</div>
       </div>
       <button class="btn-full" id="fp-btn3">Reset Password →</button>
@@ -140,78 +133,110 @@
   });
   document.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')loginBtn.click();}));
 
-  // Forgot password
-  let _otpVerified=false,_fpemail='',_localOtp='';
-  function closeFP(){
+  // Forgot password - EmailJS reset link
+  let _fpemail = '', _resetToken = '';
+  
+  function closeFP() {
     document.getElementById('fpModal').classList.remove('show');
-    document.getElementById('fp1').style.display='block';
-    document.getElementById('fp2').style.display='none';
-    document.getElementById('fp3').style.display='none';
-    document.getElementById('otpDisplay').style.display='none';
-    ['s1','s2','s3'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i===0));
-    document.getElementById('fp-title').textContent='Reset Password';
-    document.getElementById('fp-desc').textContent='Enter your registered email address.';
+    document.getElementById('fp1').style.display = 'block';
+    document.getElementById('fp2').style.display = 'none';
+    document.getElementById('fp-title').textContent = 'Reset Password';
+    document.getElementById('fp-desc').textContent = 'Enter your registered email address. We\'ll send you a reset link.';
+    ['s1','s2'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i===0));
+    _fpemail = '';
+    _resetToken = '';
   }
-  function fpStep(n){
-    ['fp1','fp2','fp3'].forEach((id,i)=>document.getElementById(id).style.display=i===n-1?'block':'none');
-    ['s1','s2','s3'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i<n));
+  
+  function fpStep(n) {
+    ['fp1','fp2'].forEach((id,i)=>document.getElementById(id).style.display=i===n-1?'block':'none');
+    ['s1','s2'].forEach((id,i)=>document.getElementById(id).classList.toggle('on',i<n));
   }
-   document.getElementById("fp-btn1").addEventListener("click", async () => {
-
-    const em = document.getElementById("fp-email").value.trim();
-
-    document.getElementById("fp-email-err").classList.remove("show");
-
-    if (!em || !/^[^@]+@[^@]+\.[^@]+$/.test(em)) {
-        document.getElementById("fp-email-err").classList.add("show");
-        return;
+  
+  // Check for reset token in URL on page load
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('reset');
+    if (token) {
+      const stored = localStorage.getItem('lv_reset_' + token);
+      if (stored) {
+        const data = JSON.parse(stored);
+        if (data.expires > Date.now()) {
+          _fpemail = data.email;
+          _resetToken = token;
+          document.getElementById('fp-email').value = data.email;
+          fpStep(2);
+          document.getElementById('fpModal').classList.add('show');
+          document.getElementById('fp-title').textContent = 'Set New Password';
+          document.getElementById('fp-desc').textContent = 'Enter your new password below.';
+          history.replaceState(null, '', 'login.html');
+        } else {
+          localStorage.removeItem('lv_reset_' + token);
+          showToast('Reset link expired. Please request a new one.', 'error');
+        }
+      } else {
+        showToast('Invalid reset link. Please request a new one.', 'error');
+      }
     }
-
+  })();
+  
+  document.getElementById("fp-btn1").addEventListener("click", async () => {
+    const em = document.getElementById("fp-email").value.trim();
+    document.getElementById("fp-email-err").classList.remove("show");
+    if (!em || !/^[^@]+@[^@]+\.[^@]+$/.test(em)) {
+      document.getElementById("fp-email-err").classList.add("show");
+      return;
+    }
     _fpemail = em;
-    const btn1=document.getElementById('fp-btn1');btn1.disabled=true;btn1.textContent='Sending…';
+    const btn1 = document.getElementById('fp-btn1');
+    btn1.disabled = true; btn1.textContent = 'Sending…';
+    
+    _resetToken = 'reset_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const expires = Date.now() + 3600000;
+    localStorage.setItem('lv_reset_' + _resetToken, JSON.stringify({email: em, expires}));
+    
+    const resetLink = `${window.location.origin}${window.location.pathname}?reset=${_resetToken}`;
+    
     try {
-      const r=await fetch(`${BACKEND}/send-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em})});
-      const result=await r.json();
-      _localOtp=result.otp||'';
-      if(result.emailFailed) showToast('Email issue — see OTP below','success');
-      else showToast('OTP sent to your email ✓','success');
-    }catch(e){_localOtp=String(Math.floor(100000+Math.random()*900000));showToast('Demo OTP below','success');}
-    btn1.disabled=false;btn1.textContent='Send Code →';
-    document.getElementById('fp-title').textContent='Verify Code';
-    document.getElementById('fp-desc').textContent=`Code sent to ${em}`;
-    const d=document.getElementById('otpDisplay');
-    d.textContent='🔑 Your OTP: '+_localOtp;d.style.display='block';
+      await emailjs.send('service_63ztzjj', 'template_0gbkr7y', {
+        to_name: 'User',
+        to_email: em,
+        reset_link: resetLink,
+        expires_in: '1 hour',
+        support_email: 'marchub2026@gmail.com'
+      });
+      showToast('Reset link sent to your email! ✓', 'success');
+    } catch (e) {
+      console.error('EmailJS error:', e);
+      showToast('Email sending failed. Check console for reset link.', 'error');
+      console.log('Reset link (demo):', resetLink);
+    }
+    
+    btn1.disabled = false; btn1.textContent = 'Send Reset Link →';
     fpStep(2);
-
-});
-  document.getElementById('fp-btn2').addEventListener('click',async()=>{
-    const c=document.getElementById('fp-code').value.trim();
-    document.getElementById('fp-code-err').classList.remove('show');
-    let verified=false;
-    // Check local OTP first (always works)
-    if(c===_localOtp) verified=true;
-    // Also check backend OTP (if reachable)
-    if(!verified){try{const r=await fetch(`${BACKEND}/verify-otp`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpemail,otp:c})});const result=await r.json();if(result.success)verified=true;}catch(e){}}
-    if(!verified){document.getElementById('fp-code-err').textContent='Incorrect code.';document.getElementById('fp-code-err').classList.add('show');return;}
-    _otpVerified=true;
-    document.getElementById('fp-title').textContent='New Password';
-    document.getElementById('fp-desc').textContent='Choose a strong new password.';
-    fpStep(3);
   });
+  
   document.getElementById('fp-btn3').addEventListener('click', async () => {
-    if(!_otpVerified){showToast('Please verify OTP first.','error');closeFP();return;}
-    const np=document.getElementById('fp-np').value;
-    const cp=document.getElementById('fp-cp').value;
+    const np = document.getElementById('fp-np').value;
+    const cp = document.getElementById('fp-cp').value;
     document.getElementById('fp-np-err').classList.remove('show');
     document.getElementById('fp-cp-err').classList.remove('show');
-    if(!np||np.length<6){document.getElementById('fp-np-err').classList.add('show');return;}
-    if(np!==cp){document.getElementById('fp-cp-err').classList.add('show');return;}
+    if (!np || np.length < 6) { document.getElementById('fp-np-err').classList.add('show'); return; }
+    if (np !== cp) { document.getElementById('fp-cp-err').classList.add('show'); return; }
+    if (!_resetToken) { showToast('Session expired. Please request a new reset link.', 'error'); closeFP(); return; }
+    
     try {
-      const r=await fetch(`${BACKEND}/reset-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpemail,newPassword:np})});
-      const result=await r.json();
-      if(result.success){showToast('Password Reset Successfully','success');closeFP();}
-      else showToast(result.message,'error');
-    }catch(err){showToast('Server Error','error');}
+      const r = await fetch(`${BACKEND}/reset-password`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:_fpemail,newPassword:np,token:_resetToken})});
+      const result = await r.json();
+      if (result.success) {
+        localStorage.removeItem('lv_reset_' + _resetToken);
+        showToast('Password Reset Successfully', 'success');
+        closeFP();
+      } else {
+        showToast(result.message || 'Reset failed', 'error');
+      }
+    } catch (err) {
+      showToast('Server Error', 'error');
+    }
   });
 </script>
 </body>
