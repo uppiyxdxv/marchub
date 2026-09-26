@@ -364,16 +364,16 @@
     <button class="pay-close" onclick="closePayModal()">✕</button>
     <div class="pay-icon">💳</div>
     <h3 style="text-align:center;">Complete Payment</h3>
-    <p class="pay-sub">Pay ₹49 to unlock your certificate download.</p>
+    <p class="pay-sub">Pay ₹1 to unlock your certificate download.</p>
     <div class="amt-box">
       <div class="lbl">Certificate Fee</div>
-      <div class="amt">₹49</div>
+      <div class="amt">₹1</div>
       <div class="note">One-time payment for certificate generation</div>
     </div>
     <!-- Razorpay Payment -->
     <div id="payFormArea">
       <button class="btn-full" id="razorpayBtn" onclick="initiateRazorpayPayment()" style="flex:1;">
-        <span id="rzpBtnText">Pay ₹49 with Razorpay</span>
+        <span id="rzpBtnText">Pay ₹1 with Razorpay</span>
         <span id="rzpBtnLoading" style="display:none;">⏳ Processing...</span>
       </button>
       <p class="pay-hint" style="margin-top:.75rem;text-align:center;font-size:.75rem;">Secure payment via UPI, Card, NetBanking, Wallet</p>
@@ -460,7 +460,7 @@
 
   // ── Razorpay Config ──
   const RAZORPAY_KEY_ID = 'rzp_live_Tgb7PQ428ga95T'; // 🔧 Live Key ID from Razorpay Dashboard
-  const RAZORPAY_AMOUNT = 4900; // ₹49 in paise
+  const RAZORPAY_AMOUNT = 100; // ₹1 in paise
 
   // ── Certificate ──
   function showCertModal(){
