@@ -370,16 +370,15 @@
       <div class="amt">₹49</div>
       <div class="note">One-time payment for certificate generation</div>
     </div>
-    <div class="upi-detail">📱 UPI ID: <span id="payUpiDisplay">marchub@upi</span></div>
-    <!-- UTR Form -->
+    <!-- Razorpay Payment -->
     <div id="payFormArea">
-      <label>📝 UTR Number *</label>
-      <input type="text" id="payUtrInput" placeholder="Enter UPI transaction UTR" />
-      <p class="pay-hint">Enter the UTR/Reference number from your UPI payment confirmation.</p>
-      <div class="pay-err" id="payUtrErr">Please enter a valid UTR number.</div>
-      <div style="display:flex;gap:.75rem;margin-top:1.25rem;">
-        <button class="btn-full" onclick="submitPayment()" style="flex:1;">Submit & Download →</button>
-        <button class="act-btn" onclick="closePayModal()" style="padding:.85rem 1.5rem;">Cancel</button>
+      <button class="btn-full" id="razorpayBtn" onclick="initiateRazorpayPayment()" style="flex:1;">
+        <span id="rzpBtnText">Pay ₹49 with Razorpay</span>
+        <span id="rzpBtnLoading" style="display:none;">⏳ Processing...</span>
+      </button>
+      <p class="pay-hint" style="margin-top:.75rem;text-align:center;font-size:.75rem;">Secure payment via UPI, Card, NetBanking, Wallet</p>
+      <div style="display:flex;gap:.75rem;margin-top:1rem;">
+        <button class="act-btn" onclick="closePayModal()" style="flex:1;padding:.85rem 1.5rem;">Cancel</button>
       </div>
     </div>
     <!-- Success state -->
@@ -429,6 +428,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>emailjs.init('rwHZkgqFwOWu7Cs9o');</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="../js/main.js?v=3"></script>
 <script>
   history.replaceState(null, '', location.href);
@@ -458,6 +458,10 @@
   }
   function isPaid(rid){return !!getPayStatus(rid);}
 
+  // ── Razorpay Config ──
+  const RAZORPAY_KEY_ID = 'YOUR_RAZORPAY_KEY_ID'; // 🔧 Replace with your Key ID from Razorpay Dashboard
+  const RAZORPAY_AMOUNT = 4900; // ₹49 in paise
+
   // ── Certificate ──
   function showCertModal(){
     document.getElementById('cert-name').textContent=user.name||session.name;
@@ -471,28 +475,117 @@
 
   // ── Payment Modal ──
   function showPayModal(regId){
-    document.getElementById('payUtrInput').value='';
     document.getElementById('payFormArea').style.display='block';
     document.getElementById('payDoneArea').style.display='none';
-    document.getElementById('payUtrErr').style.display='none';
     document.getElementById('payModal').dataset.regid=regId;
     document.getElementById('payModal').classList.add('show');
+    // Reset button state
+    document.getElementById('rzpBtnText').style.display='inline';
+    document.getElementById('rzpBtnLoading').style.display='none';
+    document.getElementById('razorpayBtn').disabled=false;
   }
   function closePayModal(){
     document.getElementById('payModal').classList.remove('show');
   }
-  function submitPayment(){
-    const regId=document.getElementById('payModal').dataset.regid;
-    const utr=document.getElementById('payUtrInput').value.trim();
-    document.getElementById('payUtrErr').style.display='none';
-    if(!utr||utr.length<4){document.getElementById('payUtrErr').style.display='block';return;}
-    const payments=JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
-    payments[regId]={utr,paidAt:new Date().toISOString()};
-    localStorage.setItem('lv_int_payments',JSON.stringify(payments));
-    document.getElementById('payFormArea').style.display='none';
-    document.getElementById('payDoneArea').style.display='block';
-    renderAll();
+  function initiateRazorpayPayment(){
+    const regId = document.getElementById('payModal').dataset.regid;
+    if(!regId){showToast('Session expired. Please reopen payment modal.','error');return;}
+    
+    const btn = document.getElementById('razorpayBtn');
+    const btnText = document.getElementById('rzpBtnText');
+    const btnLoading = document.getElementById('rzpBtnLoading');
+    
+    btn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    
+    // 🔧 OPTION 1: If you have a backend endpoint to create orders
+    // createRazorpayOrder(regId).then(orderId => openRazorpayCheckout(orderId, regId));
+    
+    // 🔧 OPTION 2: Demo mode - create order client-side (NOT secure for production)
+    // For production, ALWAYS create orders on your backend!
+    const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    openRazorpayCheckout(orderId, regId);
   }
+  
+  function openRazorpayCheckout(orderId, regId){
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: RAZORPAY_AMOUNT,
+      currency: 'INR',
+      name: 'MarcHub',
+      description: 'Certificate Fee - Internship Completion',
+      order_id: orderId,
+      handler: function(response){
+        // Payment successful - verify on backend
+        verifyRazorpayPayment(response, regId);
+      },
+      prefill: {
+        name: user.name || session.name,
+        email: session.email,
+        contact: user.phone || ''
+      },
+      notes: {
+        reg_id: regId,
+        user_email: session.email
+      },
+      theme: {
+        color: '#1e3a5f'
+      },
+      modal: {
+        ondismiss: function(){
+          resetPaymentButton();
+        }
+      }
+    };
+    
+    const rzp = new Razorpay(options);
+    rzp.on('payment.failed', function(response){
+      showToast('Payment failed: ' + response.error.description, 'error');
+      resetPaymentButton();
+    });
+    rzp.open();
+  }
+  
+  function resetPaymentButton(){
+    document.getElementById('razorpayBtn').disabled = false;
+    document.getElementById('rzpBtnText').style.display = 'inline';
+    document.getElementById('rzpBtnLoading').style.display = 'none';
+  }
+  
+  async function verifyRazorpayPayment(response, regId){
+    // 🔧 BACKEND VERIFICATION REQUIRED
+    // Send response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature
+    // to your backend to verify signature
+    
+    try {
+      // For demo: simulate verification success
+      // REPLACE WITH ACTUAL BACKEND CALL:
+      // const verified = await fetch(`${BACKEND}/verify-razorpay`, {method:'POST', body: JSON.stringify({...})})
+      
+      // Demo: store payment locally (INSECURE - use backend in production)
+      const payments = JSON.parse(localStorage.getItem('lv_int_payments')||'{}');
+      payments[regId] = {
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_signature: response.razorpay_signature,
+        amount: RAZORPAY_AMOUNT / 100,
+        paidAt: new Date().toISOString(),
+        method: 'razorpay'
+      };
+      localStorage.setItem('lv_int_payments', JSON.stringify(payments));
+      
+      document.getElementById('payFormArea').style.display = 'none';
+      document.getElementById('payDoneArea').style.display = 'block';
+      renderAll();
+      showToast('Payment successful! ✓', 'success');
+      
+    } catch (err) {
+      showToast('Verification failed. Contact support.', 'error');
+      resetPaymentButton();
+    }
+  }
+  
   function openCertFromPay(){
     closePayModal();
     showCertModal();
