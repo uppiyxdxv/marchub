@@ -71,15 +71,29 @@
     /* Cert modal */
     .cert-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;}
     .cert-overlay.show{display:flex;}
-    .cert-paper{background:#fff;border-radius:12px;padding:3rem;max-width:600px;width:90%;text-align:center;position:relative;}
-    .cert-paper h1{font-size:2rem;color:#1a1a1a;font-weight:800;margin:.5rem 0;}
-    .cert-paper .sub{color:#666;margin-bottom:1.5rem;}
-    .cert-paper .name{font-size:1.8rem;color:var(--accent);font-weight:800;border-bottom:2px solid var(--accent);display:inline-block;padding-bottom:.3rem;margin:1rem 0;}
-    .cert-paper .course-nm{font-size:1.2rem;color:#1a1a1a;font-weight:600;margin-top:.5rem;}
-    .cert-paper .date{color:#666;font-size:.85rem;margin-top:1rem;}
-    .cert-paper .seal{font-size:3rem;margin:1rem 0;}
-    .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;}
-    .btn-print{margin-top:1.5rem;padding:.75rem 2rem;background:var(--accent);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:1rem;cursor:pointer;}
+    .cert-paper{background:#fff;border-radius:12px;padding:3rem;max-width:700px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+    .cert-paper .cert-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#999;}
+    .cert-paper .logo{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:3px;color:#1f2937;margin-top:5px;}
+    .cert-paper .tagline{font-family:Arial,sans-serif;font-size:13px;letter-spacing:3px;color:#777;margin-top:5px;}
+    .cert-paper .certificate-title{margin-top:35px;font-size:46px;letter-spacing:5px;color:#1f2937;text-transform:uppercase;font-weight:800;}
+    .cert-paper .subtitle{font-family:Arial,sans-serif;font-size:17px;color:#666;margin-top:5px;}
+    .cert-paper .presented{margin-top:28px;font-family:Arial,sans-serif;font-size:15px;color:#555;}
+    .cert-paper .student-name{margin-top:10px;font-size:42px;font-weight:bold;color:#111827;border-bottom:2px solid #c9a227;padding:0 70px 8px;display:inline-block;}
+    .cert-paper .description{max-width:760px;margin-top:20px;font-family:Arial,sans-serif;font-size:16px;line-height:1.7;color:#4b5563;}
+    .cert-paper .course-name{font-size:26px;font-weight:bold;color:#b38b18;margin:12px 0;}
+    .cert-paper .bottom{width:90%;margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font-family:Arial,sans-serif;}
+    .cert-paper .date,.cert-paper .signature{width:220px;text-align:center;}
+    .cert-paper .line{border-top:1px solid #555;margin-bottom:7px;}
+    .cert-paper .label{font-size:13px;color:#555;}
+    .cert-paper .sign-name{font-weight:bold;font-size:14px;color:#222;}
+    .cert-paper .verification{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-family:Arial,sans-serif;font-size:10px;color:#777;white-space:nowrap;}
+    .cert-paper .verification a{color:#2563eb;text-decoration:none;}
+    .cert-paper .btn-print{margin-top:30px;padding:12px 40px;font-size:16px;background:#1e3a5f;color:#fff;border:none;border-radius:10px;font-weight:700;cursor:pointer;}
+    @media print {
+      body{background:white;}
+      .cert-paper{margin:0;box-shadow:none;page-break-after:always;}
+      @page{size:A4 landscape;margin:0;}
+    }
     /* Logout */
     .logout-btn{padding:.6rem 1.4rem;border-radius:8px;border:1px solid var(--card-border);color:var(--muted);cursor:pointer;font-family:var(--font-display);font-size:.9rem;background:var(--bg);transition:all .2s;}
     .logout-btn:hover{border-color:#ef4444;color:#ef4444;}
@@ -177,19 +191,42 @@
 <div class="cert-overlay" id="certModal">
   <div class="cert-paper">
     <button class="cert-close" onclick="document.getElementById('certModal').classList.remove('show')">✕</button>
-    <div class="seal">🏆</div>
-    <div style="font-size:.9rem;color:#888;text-transform:uppercase;letter-spacing:.15em;">Certificate of Completion</div>
-    <h1>MarcHub</h1>
-    <div class="sub">This certifies that</div>
-    <div class="name" id="cert-name"></div>
-    <div class="sub">has successfully completed</div>
-    <div class="course-nm" id="cert-course"></div>
-    <div class="date" id="cert-date"></div>
-    <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #eee;">
-      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">Student Signature</div></div>
-      <div><div style="border-top:2px solid #333;width:120px;"></div><div style="font-size:.75rem;color:#666;margin-top:.3rem;">MarcHub Director</div></div>
+    
+    <div class="logo">MARCHUB</div>
+    <div class="tagline">LEARN • GROW • ACHIEVE</div>
+    
+    <div class="certificate-title">Certificate</div>
+    <div class="subtitle">of Completion</div>
+    
+    <div class="presented">This certificate is proudly presented to</div>
+    
+    <div class="student-name" id="cert-name">Student Name</div>
+    
+    <div class="description">For successfully completing the learning program</div>
+    
+    <div class="course-name" id="cert-course">Course Name</div>
+    
+    <div class="description">This certificate recognizes the successful completion of the required learning activities and assessments provided through the MarcHub learning platform.</div>
+    
+    <div class="bottom">
+      <div class="date">
+        <div class="line"></div>
+        <div class="label">Date of Issue</div>
+        <div class="sign-name" id="cert-date">29 September 2026</div>
+      </div>
+      
+      <div class="signature">
+        <div class="line"></div>
+        <div class="sign-name">Authorized Signatory</div>
+        <div class="label">MarcHub</div>
+      </div>
     </div>
-    <button class="btn-print" onclick="window.print()">🖨 Print Certificate</button>
+    
+    <div class="verification">
+      Certificate ID: <strong id="cert-id">MARCHUB-2026-00001</strong> &nbsp; | &nbsp; Verify at: <a href="https://www.marchub.com/verify" target="_blank">www.marchub.com/verify</a>
+    </div>
+    
+    <button class="btn-print" onclick="window.print()" style="margin-top:30px;padding:12px 40px;font-size:16px;">🖨 Print Certificate</button>
   </div>
 </div>
 
@@ -265,7 +302,8 @@ function submitTask(email,course,taskId,ansId){
 function openCert(course){
   document.getElementById('cert-name').textContent=user.name||session.name;
   document.getElementById('cert-course').textContent=course+' – MarcHub';
-  document.getElementById('cert-date').textContent='Issued: '+new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cert-date').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('cert-id').textContent='MARCHUB-'+new Date().getFullYear()+'-'+String(Math.floor(Math.random()*10000)).padStart(5,'0');
   document.getElementById('certModal').classList.add('show');
 }
 function renderCourses(){
